@@ -296,11 +296,10 @@ class _TaleDetailMobileComponentWidgetState
                         color: FlutterFlowTheme.of(context).alternate,
                       ).animateOnPageLoad(
                           animationsMap['dividerOnPageLoadAnimation1']!),
-                      if (valueOrDefault<String>(
-                                widget.taleDetailParameter?.audioUrl,
-                                'name',
-                              ) !=
-                              '')
+                      if (valueOrDefault<bool>(
+                        widget.taleDetailParameter?.hasAudioUrl(),
+                        false,
+                      ))
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               4.0, 8.0, 4.0, 8.0),

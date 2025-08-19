@@ -101,9 +101,11 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                 highlightColor: Colors.transparent,
                 onTap: () async {
                   if (isiOS) {
-                    await launchURL('apple-privacy-policy.merakily.com');
+                    await launchURL(
+                        'https://apple-privacy-policy.merakily.com');
                   } else {
-                    await launchURL('android-privacy-policy.merakily.com');
+                    await launchURL(
+                        'https://android-privacy-policy.merakily.com');
                   }
                 },
                 child: Container(
