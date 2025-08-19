@@ -102,10 +102,10 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                 onTap: () async {
                   if (isiOS) {
                     await launchURL(
-                        'https://apple-privacy-policy.merakily.com');
+                        'https://sites.google.com/view/privacy-merakitales-apple');
                   } else {
                     await launchURL(
-                        'https://android-privacy-policy.merakily.com');
+                        'https://sites.google.com/view/privacy-merakitales-androi');
                   }
                 },
                 child: Container(
