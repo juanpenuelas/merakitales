@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "tales",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lang",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tale_id",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ]
+}

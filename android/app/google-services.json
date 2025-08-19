@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "650643926570",
+    "project_id": "merakitales-5rltbl",
+    "storage_bucket": "merakitales-5rltbl.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650643926570:android:63ff039599df0c92665d53",
+        "android_client_info": {
+          "package_name": "com.merakily.merakitales"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADY0JRZooId7XptEVaAaRKcD2hqaPrlUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650643926570:android:2b089ca6cc2a13d0665d53",
+        "android_client_info": {
+          "package_name": "com.mycompany.merakitales"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADY0JRZooId7XptEVaAaRKcD2hqaPrlUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
