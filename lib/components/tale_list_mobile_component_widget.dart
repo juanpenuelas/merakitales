@@ -327,8 +327,22 @@ class _TaleListMobileComponentWidgetState
                                 _model.interstitialAdSuccess =
                                     await admob.showInterstitialAd();
 
-                                FFAppState().TalesReadSinceLastIntersticialAdd =
-                                    0;
+                                if (_model.interstitialAdSuccess == true) {
+                                  admob.loadInterstitialAd(
+                                    "ca-app-pub-6049242703708474/2634885084",
+                                    "ca-app-pub-6049242703708474/2634885084",
+                                    false,
+                                  );
+
+                                  FFAppState()
+                                      .TalesReadSinceLastIntersticialAdd = 0;
+                                } else {
+                                  admob.loadInterstitialAd(
+                                    "ca-app-pub-6049242703708474/2634885084",
+                                    "ca-app-pub-6049242703708474/2634885084",
+                                    false,
+                                  );
+                                }
                               }
 
                               context.pushNamed(
