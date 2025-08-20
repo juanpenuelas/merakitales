@@ -330,7 +330,7 @@ class _TaleListMobileComponentWidgetState
                                 if (_model.interstitialAdSuccess == true) {
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
-                                    "ca-app-pub-6049242703708474/2634885084",
+                                    "ca-app-pub-6049242703708474/1026289941",
                                     false,
                                   );
 
@@ -339,7 +339,7 @@ class _TaleListMobileComponentWidgetState
                                 } else {
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
-                                    "ca-app-pub-6049242703708474/2634885084",
+                                    "ca-app-pub-6049242703708474/1026289941",
                                     false,
                                   );
                                 }
