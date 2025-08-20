@@ -38,7 +38,7 @@ class _TaleListWidgetState extends State<TaleListWidget> {
           admob.loadInterstitialAd(
             "ca-app-pub-6049242703708474/2634885084",
             "ca-app-pub-6049242703708474/1026289941",
-            false,
+            true,
           );
         }(),
       );
@@ -125,7 +125,7 @@ class _TaleListWidgetState extends State<TaleListWidget> {
               FlutterFlowAdBanner(
                 width: MediaQuery.sizeOf(context).width * 1.0,
                 height: 50.0,
-                showsTestAd: false,
+                showsTestAd: true,
                 iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
                 androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
               ),

@@ -119,7 +119,7 @@ class _TailDetailWidgetState extends State<TailDetailWidget> {
               FlutterFlowAdBanner(
                 width: MediaQuery.sizeOf(context).width * 1.0,
                 height: 50.0,
-                showsTestAd: false,
+                showsTestAd: true,
                 iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
                 androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
               ),

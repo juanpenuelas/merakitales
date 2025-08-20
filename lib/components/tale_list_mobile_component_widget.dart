@@ -331,7 +331,7 @@ class _TaleListMobileComponentWidgetState
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
                                     "ca-app-pub-6049242703708474/1026289941",
-                                    false,
+                                    true,
                                   );
 
                                   FFAppState()
@@ -340,7 +340,7 @@ class _TaleListMobileComponentWidgetState
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
                                     "ca-app-pub-6049242703708474/1026289941",
-                                    false,
+                                    true,
                                   );
                                 }
                               }
