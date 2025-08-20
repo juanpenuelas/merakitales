@@ -172,32 +172,6 @@ class _TaleListMobileComponentWidgetState
                                             .fontStyle,
                                       ),
                                 ),
-                                Text(
-                                  FFAppState()
-                                      .TalesReadSinceLastIntersticialAdd
-                                      .toString(),
-                                  style: FlutterFlowTheme.of(context)
-                                      .titleMedium
-                                      .override(
-                                        font: GoogleFonts.readexPro(
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .titleMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .titleMedium
-                                                  .fontStyle,
-                                        ),
-                                        letterSpacing: 0.0,
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .titleMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .titleMedium
-                                            .fontStyle,
-                                      ),
-                                ),
                               ],
                             ),
                           ),
@@ -331,7 +305,7 @@ class _TaleListMobileComponentWidgetState
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
                                     "ca-app-pub-6049242703708474/1026289941",
-                                    true,
+                                    false,
                                   );
 
                                   FFAppState()
@@ -340,7 +314,7 @@ class _TaleListMobileComponentWidgetState
                                   admob.loadInterstitialAd(
                                     "ca-app-pub-6049242703708474/2634885084",
                                     "ca-app-pub-6049242703708474/1026289941",
-                                    true,
+                                    false,
                                   );
                                 }
                               }
