@@ -1,6 +1,7 @@
 import '/backend/backend.dart';
 import '/components/tale_detail_mobile_component_widget.dart';
 import '/components/tale_detail_tablet_component_widget.dart';
+import '/flutter_flow/flutter_flow_ad_banner.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -115,6 +116,13 @@ class _TailDetailWidgetState extends State<TailDetailWidget> {
                     ),
                   ),
                 ),
+              FlutterFlowAdBanner(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                height: 50.0,
+                showsTestAd: false,
+                iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
+                androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
+              ),
             ],
           ),
         ),

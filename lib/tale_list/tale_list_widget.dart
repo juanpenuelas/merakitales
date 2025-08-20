@@ -2,8 +2,12 @@ import '/components/drawer_component_widget.dart';
 import '/components/tale_list_large_component_widget.dart';
 import '/components/tale_list_mobile_component_widget.dart';
 import '/components/tale_list_tablet_component_widget.dart';
+import '/flutter_flow/flutter_flow_ad_banner.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import 'dart:async';
+import '/flutter_flow/admob_util.dart' as admob;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'tale_list_model.dart';
 export 'tale_list_model.dart';
 
@@ -26,6 +30,19 @@ class _TaleListWidgetState extends State<TaleListWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => TaleListModel());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      unawaited(
+        () async {
+          admob.loadInterstitialAd(
+            "ca-app-pub-6049242703708474/2634885084",
+            "ca-app-pub-6049242703708474/1026289941",
+            false,
+          );
+        }(),
+      );
+    });
   }
 
   @override
@@ -53,57 +70,67 @@ class _TaleListWidgetState extends State<TaleListWidget> {
             child: DrawerComponentWidget(),
           ),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            if (responsiveVisibility(
-              context: context,
-              tablet: false,
-              tabletLandscape: false,
-              desktop: false,
-            ))
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.taleListMobileComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: TaleListMobileComponentWidget(),
+        body: SafeArea(
+          top: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              if (responsiveVisibility(
+                context: context,
+                tablet: false,
+                tabletLandscape: false,
+                desktop: false,
+              ))
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(),
+                    child: wrapWithModel(
+                      model: _model.taleListMobileComponentModel,
+                      updateCallback: () => safeSetState(() {}),
+                      child: TaleListMobileComponentWidget(),
+                    ),
                   ),
                 ),
-              ),
-            if (responsiveVisibility(
-              context: context,
-              phone: false,
-              tabletLandscape: false,
-              desktop: false,
-            ))
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.taleListTabletComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: TaleListTabletComponentWidget(),
+              if (responsiveVisibility(
+                context: context,
+                phone: false,
+                tabletLandscape: false,
+                desktop: false,
+              ))
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(),
+                    child: wrapWithModel(
+                      model: _model.taleListTabletComponentModel,
+                      updateCallback: () => safeSetState(() {}),
+                      child: TaleListTabletComponentWidget(),
+                    ),
                   ),
                 ),
-              ),
-            if (responsiveVisibility(
-              context: context,
-              phone: false,
-              tablet: false,
-            ))
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(),
-                  child: wrapWithModel(
-                    model: _model.taleListLargeComponentModel,
-                    updateCallback: () => safeSetState(() {}),
-                    child: TaleListLargeComponentWidget(),
+              if (responsiveVisibility(
+                context: context,
+                phone: false,
+                tablet: false,
+              ))
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(),
+                    child: wrapWithModel(
+                      model: _model.taleListLargeComponentModel,
+                      updateCallback: () => safeSetState(() {}),
+                      child: TaleListLargeComponentWidget(),
+                    ),
                   ),
                 ),
+              FlutterFlowAdBanner(
+                width: MediaQuery.sizeOf(context).width * 1.0,
+                height: 50.0,
+                showsTestAd: false,
+                iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
+                androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

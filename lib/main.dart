@@ -8,6 +8,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
 
+import '/flutter_flow/admob_util.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
@@ -16,6 +18,8 @@ void main() async {
   await initFirebase();
 
   await FlutterFlowTheme.initialize();
+  adMobRequestConsent();
+  adMobUpdateRequestConfiguration();
 
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();

@@ -4,10 +4,12 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/flutter_flow/admob_util.dart' as admob;
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:provider/provider.dart';
 import 'tale_list_mobile_component_model.dart';
 export 'tale_list_mobile_component_model.dart';
 
@@ -44,6 +46,8 @@ class _TaleListMobileComponentWidgetState
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -165,6 +169,32 @@ class _TaleListMobileComponentWidgetState
                                         fontWeight: FontWeight.bold,
                                         fontStyle: FlutterFlowTheme.of(context)
                                             .labelMedium
+                                            .fontStyle,
+                                      ),
+                                ),
+                                Text(
+                                  FFAppState()
+                                      .TalesReadSinceLastIntersticialAdd
+                                      .toString(),
+                                  style: FlutterFlowTheme.of(context)
+                                      .titleMedium
+                                      .override(
+                                        font: GoogleFonts.readexPro(
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleMedium
+                                                  .fontStyle,
+                                        ),
+                                        letterSpacing: 0.0,
+                                        fontWeight: FlutterFlowTheme.of(context)
+                                            .titleMedium
+                                            .fontWeight,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .titleMedium
                                             .fontStyle,
                                       ),
                                 ),
@@ -291,6 +321,15 @@ class _TaleListMobileComponentWidgetState
                                   FFAppState()
                                           .TalesReadSinceLastIntersticialAdd +
                                       1;
+                              if (FFAppState()
+                                      .TalesReadSinceLastIntersticialAdd >=
+                                  5) {
+                                _model.interstitialAdSuccess =
+                                    await admob.showInterstitialAd();
+
+                                FFAppState().TalesReadSinceLastIntersticialAdd =
+                                    0;
+                              }
 
                               context.pushNamed(
                                 TailDetailWidget.routeName,
@@ -304,6 +343,8 @@ class _TaleListMobileComponentWidgetState
                                   'taleParameter': listViewTalesRecord,
                                 },
                               );
+
+                              safeSetState(() {});
                             },
                             child: Container(
                               width: double.infinity,

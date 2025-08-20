@@ -18,6 +18,9 @@ class TaleListMobileComponentModel
   PagingController<DocumentSnapshot?, TalesRecord>? listViewPagingController;
   Query? listViewPagingQuery;
 
+  // Stores action output result for [AdMob - Show Interstitial Ad] action in cardView widget.
+  bool? interstitialAdSuccess;
+
   @override
   void initState(BuildContext context) {}
 
