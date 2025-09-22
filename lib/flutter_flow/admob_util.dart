@@ -8,6 +8,9 @@ export 'package:google_mobile_ads/google_mobile_ads.dart';
 // Learn more about displaying interstitial ads:
 // https://developers.google.com/admob/flutter/interstitial
 
+// Global toggle to enable/disable interstitial ads without removing code.
+const bool kInterstitialsEnabled = false;
+
 InterstitialAd? _interstitialAd;
 String? _loadingInterstitialAdUnitId;
 
@@ -16,6 +19,9 @@ void loadInterstitialAd(
   String androidAdUnitId,
   bool showTestAds,
 ) {
+  if (!kInterstitialsEnabled) {
+    return;
+  }
   if (kIsWeb) {
     print('AdMob is not supported on web.');
     return;
@@ -62,6 +68,10 @@ void loadInterstitialAd(
 }
 
 Future<bool> showInterstitialAd() async {
+  if (!kInterstitialsEnabled) {
+    // Pretend success so the app flow is unaffected and counters can reset.
+    return true;
+  }
   if (_interstitialAd == null) {
     print('Interstitial ad is not loaded.');
     // Return success even if the ad is not yet loaded.
