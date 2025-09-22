@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/admob_util.dart' as admob;
+import '/flutter_flow/flutter_flow_native_ad.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -282,7 +283,7 @@ class _TaleListMobileComponentWidgetState
                       itemBuilder: (context, _, listViewIndex) {
                         final listViewTalesRecord = _model
                             .listViewPagingController!.itemList![listViewIndex];
-                        return Padding(
+                        final taleTile = Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 4.0, 16.0, 8.0),
                           child: InkWell(
@@ -429,6 +430,19 @@ class _TaleListMobileComponentWidgetState
                             ),
                           ),
                         );
+
+                        // Insert a Native Advanced ad after every two tales (at indices 1, 3, 5, ...)
+                        if (listViewIndex % 2 == 1) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const NativeAdListTile(),
+                              taleTile,
+                            ],
+                          );
+                        } else {
+                          return taleTile;
+                        }
                       },
                     ),
                   ),

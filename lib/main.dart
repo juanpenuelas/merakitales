@@ -9,6 +9,7 @@ import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
 
 import '/flutter_flow/admob_util.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,8 @@ void main() async {
   await FlutterFlowTheme.initialize();
   adMobRequestConsent();
   adMobUpdateRequestConfiguration();
+  // Initialize Google Mobile Ads SDK so that Native ads can load.
+  await MobileAds.instance.initialize();
 
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
