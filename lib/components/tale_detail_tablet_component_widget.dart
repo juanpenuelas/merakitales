@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_audio_player.dart';
 import '/flutter_flow/flutter_flow_expanded_image_view.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_native_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -202,44 +203,51 @@ class _TaleDetailTabletComponentWidgetState
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
                               12.0, 12.0, 12.0, 12.0),
-                          child: InkWell(
-                            splashColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.fade,
-                                  child: FlutterFlowExpandedImageView(
-                                    image: Image.network(
-                                      widget
-                                          .taleDetailParameter!.imageUrl640px,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  await Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: FlutterFlowExpandedImageView(
+                                        image: Image.network(
+                                          widget
+                                              .taleDetailParameter!.imageUrl640px,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        allowRotation: false,
+                                        tag: widget
+                                            .taleDetailParameter!.imageUrl640px,
+                                        useHeroAnimation: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Hero(
+                                  tag: widget.taleDetailParameter!.imageUrl640px,
+                                  transitionOnUserGestures: true,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      widget.taleDetailParameter!.imageUrl640px,
+                                      width: double.infinity,
                                       fit: BoxFit.contain,
                                     ),
-                                    allowRotation: false,
-                                    tag: widget
-                                        .taleDetailParameter!.imageUrl640px,
-                                    useHeroAnimation: true,
                                   ),
                                 ),
-                              );
-                            },
-                            child: Hero(
-                              tag: widget.taleDetailParameter!.imageUrl640px,
-                              transitionOnUserGestures: true,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  widget.taleDetailParameter!.imageUrl640px,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ).animateOnPageLoad(
-                              animationsMap['imageOnPageLoadAnimation']!),
+                              ).animateOnPageLoad(
+                                  animationsMap['imageOnPageLoadAnimation']!),
+                              const SizedBox(height: 12.0),
+                              const NativeAdListTile(height: 180),
+                            ],
+                          ),
                         ),
                       ),
                     ),

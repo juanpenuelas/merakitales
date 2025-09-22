@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'dart:async';
 import '/flutter_flow/admob_util.dart' as admob;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/scheduler.dart';
 import 'tale_list_model.dart';
 export 'tale_list_model.dart';
@@ -125,7 +126,8 @@ class _TaleListWidgetState extends State<TaleListWidget> {
               FlutterFlowAdBanner(
                 width: MediaQuery.sizeOf(context).width * 1.0,
                 height: 50.0,
-                showsTestAd: false,
+                // Use test ads in debug builds (especially for iOS Simulator to avoid error code 2).
+                showsTestAd: kDebugMode,
                 iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
                 androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
               ),

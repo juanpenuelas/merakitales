@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, Tar
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class NativeAdListTile extends StatefulWidget {
-  const NativeAdListTile({super.key});
+  const NativeAdListTile({super.key, this.height});
+
+  // Optional explicit height to better fit different layouts (e.g., tablet).
+  final double? height;
 
   @override
   State<NativeAdListTile> createState() => _NativeAdListTileState();
@@ -65,7 +68,7 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
     }
     // IMPORTANT: Native Ad platform views require a bounded size.
     // Give the AdWidget an explicit height to avoid unbounded layout errors in slivers.
-    const double adHeight = 120; // Tweak as needed for your native layout
+    final double adHeight = widget.height ?? 120; // default 120, override as needed
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
