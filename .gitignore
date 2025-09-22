@@ -1,0 +1,70 @@
+# ---- Flutter/Dart ----
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+pubspec.lock
+# (Si es paquete/plug-in público, quita pubspec.lock)
+build/
+coverage/
+!.vscode/settings.json
+
+# ---- SO/IDE ----
+.DS_Store
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# ---- Android ----
+android/.gradle/
+android/build/
+**/android/**/build/
+**/android/**/.gradle/
+**/android/**/captures/
+**/android/**/local.properties
+**/android/**/.cxx/
+**/android/**/generated/**
+
+# Mantener (NO ignorar): android/gradle/** y wrapper
+!android/gradle/wrapper/gradle-wrapper.jar
+!android/gradle/wrapper/gradle-wrapper.properties
+!android/gradle/wrapper/gradle-wrapper.properties
+!android/gradle/**/gradle-wrapper.jar
+!android/gradle/**/gradle-wrapper.properties
+
+# Keystores (guárdalos fuera del repo o en secrets)
+**/*.keystore
+**/*.jks
+
+# ---- iOS ----
+ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/Flutter.podspec
+ios/.symlinks/
+ios/Pods/
+ios/DerivedData/
+**/xcuserdata/
+**/build/
+# Workspace y Pods los recrea CocoaPods; el proyecto Runner sí se versiona
+# (Deja Podfile y Podfile.lock en el repo)
+# Si tu equipo prefiere commitear Pods, quita ios/Pods/ de aquí.
+
+# ---- Xcode intermediate ----
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+**/*.xccheckout
+**/*.moved-aside
+**/*.xcuserstate
+
+# ---- Web ----
+web/.dart_tool/
+web/build/
+
+# ---- Others ----
+.mercurial/
+.svn/
