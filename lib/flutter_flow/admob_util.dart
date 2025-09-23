@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 export 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -133,10 +133,15 @@ void adMobUpdateRequestConfiguration() {
     print('AdMob is not supported on web.');
     return;
   }
+  // In debug builds, mark developer devices as test devices so AdMob serves test creatives
+  // without needing to swap ad unit IDs. You can add more device IDs as needed.
+  final List<String>? testIds = kDebugMode ? <String>['SIMULATOR'] : null;
+
   final RequestConfiguration requestConfiguration = RequestConfiguration(
     tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
     tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
     maxAdContentRating: MaxAdContentRating.g,
+    testDeviceIds: testIds,
   );
   MobileAds.instance.updateRequestConfiguration(requestConfiguration);
 }

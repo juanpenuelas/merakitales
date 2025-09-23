@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.flutter.embedding.android.FlutterActivity
@@ -13,6 +14,7 @@ import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
 import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin.NativeAdFactory
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.gms.ads.nativead.MediaView
 
 class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -29,30 +31,84 @@ class MainActivity: FlutterActivity() {
 class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
     override fun createNativeAd(nativeAd: NativeAd, customOptions: MutableMap<String, Any>?): NativeAdView {
         val adView = NativeAdView(context)
+
+        // Root vertical container
         val container = LinearLayout(context)
         container.orientation = LinearLayout.VERTICAL
-        container.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        container.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        // Media view for image/video (16:9 can be managed by parent height in Flutter)
+        val mediaView = MediaView(context)
+        mediaView.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        // Headline
         val title = TextView(context)
         title.textSize = 16f
-        title.setPadding(16, 16, 16, 8)
+        title.setPadding(16, 12, 16, 4)
+
+        // Body text
+        val body = TextView(context)
+        body.textSize = 14f
+        body.setPadding(16, 0, 16, 8)
+        body.maxLines = 2
+
+        // Footer with optional icon and CTA button
+        val footer = LinearLayout(context)
+        footer.orientation = LinearLayout.HORIZONTAL
+        footer.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        val iconView = ImageView(context)
+        val iconLp = LinearLayout.LayoutParams(64, 64)
+        iconLp.setMargins(16, 8, 8, 12)
+        iconView.layoutParams = iconLp
+
         val cta = Button(context)
         cta.textSize = 14f
-        val ctaParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        val ctaParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         ctaParams.gravity = Gravity.END
+        ctaParams.weight = 1f
         cta.layoutParams = ctaParams
-        cta.setPadding(16, 8, 16, 16)
+        cta.setPadding(16, 8, 16, 12)
 
-        // Assign views to the ad view.
+        // Assign views to the adView
+        adView.mediaView = mediaView
         adView.headlineView = title
+        adView.bodyView = body
         adView.callToActionView = cta
+        adView.iconView = iconView
 
-        // Populate the views.
+        // Populate available assets
         title.text = nativeAd.headline
+        body.text = nativeAd.body
         cta.text = nativeAd.callToAction
+        nativeAd.icon?.let { iconView.setImageDrawable(it.drawable) } ?: run {
+            iconView.visibility = View.GONE
+        }
 
+        // KEY: assign media content so image/video renders
+        adView.mediaView?.mediaContent = nativeAd.mediaContent
+
+        // Build view hierarchy
+        container.addView(mediaView)
         container.addView(title)
-        container.addView(cta)
+        container.addView(body)
+        footer.addView(iconView)
+        footer.addView(cta)
+        container.addView(footer)
         adView.addView(container)
+
         adView.setNativeAd(nativeAd)
         return adView
     }
