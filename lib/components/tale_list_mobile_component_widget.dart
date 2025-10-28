@@ -8,6 +8,7 @@ import '/flutter_flow/admob_util.dart' as admob;
 import '/flutter_flow/flutter_flow_native_ad.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -432,7 +433,8 @@ class _TaleListMobileComponentWidgetState
                         );
 
                         // Insert a Native Advanced ad after every two tales (at indices 1, 3, 5, ...)
-                        if (listViewIndex % 2 == 1) {
+                        // Android: no Native Advanced between tales. iOS (and others): keep behavior.
+                        if (defaultTargetPlatform != TargetPlatform.android && listViewIndex % 2 == 1) {
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -447,6 +449,8 @@ class _TaleListMobileComponentWidgetState
                     ),
                   ),
                 ),
+
+                // End of children for the inner Column
               ],
             ),
           ),

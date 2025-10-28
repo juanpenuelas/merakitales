@@ -31,6 +31,10 @@ class MainActivity: FlutterActivity() {
 class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
     override fun createNativeAd(nativeAd: NativeAd, customOptions: MutableMap<String, Any>?): NativeAdView {
         val adView = NativeAdView(context)
+        adView.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
 
         // Root vertical container
         val container = LinearLayout(context)
@@ -42,10 +46,12 @@ class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
 
         // Media view for image/video (16:9 can be managed by parent height in Flutter)
         val mediaView = MediaView(context)
-        mediaView.layoutParams = LinearLayout.LayoutParams(
+        // Use a fixed height to avoid overflowing outside the NativeAdView. Adjust as needed.
+        val mediaLp = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            dp(context, 180)
         )
+        mediaView.layoutParams = mediaLp
 
         // Headline
         val title = TextView(context)
@@ -65,11 +71,17 @@ class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
+        footer.setPadding(0, 8, 16, 12)
 
         val iconView = ImageView(context)
         val iconLp = LinearLayout.LayoutParams(64, 64)
         iconLp.setMargins(16, 8, 8, 12)
         iconView.layoutParams = iconLp
+
+        val spacer = View(context)
+        val spacerLp = LinearLayout.LayoutParams(0, 0)
+        spacerLp.weight = 1f
+        spacer.layoutParams = spacerLp
 
         val cta = Button(context)
         cta.textSize = 14f
@@ -77,8 +89,6 @@ class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        ctaParams.gravity = Gravity.END
-        ctaParams.weight = 1f
         cta.layoutParams = ctaParams
         cta.setPadding(16, 8, 16, 12)
 
@@ -105,6 +115,7 @@ class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
         container.addView(title)
         container.addView(body)
         footer.addView(iconView)
+        footer.addView(spacer)
         footer.addView(cta)
         container.addView(footer)
         adView.addView(container)
@@ -113,3 +124,6 @@ class ListTileNativeAdFactory(private val context: Context) : NativeAdFactory {
         return adView
     }
 }
+
+// Helper to convert dp to pixels for consistent sizing
+private fun dp(ctx: Context, value: Int): Int = (ctx.resources.displayMetrics.density * value).toInt()

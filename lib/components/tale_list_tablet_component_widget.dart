@@ -7,6 +7,7 @@ import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/flutter_flow_native_ad.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'tale_list_tablet_component_model.dart';
@@ -475,8 +476,8 @@ class _TaleListTabletComponentWidgetState
                                         ),
                                       );
 
-                                      // Insert a Native Advanced ad after every two tales (indices 1,3,5,...)
-                                      if (listViewIndex % 2 == 1) {
+                                      // Insert a Native Advanced ad after every two tales only on non-Android (keep iOS behavior)
+                                      if (defaultTargetPlatform != TargetPlatform.android && listViewIndex % 2 == 1) {
                                         return Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [

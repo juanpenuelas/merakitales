@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'tail_detail_model.dart';
 export 'tail_detail_model.dart';
 
@@ -116,13 +117,14 @@ class _TailDetailWidgetState extends State<TailDetailWidget> {
                     ),
                   ),
                 ),
-              FlutterFlowAdBanner(
-                width: MediaQuery.sizeOf(context).width * 1.0,
-                height: 50.0,
-                showsTestAd: false,
-                iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
-                androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
-              ),
+              if (defaultTargetPlatform != TargetPlatform.android)
+                FlutterFlowAdBanner(
+                  width: MediaQuery.sizeOf(context).width * 1.0,
+                  height: 50.0,
+                  showsTestAd: false,
+                  iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
+                  androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
+                ),
             ],
           ),
         ),
