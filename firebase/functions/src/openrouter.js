@@ -4,8 +4,10 @@ const BASE_URL = "https://openrouter.ai/api/v1";
 
 const TEXT_MODEL = "openai/gpt-4o-mini";
 const IMAGE_MODEL = "bytedance-seed/seedream-4.5";
-const TTS_MODEL = "hexgrad/kokoro-82m";
-const TTS_VOICE = "af_alloy";
+const TTS_EN_MODEL = "hexgrad/kokoro-82m";
+const TTS_EN_VOICE = "am_adam";
+const TTS_ES_MODEL = "microsoft/mai-voice-2";
+const TTS_ES_VOICE = "es-MX-Valeria:MAI-Voice-2";
 
 /**
  * @param {{ theme?: string|null, apiKey: string }} opts
@@ -62,13 +64,15 @@ async function generateImage({ prompt, apiKey }) {
 }
 
 /**
- * @param {{ input: string, apiKey: string, voice?: string }} opts
+ * @param {{ input: string, apiKey: string, lang?: "es"|"en", voice?: string }} opts
  * @returns {Promise<Buffer>}
  */
-async function generateSpeech({ input, apiKey, voice = TTS_VOICE }) {
+async function generateSpeech({ input, apiKey, lang = "en", voice }) {
+  const model = lang === "es" ? TTS_ES_MODEL : TTS_EN_MODEL;
+  const defaultVoice = lang === "es" ? TTS_ES_VOICE : TTS_EN_VOICE;
   const resp = await axios.post(
     `${BASE_URL}/audio/speech`,
-    { model: TTS_MODEL, input, voice, response_format: "mp3" },
+    { model, input, voice: voice || defaultVoice, response_format: "mp3" },
     {
       headers: { Authorization: `Bearer ${apiKey}` },
       responseType: "arraybuffer",
