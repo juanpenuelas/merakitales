@@ -1,4 +1,4 @@
-const { db, bucket, openrouterApiKey, requireAuth } = require("./admin");
+const { db, bucket, getOpenRouterApiKey, requireAuth } = require("./admin");
 const { generateTaleText, generateImage, generateSpeech } = require("./openrouter");
 const { resizeToWidth, uploadBuffer, uploadBase64Image, deletePrefix } = require("./storage");
 
@@ -8,7 +8,7 @@ const { resizeToWidth, uploadBuffer, uploadBase64Image, deletePrefix } = require
  */
 async function generateTaleDraftHandler(req) {
   requireAuth(req);
-  const apiKey = openrouterApiKey.value();
+  const apiKey = getOpenRouterApiKey();
   const theme = req.data?.theme || null;
   const draftId = db.collection("tale_drafts").doc().id;
   const storagePrefix = `drafts/${draftId}`;

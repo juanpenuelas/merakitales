@@ -19,7 +19,7 @@ jest.mock("../src/admin", () => {
   return {
     db: { collection: jest.fn(() => collectionObj) },
     bucket: { name: "test-bucket" },
-    openrouterApiKey: { value: () => "test-key" },
+    getOpenRouterApiKey: () => "test-key",
     requireAuth: jest.fn(),
     __sets: sets,
   };
