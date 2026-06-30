@@ -17,7 +17,7 @@ async function generateTaleText({ theme, apiKey }) {
     `${BASE_URL}/chat/completions`,
     {
       model: TEXT_MODEL,
-      messages: buildMessages(theme),
+      messages: buildMessages({ theme }),
       response_format: { type: "json_object" },
     },
     { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 120000 }
