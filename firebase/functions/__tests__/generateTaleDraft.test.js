@@ -67,4 +67,21 @@ describe("generateTaleDraft", () => {
     const result = await generateTaleDraftHandler({ data: {}, auth: { uid: "admin" } });
     expect(result.draftId).toBe("draft1");
   });
+
+  test("calls requireAuth with the request", async () => {
+    const admin = require("../src/admin");
+    admin.requireAuth.mockClear();
+    const req = { data: { theme: "courage" }, auth: { uid: "admin" } };
+    await generateTaleDraftHandler(req);
+    expect(admin.requireAuth).toHaveBeenCalledWith(req);
+  });
+
+  test("cleans up storage prefix and rethrows when generateImage rejects", async () => {
+    const openrouter = require("../src/openrouter");
+    const storage = require("../src/storage");
+    openrouter.generateImage.mockRejectedValueOnce(new Error("image failed"));
+    const req = { data: { theme: "courage" }, auth: { uid: "admin" } };
+    await expect(generateTaleDraftHandler(req)).rejects.toThrow("image failed");
+    expect(storage.deletePrefix).toHaveBeenCalledWith({ bucket: expect.anything(), prefix: "drafts/draft1" });
+  });
 });
