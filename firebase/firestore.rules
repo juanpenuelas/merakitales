@@ -14,5 +14,11 @@ service cloud.firestore {
       allow write: if false;
       allow delete: if false;
     }
+
+    // Drafts: readable only when authenticated. Admin uid is enforced in Cloud Functions;
+    // the web admin uses Firebase Auth so only the logged-in admin reaches these.
+    match /tale_drafts/{document} {
+      allow read, write: if request.auth != null;
+    }
   }
 }
