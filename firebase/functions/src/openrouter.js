@@ -10,16 +10,16 @@ const TTS_ES_MODEL = "microsoft/mai-voice-2";
 const TTS_ES_VOICE = "es-MX-Valeria:MAI-Voice-2";
 
 /**
- * @param {{ theme?: string|null, apiKey: string }} opts
+ * @param {{ theme?: string|null, feedback?: string|null, apiKey: string }} opts
  * @returns {Promise<object>} parsed tale JSON
  */
-async function generateTaleText({ theme, apiKey }) {
+async function generateTaleText({ theme, feedback, apiKey }) {
   const { buildMessages } = require("./prompts");
   const resp = await axios.post(
     `${BASE_URL}/chat/completions`,
     {
       model: TEXT_MODEL,
-      messages: buildMessages({ theme }),
+      messages: buildMessages({ theme, feedback }),
       response_format: { type: "json_object" },
     },
     { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 120000 }
