@@ -18,11 +18,18 @@ async function generateTaleText({ theme, apiKey }) {
     {
       model: TEXT_MODEL,
       messages: buildMessages(theme),
+      response_format: { type: "json_object" },
     },
     { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 120000 }
   );
   const content = resp.data.choices[0].message.content;
-  const parsed = JSON.parse(content);
+  const cleaned = content.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
+  let parsed;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch (e) {
+    throw new Error("Model did not return valid tale JSON: " + content.slice(0, 200));
+  }
   const required = [
     "name_es", "description_es", "specifications_es",
     "name_en", "description_en", "specifications_en",

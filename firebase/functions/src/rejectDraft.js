@@ -18,8 +18,12 @@ async function rejectDraftHandler(req) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("not-found", "Draft not found");
   }
-  await draftRef.delete();
+  if (snap.data().status !== "pending") {
+    const { HttpsError } = require("firebase-functions/v2/https");
+    throw new HttpsError("failed-precondition", `Draft already ${snap.data().status}`);
+  }
   await deletePrefix({ bucket, prefix: `drafts/${draftId}` });
+  await draftRef.delete();
   return { ok: true };
 }
 
