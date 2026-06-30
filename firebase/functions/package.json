@@ -15,14 +15,18 @@
     "@langchain/langgraph": "^0.2.23",
     "@langchain/openai": "^0.3.14",
     "@langchain/google-genai": "^0.0.8",
-    "@langchain/anthropic": "^0.1.1"
+    "@langchain/anthropic": "^0.1.1",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.2.1",
+    "jest": "^29.7.0",
+    "nock": "^13.5.4"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "test": "jest",
     "serve": "firebase -P merakitales-5rltbl emulators:start --only functions",
     "shell": "firebase -P merakitales-5rltbl functions:shell",
     "start": "npm run shell",
