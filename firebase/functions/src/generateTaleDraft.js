@@ -24,13 +24,15 @@ async function generateTaleDraftHandler(req) {
     const imageUrl = await uploadBase64Image({ bucket, path: `${storagePrefix}/image_1024.png`, b64 });
     const imageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
 
-    // 3. TTS ES
-    const audioEs = await generateSpeech({ input: tale.specifications_es, apiKey });
-    const audioUrlEs = await uploadBuffer({ bucket, path: `${storagePrefix}/audio_es.mp3`, buffer: audioEs, contentType: "audio/mpeg" });
-
-    // 4. TTS EN
-    const audioEn = await generateSpeech({ input: tale.specifications_en, apiKey });
-    const audioUrlEn = await uploadBuffer({ bucket, path: `${storagePrefix}/audio_en.mp3`, buffer: audioEn, contentType: "audio/mpeg" });
+    // 3. TTS ES + EN in parallel
+    const [audioEs, audioEn] = await Promise.all([
+      generateSpeech({ input: tale.specifications_es, apiKey }),
+      generateSpeech({ input: tale.specifications_en, apiKey }),
+    ]);
+    const [audioUrlEs, audioUrlEn] = await Promise.all([
+      uploadBuffer({ bucket, path: `${storagePrefix}/audio_es.mp3`, buffer: audioEs, contentType: "audio/mpeg" }),
+      uploadBuffer({ bucket, path: `${storagePrefix}/audio_en.mp3`, buffer: audioEn, contentType: "audio/mpeg" }),
+    ]);
 
     // 5. Save draft
     const draft = {

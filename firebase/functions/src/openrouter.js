@@ -2,10 +2,10 @@ const axios = require("axios");
 
 const BASE_URL = "https://openrouter.ai/api/v1";
 
-const TEXT_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct";
+const TEXT_MODEL = "openai/gpt-4o-mini";
 const IMAGE_MODEL = "bytedance-seed/seedream-4.5";
-const TTS_MODEL = "openai/gpt-4o-mini-tts-2025-12-15";
-const TTS_VOICE = "alloy";
+const TTS_MODEL = "hexgrad/kokoro-82m";
+const TTS_VOICE = "af_alloy";
 
 /**
  * @param {{ theme?: string|null, apiKey: string }} opts
@@ -18,9 +18,8 @@ async function generateTaleText({ theme, apiKey }) {
     {
       model: TEXT_MODEL,
       messages: buildMessages(theme),
-      response_format: { type: "json_object" },
     },
-    { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 60000 }
+    { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 120000 }
   );
   const content = resp.data.choices[0].message.content;
   const parsed = JSON.parse(content);
@@ -45,7 +44,7 @@ async function generateImage({ prompt, apiKey }) {
     {
       model: IMAGE_MODEL,
       prompt,
-      resolution: "1K",
+      resolution: "2K",
       aspect_ratio: "1:1",
       output_format: "png",
     },
