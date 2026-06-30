@@ -44,15 +44,18 @@ async function generateTaleText({ theme, feedback, apiKey }) {
 }
 
 /**
- * @param {{ prompt: string, apiKey: string }} opts
+ * @param {{ prompt: string, apiKey: string, feedback?: string|null }} opts
  * @returns {Promise<{ b64: string, mediaType?: string }>}
  */
-async function generateImage({ prompt, apiKey }) {
+async function generateImage({ prompt, feedback, apiKey }) {
+  const finalPrompt = feedback && feedback.trim().length > 0
+    ? `${prompt}. Style adjustment: ${feedback.trim().slice(0, 500)}`
+    : prompt;
   const resp = await axios.post(
     `${BASE_URL}/images`,
     {
       model: IMAGE_MODEL,
-      prompt,
+      prompt: finalPrompt,
       resolution: "2K",
       aspect_ratio: "1:1",
       output_format: "png",
