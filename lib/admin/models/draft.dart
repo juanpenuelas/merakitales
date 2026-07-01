@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Draft {
   final String id;
   final String status;
+  final String step;
   final DateTime? createdAt;
   final String nameEs;
   final String descriptionEs;
@@ -16,10 +17,12 @@ class Draft {
   final String imageUrl640;
   final String imagePrompt;
   final int? assignedTaleId;
+  final int? retractedFromTaleId;
 
   Draft({
     required this.id,
     required this.status,
+    required this.step,
     this.createdAt,
     required this.nameEs,
     required this.descriptionEs,
@@ -33,6 +36,7 @@ class Draft {
     required this.imageUrl640,
     required this.imagePrompt,
     this.assignedTaleId,
+    this.retractedFromTaleId,
   });
 
   factory Draft.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -40,6 +44,7 @@ class Draft {
     return Draft(
       id: doc.id,
       status: d['status'] as String? ?? 'pending',
+      step: d['step'] as String? ?? 'text',
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
       nameEs: d['name_es'] as String? ?? '',
       descriptionEs: d['description_es'] as String? ?? '',
@@ -51,8 +56,9 @@ class Draft {
       audioUrlEn: d['audio_url_en'] as String? ?? '',
       imageUrl: d['image_url'] as String? ?? '',
       imageUrl640: d['image_url_640px'] as String? ?? '',
-      imagePrompt: d['image_prompt_es'] as String? ?? '',
+      imagePrompt: d['image_prompt'] as String? ?? '',
       assignedTaleId: d['assigned_tale_id'] as int?,
+      retractedFromTaleId: d['retracted_from_tale_id'] as int?,
     );
   }
 }
