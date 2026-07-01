@@ -98,11 +98,12 @@ Errores: `not-found` si el draft no existe, `invalid-argument` si falta `draftId
 3. **Imagen**: zona de subida con vista previa tras subir; mientras sube, barra de progreso determinada (Storage SDK expone bytes transferidos) + botón deshabilitado
 4. **Audio ES** / **Audio EN**: un botón de subida por idioma, con nombre de archivo una vez subido y opción de reemplazar
 
-**Botón "Guardar borrador"** (fijo al fondo o en la AppBar), habilitado solo si el texto ES+EN está completo:
+**Botón "Guardar borrador"**, fijo en un `bottomNavigationBar` del `Scaffold` (siempre visible sin necesidad de hacer scroll), habilitado solo si el texto ES+EN está completo:
 - 1ª vez → crea el doc en Firestore con el `draftId` generado en cliente, navega a `/drafts/{id}` para persistir el estado en la URL (recargar la página no pierde el draft)
 - Siguientes veces → actualiza el doc existente
 - Mientras guarda: botón deshabilitado + spinner inline (no bloquea toda la pantalla)
 - Al terminar: `SnackBar` de confirmación ("Borrador guardado")
+- Si el primer guardado falla (red, permisos), el `draftId` ya generado en cliente se reutiliza en el reintento — no se genera uno nuevo, así no quedan ids huérfanos sin doc asociado
 
 "Aprobar y publicar" **no** aparece en esta pantalla — una vez creado, el admin va a `/drafts/{id}` (`draft_detail_page.dart`, con el gating por `step` ya implementado) para revisar y publicar, exactamente igual que un draft de IA.
 
