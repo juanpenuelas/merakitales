@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/draft.dart';
 import '../models/published_tale.dart';
@@ -42,6 +45,82 @@ class DraftsService {
       esData: snaps[0].data(),
       enData: snaps[1].data(),
     );
+  }
+
+  Future<String> createManualDraft({
+    required String nameEs,
+    required String descriptionEs,
+    required String specificationsEs,
+    required String nameEn,
+    required String descriptionEn,
+    required String specificationsEn,
+  }) async {
+    final ref = _db.collection('tale_drafts').doc();
+    await ref.set({
+      'status': 'pending',
+      'step': 'text',
+      'created_at': FieldValue.serverTimestamp(),
+      'decided_at': null,
+      'decided_by': null,
+      'name_es': nameEs,
+      'description_es': descriptionEs,
+      'specifications_es': specificationsEs,
+      'audio_url_es': '',
+      'image_prompt': '',
+      'name_en': nameEn,
+      'description_en': descriptionEn,
+      'specifications_en': specificationsEn,
+      'audio_url_en': '',
+      'image_url': '',
+      'image_url_640px': '',
+      'assigned_tale_id': null,
+      'retracted_from_tale_id': null,
+    });
+    return ref.id;
+  }
+
+  Future<void> updateManualDraftText({
+    required String draftId,
+    required String nameEs,
+    required String descriptionEs,
+    required String specificationsEs,
+    required String nameEn,
+    required String descriptionEn,
+    required String specificationsEn,
+  }) async {
+    await _db.collection('tale_drafts').doc(draftId).update({
+      'name_es': nameEs,
+      'description_es': descriptionEs,
+      'specifications_es': specificationsEs,
+      'name_en': nameEn,
+      'description_en': descriptionEn,
+      'specifications_en': specificationsEn,
+    });
+  }
+
+  UploadTask uploadDraftImage(String draftId, Uint8List bytes) {
+    final ref = FirebaseStorage.instance.ref('drafts/$draftId/image_1024.png');
+    return ref.putData(bytes, SettableMetadata(contentType: 'image/png'));
+  }
+
+  Future<void> resizeDraftImage(String draftId) async {
+    await _functions.httpsCallable('resizeDraftImage').call({'draftId': draftId});
+  }
+
+  UploadTask uploadDraftAudio(String draftId, String lang, Uint8List bytes) {
+    final ref = FirebaseStorage.instance.ref('drafts/$draftId/audio_$lang.mp3');
+    return ref.putData(bytes, SettableMetadata(contentType: 'audio/mpeg'));
+  }
+
+  Future<void> saveManualDraftAudioUrl({
+    required String draftId,
+    required String lang,
+    required String url,
+    required bool bothLangsPresent,
+  }) async {
+    final data = <String, dynamic>{'audio_url_$lang': url};
+    if (bothLangsPresent) data['step'] = 'audio';
+    await _db.collection('tale_drafts').doc(draftId).update(data);
   }
 
   Future<void> updateDraftText(String draftId, String lang, String text) async {
