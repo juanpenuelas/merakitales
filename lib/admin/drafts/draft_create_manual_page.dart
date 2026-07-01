@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +27,12 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
   Draft? _draft;
   bool _saving = false;
   bool _loadingExisting = false;
+  bool _uploadingImage = false;
+  double? _imageUploadProgress;
+  bool _uploadingAudioEs = false;
+  double? _audioEsProgress;
+  bool _uploadingAudioEn = false;
+  double? _audioEnProgress;
 
   @override
   void initState() {
@@ -107,6 +114,112 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
     }
   }
 
+  Future<void> _pickAndUploadImage() async {
+    if (_draftId == null) return;
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg'],
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    final bytes = file.bytes;
+    if (bytes == null) return;
+    if (file.size > 15 * 1024 * 1024) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La imagen supera los 15MB')));
+      return;
+    }
+    setState(() {
+      _uploadingImage = true;
+      _imageUploadProgress = 0;
+    });
+    try {
+      final task = _service.uploadDraftImage(_draftId!, bytes);
+      task.snapshotEvents.listen((snapshot) {
+        if (snapshot.totalBytes > 0 && mounted) {
+          setState(() => _imageUploadProgress = snapshot.bytesTransferred / snapshot.totalBytes);
+        }
+      });
+      await task;
+      await _service.resizeDraftImage(_draftId!);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Imagen subida')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error subiendo imagen: $e')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _uploadingImage = false;
+          _imageUploadProgress = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _pickAndUploadAudio(String lang) async {
+    if (_draftId == null) return;
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3'],
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    final bytes = file.bytes;
+    if (bytes == null) return;
+    if (file.size > 30 * 1024 * 1024) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El audio supera los 30MB')));
+      return;
+    }
+    setState(() {
+      if (lang == 'es') {
+        _uploadingAudioEs = true;
+        _audioEsProgress = 0;
+      } else {
+        _uploadingAudioEn = true;
+        _audioEnProgress = 0;
+      }
+    });
+    try {
+      final task = _service.uploadDraftAudio(_draftId!, lang, bytes);
+      task.snapshotEvents.listen((snapshot) {
+        if (snapshot.totalBytes > 0 && mounted) {
+          final progress = snapshot.bytesTransferred / snapshot.totalBytes;
+          setState(() {
+            if (lang == 'es') {
+              _audioEsProgress = progress;
+            } else {
+              _audioEnProgress = progress;
+            }
+          });
+        }
+      });
+      await task;
+      final url = await task.snapshot.ref.getDownloadURL();
+      final otherUrl = lang == 'es' ? (_draft?.audioUrlEn ?? '') : (_draft?.audioUrlEs ?? '');
+      await _service.saveManualDraftAudioUrl(
+        draftId: _draftId!,
+        lang: lang,
+        url: url,
+        bothLangsPresent: otherUrl.isNotEmpty,
+      );
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Audio subido')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error subiendo audio: $e')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          if (lang == 'es') {
+            _uploadingAudioEs = false;
+            _audioEsProgress = null;
+          } else {
+            _uploadingAudioEn = false;
+            _audioEnProgress = null;
+          }
+        });
+      }
+    }
+  }
+
   Widget _textField({
     required String label,
     required TextEditingController controller,
@@ -131,6 +244,68 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
                 (_wordCount(controller.text) < 200 || _wordCount(controller.text) > 600))
               const Text('⚠️ Los cuentos existentes tienen 300-500 palabras', style: TextStyle(fontSize: 12, color: Colors.orange)),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _imageSection() {
+    if (_draftId == null) {
+      return const Text('Guarda el texto primero para poder subir la imagen.', style: TextStyle(color: Colors.grey));
+    }
+    final hasImage = _draft?.imageUrl.isNotEmpty ?? false;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hasImage)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              _draft!.imageUrl,
+              height: 200,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) => Container(
+                height: 200,
+                color: Colors.grey.shade200,
+                child: const Center(child: Icon(Icons.broken_image, size: 48)),
+              ),
+            ),
+          ),
+        const SizedBox(height: 8),
+        if (_uploadingImage) LinearProgressIndicator(value: _imageUploadProgress),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          onPressed: _uploadingImage ? null : _pickAndUploadImage,
+          icon: const Icon(Icons.upload_file),
+          label: Text(hasImage ? 'Reemplazar imagen' : 'Subir imagen'),
+        ),
+      ],
+    );
+  }
+
+  Widget _audioSection(String lang) {
+    final label = lang == 'es' ? 'Audio Español' : 'Audio English';
+    final url = lang == 'es' ? (_draft?.audioUrlEs ?? '') : (_draft?.audioUrlEn ?? '');
+    final uploading = lang == 'es' ? _uploadingAudioEs : _uploadingAudioEn;
+    final progress = lang == 'es' ? _audioEsProgress : _audioEnProgress;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text(url.isEmpty ? 'Sin audio' : 'Audio subido ✓', style: const TextStyle(fontSize: 13)),
+          if (uploading) ...[
+            const SizedBox(height: 4),
+            LinearProgressIndicator(value: progress),
+          ],
+          const SizedBox(height: 4),
+          OutlinedButton.icon(
+            onPressed: (uploading || _draftId == null) ? null : () => _pickAndUploadAudio(lang),
+            icon: const Icon(Icons.upload_file),
+            label: Text(url.isEmpty ? 'Subir audio' : 'Reemplazar audio'),
+          ),
         ],
       ),
     );
@@ -162,6 +337,24 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
             _textField(label: 'Nombre', controller: _nameEnController),
             _textField(label: 'Descripción', controller: _descriptionEnController, maxLines: 2),
             _textField(label: 'Cuento', controller: _specificationsEnController, maxLines: 10, showWordCount: true),
+            const Divider(height: 32),
+            const Text('Imagen', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            _imageSection(),
+            const Divider(height: 32),
+            const Text('Audio', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            _audioSection('es'),
+            _audioSection('en'),
+            if (_draft?.step == 'audio')
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: OutlinedButton.icon(
+                  onPressed: () => context.go('/drafts/${_draftId!}'),
+                  icon: const Icon(Icons.arrow_forward),
+                  label: const Text('Ver borrador completo →'),
+                ),
+              ),
           ],
         ),
       ),
