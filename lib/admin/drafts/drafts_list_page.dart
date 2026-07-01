@@ -18,7 +18,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
   Future<void> _generate() async {
     setState(() => _generating = true);
     try {
-      await _service.generateDraft(theme: _themeController.text.trim().isEmpty ? null : _themeController.text.trim());
+      await _service.generateText(theme: _themeController.text.trim().isEmpty ? null : _themeController.text.trim());
       _themeController.clear();
     } catch (e) {
       if (mounted) {
