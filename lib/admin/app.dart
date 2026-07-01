@@ -7,6 +7,7 @@ import 'login/login_page.dart';
 import 'drafts/drafts_list_page.dart';
 import 'drafts/draft_detail_page.dart';
 import 'drafts/draft_create_page.dart';
+import 'drafts/draft_create_manual_page.dart';
 import 'published/published_list_page.dart';
 import 'published/published_tale_detail_page.dart';
 
@@ -46,6 +47,13 @@ class MerakiAdminApp extends StatelessWidget {
           builder: (c, s) => const DraftsListPage(),
           routes: [
             GoRoute(path: 'new', builder: (c, s) => const DraftCreatePage()),
+            GoRoute(
+              path: 'manual',
+              builder: (c, s) => const DraftCreateManualPage(),
+              routes: [
+                GoRoute(path: ':id', builder: (c, s) => DraftCreateManualPage(draftId: s.pathParameters['id'])),
+              ],
+            ),
             GoRoute(path: ':id', builder: (c, s) => DraftDetailPage(draftId: s.pathParameters['id']!)),
           ],
         ),

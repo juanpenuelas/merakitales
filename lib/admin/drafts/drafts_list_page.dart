@@ -29,6 +29,12 @@ class _DraftsListPageState extends State<DraftsListPage> {
                   icon: const Icon(Icons.add),
                   label: const Text('Nuevo cuento'),
                 ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: () => context.go('/drafts/manual'),
+                  icon: const Icon(Icons.edit_note),
+                  label: const Text('Crear a mano'),
+                ),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: () => context.go('/published'),
