@@ -54,4 +54,24 @@ async function deletePrefix({ bucket, prefix }) {
   await Promise.all(files.map((f) => f.delete()));
 }
 
-module.exports = { resizeToWidth, uploadBuffer, uploadBase64Image, moveFile, deletePrefix };
+/**
+ * Download a file's contents as a Buffer.
+ * @param {{ bucket, path: string }} opts
+ * @returns {Promise<Buffer>}
+ */
+async function downloadFile({ bucket, path }) {
+  const [buffer] = await bucket.file(path).download();
+  return buffer;
+}
+
+/**
+ * Check whether a file exists at the given path.
+ * @param {{ bucket, path: string }} opts
+ * @returns {Promise<boolean>}
+ */
+async function fileExists({ bucket, path }) {
+  const [exists] = await bucket.file(path).exists();
+  return exists;
+}
+
+module.exports = { resizeToWidth, uploadBuffer, uploadBase64Image, moveFile, deletePrefix, downloadFile, fileExists };
