@@ -68,3 +68,8 @@ web/build/
 # ---- Others ----
 .mercurial/
 .svn/
+
+# ---- Firebase build artifacts ----
+.firebase/
+firebase/.firebase/
+firebase/build
