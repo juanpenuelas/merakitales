@@ -44,6 +44,16 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
     }
   }
 
+  String _stepLabel(String step) {
+    switch (step) {
+      case 'text': return 'Texto pendiente de aprobar';
+      case 'image': return 'Imagen pendiente de aprobar';
+      case 'audio': return 'Audio pendiente de aprobar';
+      case 'approved': return 'Publicado';
+      default: return step;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Draft?>(
@@ -59,6 +69,25 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(name),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(20),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.fiber_manual_record, size: 10, color: Colors.green),
+                    const SizedBox(width: 6),
+                    Text('Paso: ${_stepLabel(d.step)}', style: const TextStyle(fontSize: 12)),
+                    if (d.retractedFromTaleId != null) ...[
+                      const SizedBox(width: 12),
+                      const Icon(Icons.history, size: 12, color: Colors.orange),
+                      const SizedBox(width: 4),
+                      Text('retractado de tale_id=${d.retractedFromTaleId}', style: const TextStyle(fontSize: 11, color: Colors.orange)),
+                    ],
+                  ],
+                ),
+              ),
+            ),
             actions: [
               ToggleButtons(
                 isSelected: [_es, !_es],
