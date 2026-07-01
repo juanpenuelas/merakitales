@@ -89,9 +89,9 @@ Errores: `not-found` si el draft no existe, `invalid-argument` si falta `draftId
 
 ## UI y componentes
 
-**Entrada**: botón `OutlinedButton.icon` "Crear a mano" junto a "Nuevo cuento" en `drafts_list_page.dart` → navega a `/drafts/new-manual`.
+**Entrada**: botón `OutlinedButton.icon` "Crear a mano" junto a "Nuevo cuento" en `drafts_list_page.dart` → navega a `/drafts/manual`.
 
-**Nueva página `draft_create_manual_page.dart`** — formulario de una sola pantalla (`SingleChildScrollView`, no wizard por pasos), con label visible en cada campo (no solo placeholder) y asterisco en los obligatorios:
+**Nueva página `draft_create_manual_page.dart`** (acepta un `draftId` opcional) — formulario de una sola pantalla (`SingleChildScrollView`, no wizard por pasos), con label visible en cada campo (no solo placeholder) y asterisco en los obligatorios:
 
 1. **Texto — Español**: `*Nombre`, `*Descripción` corta, `*Cuento` (con contador de palabras y aviso no bloqueante de rango 200-600, igual que el asistente de IA)
 2. **Texto — English**: mismos 3 campos
@@ -99,20 +99,22 @@ Errores: `not-found` si el draft no existe, `invalid-argument` si falta `draftId
 4. **Audio ES** / **Audio EN**: un botón de subida por idioma, con nombre de archivo una vez subido y opción de reemplazar
 
 **Botón "Guardar borrador"**, fijo en un `bottomNavigationBar` del `Scaffold` (siempre visible sin necesidad de hacer scroll), habilitado solo si el texto ES+EN está completo:
-- 1ª vez → crea el doc en Firestore con el `draftId` generado en cliente, navega a `/drafts/{id}` para persistir el estado en la URL (recargar la página no pierde el draft)
+- 1ª vez → crea el doc en Firestore con el `draftId` generado en cliente, navega a `/drafts/manual/{id}` (ruta propia de esta pantalla, distinta de `/drafts/{id}` que ya usa `draft_detail_page.dart` solo para revisar/publicar) para persistir el estado en la URL — recargar la página reabre esta misma pantalla de edición con el draft precargado, no la de solo-lectura
 - Siguientes veces → actualiza el doc existente
 - Mientras guarda: botón deshabilitado + spinner inline (no bloquea toda la pantalla)
 - Al terminar: `SnackBar` de confirmación ("Borrador guardado")
 - Si el primer guardado falla (red, permisos), el `draftId` ya generado en cliente se reutiliza en el reintento — no se genera uno nuevo, así no quedan ids huérfanos sin doc asociado
 
-"Aprobar y publicar" **no** aparece en esta pantalla — una vez creado, el admin va a `/drafts/{id}` (`draft_detail_page.dart`, con el gating por `step` ya implementado) para revisar y publicar, exactamente igual que un draft de IA.
+**Rutas:** `/drafts/manual` (nuevo draft, sin id) y `/drafts/manual/:id` (continuar uno existente) apuntan al mismo widget `DraftCreateManualPage(draftId: ...)` con `draftId` nulo o no. `/drafts/manual` es un segmento literal bajo `/drafts`, así que no choca con el `GoRoute(path: ':id')` que ya usa `draft_detail_page.dart` — mismo patrón que ya usa `new` para el asistente de IA.
+
+"Aprobar y publicar" **no** aparece en esta pantalla — una vez el draft llega a `step:'audio'`, el admin va a `/drafts/{id}` (`draft_detail_page.dart`, sin cambios) para revisar y publicar, exactamente igual que un draft de IA. Un enlace "Ver borrador completo →" en esta pantalla facilita ese salto una vez todo está subido.
 
 ## Flujo de datos
 
 **Guardar texto (1ª vez):**
 1. Cliente genera `draftId = db.collection('tale_drafts').doc().id`
 2. Escribe: `{status:'pending', step:'text', created_at, name_es, description_es, specifications_es, name_en, description_en, specifications_en, image_url:'', image_url_640px:'', audio_url_es:'', audio_url_en:'', image_prompt:'', assigned_tale_id:null, retracted_from_tale_id:null}`
-3. Navega a `/drafts/{draftId}`
+3. Navega a `/drafts/manual/{draftId}`
 
 **Guardar texto (ediciones siguientes):** `update()` directo del mismo doc.
 
