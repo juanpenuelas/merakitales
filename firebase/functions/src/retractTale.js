@@ -52,7 +52,7 @@ async function retractTaleHandler(req) {
     description_es: es.description,
     specifications_es: es.specifications,
     audio_url_es: audioUrlEs || es.audio_url,
-    image_prompt: common?.image_url_1024px || "",
+    image_prompt: "",
     name_en: en.name,
     description_en: en.description,
     specifications_en: en.specifications,

@@ -24,6 +24,11 @@ async function generateTaleImageHandler(req) {
   const d = snap.data();
   const storagePrefix = `drafts/${draftId}`;
 
+  if (!d.image_prompt && !feedback) {
+    const { HttpsError } = require("firebase-functions/v2/https");
+    throw new HttpsError("failed-precondition", "Cannot regenerate image: draft has no image_prompt and no feedback was provided. Please provide feedback to generate a new image.");
+  }
+
   try {
     const { b64 } = await generateImage({ prompt: d.image_prompt, feedback, apiKey });
     const imageBuffer = Buffer.from(b64, "base64");

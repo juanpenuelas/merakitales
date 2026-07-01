@@ -79,4 +79,21 @@ describe("generateTaleImage", () => {
       generateTaleImageHandler({ data: { draftId: "missing" }, auth: { uid: "admin" } })
     ).rejects.toThrow("Draft not found");
   });
+
+  test("throws when image_prompt is empty and no feedback provided", async () => {
+    const { db } = require("../src/admin");
+    db.collection = jest.fn(() => ({
+      doc: jest.fn(() => ({
+        get: jest.fn(async () => ({
+          exists: true,
+          id: "d_empty",
+          data: () => ({ status: "pending", step: "text", image_prompt: "" }),
+        })),
+        update: jest.fn(),
+      })),
+    }));
+    await expect(
+      generateTaleImageHandler({ data: { draftId: "d_empty" }, auth: { uid: "admin" } })
+    ).rejects.toThrow("Cannot regenerate image");
+  });
 });
