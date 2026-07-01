@@ -8,6 +8,7 @@ const { approveDraftHandler } = require("./src/approveDraft");
 const { rejectDraftHandler } = require("./src/rejectDraft");
 const { retractTaleHandler } = require("./src/retractTale");
 const { updateDraftTextHandler } = require("./src/updateDraftText");
+const { resizeDraftImageHandler } = require("./src/resizeDraftImage");
 
 setGlobalOptions({ maxInstances: 10 });
 
@@ -46,4 +47,9 @@ exports.retractTale = onCall(
 exports.updateDraftText = onCall(
   { timeoutSeconds: 30, memory: "256MiB", region: "europe-west1", secrets: ["ADMIN_UID"] },
   updateDraftTextHandler
+);
+
+exports.resizeDraftImage = onCall(
+  { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: ["ADMIN_UID"] },
+  resizeDraftImageHandler
 );
