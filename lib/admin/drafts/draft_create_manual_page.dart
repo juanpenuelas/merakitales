@@ -125,6 +125,11 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
     final file = result.files.first;
     final bytes = file.bytes;
     if (bytes == null) return;
+    final extension = (file.extension?.isNotEmpty ?? false) ? file.extension! : file.name.split('.').last;
+    if (!['png', 'jpg', 'jpeg'].contains(extension.toLowerCase())) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Formato no soportado, usa PNG o JPG')));
+      return;
+    }
     if (file.size > 15 * 1024 * 1024) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La imagen supera los 15MB')));
       return;
@@ -166,6 +171,11 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
     final file = result.files.first;
     final bytes = file.bytes;
     if (bytes == null) return;
+    final extension = (file.extension?.isNotEmpty ?? false) ? file.extension! : file.name.split('.').last;
+    if (extension.toLowerCase() != 'mp3') {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Formato no soportado, usa MP3')));
+      return;
+    }
     if (file.size > 30 * 1024 * 1024) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El audio supera los 30MB')));
       return;
