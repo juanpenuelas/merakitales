@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://merakitales-5rltbl.web.app", "https://merakitales-5rltbl.firebaseapp.com", "http://localhost:*", "http://127.0.0.1:*"],
+    "method": ["GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Access-Control-Allow-Origin"],
+    "maxAgeSeconds": 3600
+  }
+]

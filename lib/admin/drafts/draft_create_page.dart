@@ -102,6 +102,19 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
     }
   }
 
+  Future<void> _saveDraftText(String lang, String newText) async {
+    if (_draft == null) return;
+    try {
+      await _service.updateDraftText(_draft!.id, lang, newText);
+      if (!mounted) return;
+      final updated = await _service.streamDraft(_draft!.id).first;
+      if (!mounted || updated == null) return;
+      setState(() => _draft = updated);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
   Future<void> _approveAndPublish() async {
     if (_draft == null) return;
     try {
@@ -193,16 +206,15 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
             label: 'Cuento en español',
             initial: d.specificationsEs,
             onChanged: (v) => d.specificationsEs.length,
-            onSaved: (newText) async {
-              // Update the draft doc directly (manual edit, not via IA)
-              // Use admin SDK update — but we don't have direct Firestore writes for drafts.
-              // For simplicity, call generateTaleText with feedback to overwrite.
-              // (A better approach would be a dedicated updateText callable, but YAGNI for v1.)
-              await _service.generateText(feedback: 'Replace the entire story with this exact text: ${newText}');
-            },
+            onSaved: (newText) => _saveDraftText('es', newText),
           ),
           const SizedBox(height: 12),
-          _editableTextField(label: 'Cuento en inglés', initial: d.specificationsEn, onChanged: (v) => v.length, onSaved: (_) async {}),
+          _editableTextField(
+            label: 'Cuento en inglés',
+            initial: d.specificationsEn,
+            onChanged: (v) => v.length,
+            onSaved: (newText) => _saveDraftText('en', newText),
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: _feedback1Controller,

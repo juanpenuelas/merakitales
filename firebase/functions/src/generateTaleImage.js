@@ -29,25 +29,19 @@ async function generateTaleImageHandler(req) {
     throw new HttpsError("failed-precondition", "Cannot regenerate image: draft has no image_prompt and no feedback was provided. Please provide feedback to generate a new image.");
   }
 
-  try {
-    const { b64 } = await generateImage({ prompt: d.image_prompt, feedback, apiKey });
-    const imageBuffer = Buffer.from(b64, "base64");
-    const image640 = await resizeToWidth({ buffer: imageBuffer, width: 640 });
-    const imageUrl = await uploadBase64Image({ bucket, path: `${storagePrefix}/image_1024.png`, b64 });
-    const imageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
+  const { b64 } = await generateImage({ prompt: d.image_prompt, feedback, apiKey });
+  const imageBuffer = Buffer.from(b64, "base64");
+  const image640 = await resizeToWidth({ buffer: imageBuffer, width: 640 });
+  const imageUrl = await uploadBase64Image({ bucket, path: `${storagePrefix}/image_1024.png`, b64 });
+  const imageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
 
-    await draftRef.update({
-      step: "image",
-      image_url: imageUrl,
-      image_url_640px: imageUrl640,
-    });
+  await draftRef.update({
+    step: "image",
+    image_url: imageUrl,
+    image_url_640px: imageUrl640,
+  });
 
-    return { imageUrl, imageUrl640 };
-  } catch (err) {
-    // Don't delete previous images on regeneration — just leave the old ones
-    // and let the update overwrite. This is a regeneration step, not a full cleanup.
-    throw err;
-  }
+  return { imageUrl, imageUrl640 };
 }
 
 module.exports = { generateTaleImageHandler };

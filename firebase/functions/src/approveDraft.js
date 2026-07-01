@@ -24,6 +24,10 @@ async function approveDraftHandler(req) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("failed-precondition", `Draft already ${d.status}`);
   }
+  if (d.step !== "audio" || !d.audio_url_es || !d.audio_url_en) {
+    const { HttpsError } = require("firebase-functions/v2/https");
+    throw new HttpsError("failed-precondition", "Draft is missing image/audio assets and cannot be published yet");
+  }
 
   // Assign next tale_id in a transaction
   const taleId = await db.runTransaction(async (tx) => {

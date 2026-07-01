@@ -31,6 +31,27 @@ class DraftsService {
         .map((qs) => qs.docs.map(PublishedTale.fromDoc).toList());
   }
 
+  /// Loads the full bilingual content (ES + EN) for one published tale.
+  Future<PublishedTaleFull> getPublishedTale(int taleId) async {
+    final snaps = await Future.wait([
+      _db.collection('tales').doc('${taleId}_es').get(),
+      _db.collection('tales').doc('${taleId}_en').get(),
+    ]);
+    return PublishedTaleFull.fromDocs(
+      taleId: taleId,
+      esData: snaps[0].data(),
+      enData: snaps[1].data(),
+    );
+  }
+
+  Future<void> updateDraftText(String draftId, String lang, String text) async {
+    await _functions.httpsCallable('updateDraftText').call({
+      'draftId': draftId,
+      'lang': lang,
+      'text': text,
+    });
+  }
+
   Future<String> generateText({String? theme, String? feedback}) async {
     final result = await _functions.httpsCallable('generateTaleText').call({
       'theme': theme,

@@ -107,7 +107,17 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(d.imageUrl)),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              d.imageUrl,
+                              errorBuilder: (c, e, s) => Container(
+                                height: 200,
+                                color: Colors.grey.shade200,
+                                child: const Center(child: Icon(Icons.broken_image, size: 48)),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           Text('Descripción', style: Theme.of(context).textTheme.titleSmall),
                           Text(desc),
@@ -124,6 +134,14 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                           else
                             const Text('Sin audio'),
                           const SizedBox(height: 24),
+                          if (d.step != 'audio' || d.audioUrlEs.isEmpty || d.audioUrlEn.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Text(
+                                'Este borrador aún no ha completado los 3 pasos (texto, imagen, audio ES/EN) y no se puede publicar todavía.',
+                                style: TextStyle(color: Colors.orange.shade800, fontSize: 12),
+                              ),
+                            ),
                           Row(
                             children: [
                               OutlinedButton(
@@ -132,11 +150,12 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                                 child: const Text('Rechazar'),
                               ),
                               const SizedBox(width: 12),
-                              FilledButton.icon(
-                                onPressed: () => _approve(d.id),
-                                icon: const Icon(Icons.publish),
-                                label: const Text('Aprobar y publicar'),
-                              ),
+                              if (d.step == 'audio' && d.audioUrlEs.isNotEmpty && d.audioUrlEn.isNotEmpty)
+                                FilledButton.icon(
+                                  onPressed: () => _approve(d.id),
+                                  icon: const Icon(Icons.publish),
+                                  label: const Text('Aprobar y publicar'),
+                                ),
                             ],
                           ),
                           const SizedBox(height: 40),

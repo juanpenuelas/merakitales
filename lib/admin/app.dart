@@ -8,6 +8,7 @@ import 'drafts/drafts_list_page.dart';
 import 'drafts/draft_detail_page.dart';
 import 'drafts/draft_create_page.dart';
 import 'published/published_list_page.dart';
+import 'published/published_tale_detail_page.dart';
 
 class MerakiAdminApp extends StatelessWidget {
   const MerakiAdminApp({super.key});
@@ -48,7 +49,25 @@ class MerakiAdminApp extends StatelessWidget {
             GoRoute(path: ':id', builder: (c, s) => DraftDetailPage(draftId: s.pathParameters['id']!)),
           ],
         ),
-        GoRoute(path: '/published', builder: (c, s) => const PublishedListPage()),
+        GoRoute(
+          path: '/published',
+          builder: (c, s) => const PublishedListPage(),
+          routes: [
+            GoRoute(
+              path: ':taleId',
+              builder: (c, s) {
+                final taleId = int.tryParse(s.pathParameters['taleId']!);
+                if (taleId == null) {
+                  return Scaffold(
+                    appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => c.go('/published'))),
+                    body: const Center(child: Text('ID de cuento inválido')),
+                  );
+                }
+                return PublishedTaleDetailPage(taleId: taleId);
+              },
+            ),
+          ],
+        ),
       ],
     );
   }

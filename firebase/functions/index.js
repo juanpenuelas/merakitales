@@ -7,6 +7,7 @@ const { generateTaleAudioHandler } = require("./src/generateTaleAudio");
 const { approveDraftHandler } = require("./src/approveDraft");
 const { rejectDraftHandler } = require("./src/rejectDraft");
 const { retractTaleHandler } = require("./src/retractTale");
+const { updateDraftTextHandler } = require("./src/updateDraftText");
 
 setGlobalOptions({ maxInstances: 10 });
 
@@ -40,4 +41,9 @@ exports.rejectDraft = onCall(
 exports.retractTale = onCall(
   { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: SECRETS },
   retractTaleHandler
+);
+
+exports.updateDraftText = onCall(
+  { timeoutSeconds: 30, memory: "256MiB", region: "europe-west1", secrets: ["ADMIN_UID"] },
+  updateDraftTextHandler
 );

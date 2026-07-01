@@ -71,10 +71,20 @@ class _PublishedListPageState extends State<PublishedListPage> {
                     final t = tales[i];
                     return ListTile(
                       leading: t.imageUrl640.isNotEmpty
-                          ? ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.network(t.imageUrl640, width: 56, height: 56, fit: BoxFit.cover))
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: Image.network(
+                                t.imageUrl640,
+                                width: 56,
+                                height: 56,
+                                fit: BoxFit.cover,
+                                errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
+                              ),
+                            )
                           : const Icon(Icons.public),
                       title: Text(t.name),
                       subtitle: Text('tale_id=${t.taleId} · ${t.createdAt != null ? t.createdAt!.toLocal() : ''}'),
+                      onTap: () => context.go('/published/${t.taleId}'),
                       trailing: TextButton.icon(
                         onPressed: () => _retract(t),
                         icon: const Icon(Icons.undo),

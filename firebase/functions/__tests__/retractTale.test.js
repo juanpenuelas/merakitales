@@ -30,6 +30,7 @@ jest.mock("../src/admin", () => {
           const refId = id !== undefined ? id : "newAutoId";
           return {
             id: refId,
+            _collectionName: name,
             get: jest.fn(async () => {
               if (name === "tales" && id === "31_es") return { exists: true, data: () => esDoc };
               if (name === "tales" && id === "31_en") return { exists: true, data: () => enDoc };
@@ -46,10 +47,24 @@ jest.mock("../src/admin", () => {
     }
     return collections[name];
   }
+  function makeBatch() {
+    const ops = [];
+    return {
+      set: jest.fn((ref, d) => { ops.push({ type: "set", ref, d }); }),
+      delete: jest.fn((ref) => { ops.push({ type: "delete", ref }); }),
+      commit: jest.fn(async () => {
+        for (const op of ops) {
+          if (op.type === "set") sets.push({ name: op.ref._collectionName, id: op.ref.id, d: op.d });
+          if (op.type === "delete") deletes.push({ name: op.ref._collectionName, id: op.ref.id });
+        }
+      }),
+    };
+  }
   return {
     db: {
       collection: jest.fn((name) => getCollection(name)),
       runTransaction: undefined,
+      batch: jest.fn(() => makeBatch()),
     },
     bucket: { name: "b" },
     requireAuth: jest.fn(),

@@ -42,7 +42,11 @@ async function retractTaleHandler(req) {
   const audioUrlEs = await moveIfExists("audio_es.mp3");
   const audioUrlEn = await moveIfExists("audio_en.mp3");
 
-  await db.collection("tale_drafts").doc(draftId).set({
+  // Create the draft and delete the published docs atomically so a crash
+  // mid-way never leaves a straddled state (draft created but tale only
+  // partially deleted, or vice versa).
+  const batch = db.batch();
+  batch.set(db.collection("tale_drafts").doc(draftId), {
     status: "pending",
     step: "audio",
     created_at: new Date(),
@@ -62,12 +66,12 @@ async function retractTaleHandler(req) {
     assigned_tale_id: null,
     retracted_from_tale_id: taleId,
   });
-
-  await db.collection("tales").doc(`${taleId}_es`).delete();
-  await db.collection("tales").doc(`${taleId}_en`).delete();
+  batch.delete(db.collection("tales").doc(`${taleId}_es`));
+  batch.delete(db.collection("tales").doc(`${taleId}_en`));
   if (commonSnap.exists) {
-    await db.collection("tales_common_data").doc(`${taleId}`).delete();
+    batch.delete(db.collection("tales_common_data").doc(`${taleId}`));
   }
+  await batch.commit();
 
   return { draftId };
 }

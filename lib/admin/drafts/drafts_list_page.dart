@@ -65,7 +65,16 @@ class _DraftsListPageState extends State<DraftsListPage> {
               };
               return ListTile(
                 leading: d.imageUrl640.isNotEmpty
-                    ? ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.network(d.imageUrl640, width: 56, height: 56, fit: BoxFit.cover))
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.network(
+                          d.imageUrl640,
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.cover,
+                          errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
+                        ),
+                      )
                     : const Icon(Icons.book),
                 title: Text('${d.nameEs.isNotEmpty ? d.nameEs : d.nameEn}'),
                 subtitle: Text('$stepLabel · ${d.createdAt != null ? d.createdAt!.toLocal() : ''}'),
