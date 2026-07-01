@@ -205,12 +205,10 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
       });
       await task;
       final url = await task.snapshot.ref.getDownloadURL();
-      final otherUrl = lang == 'es' ? (_draft?.audioUrlEn ?? '') : (_draft?.audioUrlEs ?? '');
       await _service.saveManualDraftAudioUrl(
         draftId: _draftId!,
         lang: lang,
         url: url,
-        bothLangsPresent: otherUrl.isNotEmpty,
       );
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Audio subido')));
     } catch (e) {
