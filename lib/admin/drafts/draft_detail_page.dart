@@ -64,7 +64,7 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
           appBar: AppBar(
             title: Text(name),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(36),
+              preferredSize: const Size.fromHeight(48),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 child: Row(
