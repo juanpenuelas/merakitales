@@ -1,5 +1,6 @@
 const { db, bucket, requireAuth } = require("./admin");
 const { moveFile } = require("./storage");
+const { computeStep } = require("./draftStep");
 
 /**
  * @param {import("firebase-functions/v2/https").CallableRequest} req
@@ -24,7 +25,7 @@ async function approveDraftHandler(req) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("failed-precondition", `Draft already ${d.status}`);
   }
-  if (d.step !== "audio" || !d.audio_url_es || !d.audio_url_en) {
+  if (computeStep(d) !== "audio") {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("failed-precondition", "Draft is missing image/audio assets and cannot be published yet");
   }

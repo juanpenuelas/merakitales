@@ -16,7 +16,6 @@ const draftDoc = {
   image_url: "https://storage.googleapis.com/b/drafts/d1/image_1024.png",
   image_url_640px: "https://storage.googleapis.com/b/drafts/d1/image_640.png",
   image_prompt_es: "a dragon",
-  step: "audio",
 };
 
 jest.mock("../src/admin", () => {
@@ -25,7 +24,7 @@ jest.mock("../src/admin", () => {
   const updates = [];
   let draftStatus = "pending";
   let draftExists = true;
-  let draftStep = "audio";
+  let draftOverrides = {};
   function getCollection(name) {
     if (!collections[name]) {
       collections[name] = {
@@ -33,7 +32,7 @@ jest.mock("../src/admin", () => {
           get: jest.fn(async () => ({
             exists: name === "tale_drafts" ? draftExists : true,
             id,
-            data: () => (name === "tale_drafts" ? { ...draftDoc, status: draftStatus, step: draftStep } : {}),
+            data: () => (name === "tale_drafts" ? { ...draftDoc, status: draftStatus, ...draftOverrides } : {}),
           })),
           set: jest.fn(async (d) => { sets.push({ name, id, d }); }),
           update: jest.fn(async (d) => { updates.push({ name, id, d }); }),
@@ -56,7 +55,8 @@ jest.mock("../src/admin", () => {
     __sets: sets,
     __updates: updates,
     __collections: collections,
-    __setDraft: (status, exists = true, step = "audio") => { draftStatus = status; draftExists = exists; draftStep = step; },
+    __setDraft: (status, exists = true) => { draftStatus = status; draftExists = exists; },
+    __setDraftOverrides: (overrides) => { draftOverrides = overrides; },
   };
 });
 
@@ -136,12 +136,13 @@ describe("approveDraft", () => {
     ).rejects.toThrow("draftId required");
   });
 
-  test("throws failed-precondition when draft has not reached the audio step", async () => {
+  test("throws failed-precondition when the draft is missing an asset (e.g. no image yet)", async () => {
     const admin = require("../src/admin");
-    admin.__setDraft("pending", true, "image");
+    admin.__setDraft("pending", true);
+    admin.__setDraftOverrides({ image_url: "" });
     await expect(
       approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } })
     ).rejects.toThrow(/missing image\/audio assets/);
-    admin.__setDraft("pending", true, "audio");
+    admin.__setDraftOverrides({});
   });
 });
