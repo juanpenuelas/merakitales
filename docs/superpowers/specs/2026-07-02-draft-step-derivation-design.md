@@ -22,7 +22,7 @@ Eliminar la categoría de bug por completo: `step` deja de ser un campo persisti
 ## No incluido en esta versión
 
 - Migración de datos: los documentos existentes conservan su campo `step` guardado de antes, pero deja de leerse — queda como dato muerto e inofensivo, no se borra ni se toca Firestore.
-- Unificar `draft_create_page.dart` (asistente de IA) para que también lea `d.step` en su botón de publicar — hoy comprueba `audioUrlEs`/`audioUrlEn` directamente y funciona correctamente; no se toca por YAGNI, salvo que se pida explícitamente.
+- Unificar `draft_create_page.dart` (asistente de IA) para que también lea `d.step` en su botón de publicar — hoy comprueba `audioUrlEs`/`audioUrlEn` directamente y funciona correctamente; no se toca por YAGNI, salvo que se pida explícitamente. Esto solo aplica al botón de publicar: sus esperas de progreso (`_generateAudio`, `_approveTextAndGenerateImage`, `_regenerateImage`) sí leen `d?.step` mientras esperan a que `streamDraft` refleje el avance. La espera de `_generateAudio` se corrigió aparte para comprobar el campo `audioUrlEs`/`audioUrlEn` del idioma concreto en vez de `step`, ya que `step` exigiendo ambos idiomas hacía que la espera basada en `step` agotara el timeout para el primer idioma generado.
 - Cambiar la semántica del caso límite "ambos audios subidos sin imagen" (ver más abajo) — se documenta como comportamiento aceptado, no se rediseña un estado más granular.
 
 ## La fórmula

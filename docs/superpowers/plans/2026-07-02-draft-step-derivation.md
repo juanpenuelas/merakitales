@@ -13,7 +13,7 @@
 - `step` is never stored in Firestore from this point forward — only computed at read time. No migration: old documents keep their stale stored `step` field, but nothing reads it anymore.
 - Formula (identical in both languages): `image_url && audio_url_es && audio_url_en → "audio"`; else `image_url → "image"`; else `"text"`.
 - Documented edge case, not a bug: both audio URLs present but no image → `"text"` (not an intermediate state). This reflects "not yet publishable," which is the signal that matters.
-- `draft_create_page.dart` (AI wizard's own publish button, which already checks `audioUrlEs`/`audioUrlEn` directly rather than `step`) is explicitly out of scope — do not touch it.
+- `draft_create_page.dart`'s publish button already checks `audioUrlEs`/`audioUrlEn` directly rather than `step`, so it's out of scope. However, its progression waits (`_generateAudio`, `_approveTextAndGenerateImage`, `_regenerateImage`) do read `d?.step` while polling `streamDraft` for completion, so they are not out of scope in the same way. `_generateAudio`'s wait was fixed separately (see commit "fix(admin): wait on the specific audio URL instead of step in AI wizard") to check the language's own `audioUrlEs`/`audioUrlEn` field instead of `step`, precisely because `step` requiring both languages made the old step-based wait time out for whichever language finished first.
 - No Cloud Function gains or loses its region/auth/secrets configuration in `index.js` — this plan only changes function bodies, not their `onCall` registration.
 
 ---

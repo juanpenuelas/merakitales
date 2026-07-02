@@ -91,8 +91,9 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
     try {
       await _service.generateAudio(_draft!.id, lang);
       if (!mounted) return;
-      // Wait for step to become 'audio' (both langs done)
-      final updated = await _service.streamDraft(_draft!.id).firstWhere((d) => d?.step == 'audio').timeout(const Duration(seconds: 60));
+      final updated = await _service.streamDraft(_draft!.id)
+          .firstWhere((d) => (lang == 'es' ? d?.audioUrlEs : d?.audioUrlEn)?.isNotEmpty == true)
+          .timeout(const Duration(seconds: 60));
       if (!mounted) return;
       setState(() => _draft = updated);
     } catch (e) {
