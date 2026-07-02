@@ -58,7 +58,6 @@ class DraftsService {
     final ref = _db.collection('tale_drafts').doc();
     await ref.set({
       'status': 'pending',
-      'step': 'text',
       'created_at': FieldValue.serverTimestamp(),
       'decided_at': null,
       'decided_by': null,
@@ -117,21 +116,7 @@ class DraftsService {
     required String lang,
     required String url,
   }) async {
-    final ref = _db.collection('tale_drafts').doc(draftId);
-    await _db.runTransaction((tx) async {
-      final snap = await tx.get(ref);
-      final data = snap.data() ?? {};
-      final imageUrl = data['image_url'] as String? ?? '';
-      final audioEs = lang == 'es' ? url : (data['audio_url_es'] as String? ?? '');
-      final audioEn = lang == 'en' ? url : (data['audio_url_en'] as String? ?? '');
-      final update = <String, dynamic>{'audio_url_$lang': url};
-      if (imageUrl.isNotEmpty && audioEs.isNotEmpty && audioEn.isNotEmpty) {
-        update['step'] = 'audio';
-      } else if (imageUrl.isNotEmpty) {
-        update['step'] = 'image';
-      }
-      tx.update(ref, update);
-    });
+    await _db.collection('tale_drafts').doc(draftId).update({'audio_url_$lang': url});
   }
 
   Future<void> updateDraftText(String draftId, String lang, String text) async {
