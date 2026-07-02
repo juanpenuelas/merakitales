@@ -15,7 +15,6 @@ async function generateTaleTextHandler(req) {
 
   const draft = {
     status: "pending",
-    step: "text",
     created_at: new Date(),
     decided_at: null,
     decided_by: null,

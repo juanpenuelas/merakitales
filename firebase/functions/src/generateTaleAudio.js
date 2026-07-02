@@ -46,7 +46,7 @@ async function generateTaleAudioHandler(req) {
   });
 
   const update = lang === "es" ? { audio_url_es: audioUrl } : { audio_url_en: audioUrl };
-  await draftRef.update({ ...update, step: "audio" });
+  await draftRef.update(update);
 
   return { audioUrl };
 }

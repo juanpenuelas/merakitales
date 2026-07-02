@@ -45,7 +45,6 @@ describe("generateTaleImage", () => {
     expect(result.imageUrl).toContain("d1/image_1024.png");
     expect(admin.__updates).toHaveLength(1);
     const upd = admin.__updates[0].d;
-    expect(upd.step).toBe("image");
     expect(upd.image_url).toContain("image_1024.png");
     expect(upd.image_url_640px).toContain("image_640.png");
   });

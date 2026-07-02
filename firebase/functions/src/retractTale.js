@@ -48,7 +48,6 @@ async function retractTaleHandler(req) {
   const batch = db.batch();
   batch.set(db.collection("tale_drafts").doc(draftId), {
     status: "pending",
-    step: "audio",
     created_at: new Date(),
     decided_at: null,
     decided_by: null,

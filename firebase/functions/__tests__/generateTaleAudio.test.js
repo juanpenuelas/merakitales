@@ -40,7 +40,6 @@ describe("generateTaleAudio", () => {
       expect.objectContaining({ input: "texto es", lang: "es" })
     );
     expect(admin.__updates).toHaveLength(1);
-    expect(admin.__updates[0].d.step).toBe("audio");
     expect(admin.__updates[0].d.audio_url_es).toContain("audio_es.mp3");
   });
 

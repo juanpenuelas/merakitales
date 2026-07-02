@@ -36,7 +36,6 @@ async function generateTaleImageHandler(req) {
   const imageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
 
   await draftRef.update({
-    step: "image",
     image_url: imageUrl,
     image_url_640px: imageUrl640,
   });

@@ -89,7 +89,6 @@ describe("retractTale", () => {
     expect(draftSets).toHaveLength(1);
     const draft = draftSets[0].d;
     expect(draft.status).toBe("pending");
-    expect(draft.step).toBe("audio");
     expect(draft.retracted_from_tale_id).toBe(31);
     expect(draft.name_es).toBe("Los Dos Mejores Amigos");
     expect(draft.name_en).toBe("The Best of Friends");

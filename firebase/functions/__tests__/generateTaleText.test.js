@@ -38,7 +38,6 @@ describe("generateTaleText", () => {
     expect(admin.__sets).toHaveLength(1);
     const saved = admin.__sets[0].d;
     expect(saved.status).toBe("pending");
-    expect(saved.step).toBe("text");
     expect(saved.name_es).toBe("El Dragón");
     expect(saved.name_en).toBe("The Dragon");
     expect(saved.image_url).toBe("");
