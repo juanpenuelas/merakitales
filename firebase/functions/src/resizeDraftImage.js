@@ -37,12 +37,7 @@ async function resizeDraftImageHandler(req) {
     contentType: "image/png",
   });
 
-  await db.runTransaction(async (tx) => {
-    const freshSnap = await tx.get(draftRef);
-    const d = freshSnap.data() || {};
-    const step = d.audio_url_es && d.audio_url_en ? "audio" : "image";
-    tx.update(draftRef, { step, image_url: imageUrl, image_url_640px: imageUrl640 });
-  });
+  await draftRef.update({ image_url: imageUrl, image_url_640px: imageUrl640 });
 
   return { imageUrl, imageUrl640 };
 }
