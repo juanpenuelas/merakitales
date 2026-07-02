@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'theme/app_theme.dart';
 import 'auth/auth_gate.dart';
 import 'login/login_page.dart';
 import 'drafts/drafts_list_page.dart';
@@ -24,7 +25,7 @@ class MerakiAdminApp extends StatelessWidget {
         return MaterialApp.router(
           title: 'Meraki Tales Admin',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(useMaterial3: true, colorSchemeSeed: const Color(0xFF1D2428)),
+          theme: AppTheme.light(),
           routerConfig: router,
         );
       },
