@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Draft {
   final String id;
   final String status;
-  final String step;
   final DateTime? createdAt;
   final String nameEs;
   final String descriptionEs;
@@ -22,7 +21,6 @@ class Draft {
   Draft({
     required this.id,
     required this.status,
-    required this.step,
     this.createdAt,
     required this.nameEs,
     required this.descriptionEs,
@@ -39,12 +37,19 @@ class Draft {
     this.retractedFromTaleId,
   });
 
+  /// Derived purely from which assets exist — never stored, so it can
+  /// never disagree with the draft's actual Firestore fields.
+  String get step {
+    if (imageUrl.isNotEmpty && audioUrlEs.isNotEmpty && audioUrlEn.isNotEmpty) return 'audio';
+    if (imageUrl.isNotEmpty) return 'image';
+    return 'text';
+  }
+
   factory Draft.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final d = doc.data() ?? {};
     return Draft(
       id: doc.id,
       status: d['status'] as String? ?? 'pending',
-      step: d['step'] as String? ?? 'text',
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
       nameEs: d['name_es'] as String? ?? '',
       descriptionEs: d['description_es'] as String? ?? '',
