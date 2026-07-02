@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../models/draft.dart';
 import '../services/drafts_service.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../widgets/app_card.dart';
 
 class DraftCreateManualPage extends StatefulWidget {
   const DraftCreateManualPage({super.key, this.draftId});
@@ -247,10 +250,10 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
           ),
           if (showWordCount) ...[
             const SizedBox(height: 4),
-            Text('${_wordCount(controller.text)} palabras', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text('${_wordCount(controller.text)} palabras', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
             if (_wordCount(controller.text) > 0 &&
                 (_wordCount(controller.text) < 200 || _wordCount(controller.text) > 600))
-              const Text('⚠️ Los cuentos existentes tienen 300-500 palabras', style: TextStyle(fontSize: 12, color: Colors.orange)),
+              const Text('⚠️ Los cuentos existentes tienen 300-500 palabras', style: TextStyle(fontSize: 12, color: AppColors.warning)),
           ],
         ],
       ),
@@ -330,39 +333,67 @@ class _DraftCreateManualPageState extends State<DraftCreateManualPage> {
         leading: IconButton(icon: const Icon(Icons.close), onPressed: () => context.go('/drafts')),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Texto — Español', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            _textField(label: 'Nombre', controller: _nameEsController),
-            _textField(label: 'Descripción', controller: _descriptionEsController, maxLines: 2),
-            _textField(label: 'Cuento', controller: _specificationsEsController, maxLines: 10, showWordCount: true),
-            const Divider(height: 32),
-            const Text('Texto — English', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            _textField(label: 'Nombre', controller: _nameEnController),
-            _textField(label: 'Descripción', controller: _descriptionEnController, maxLines: 2),
-            _textField(label: 'Cuento', controller: _specificationsEnController, maxLines: 10, showWordCount: true),
-            const Divider(height: 32),
-            const Text('Imagen', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            _imageSection(),
-            const Divider(height: 32),
-            const Text('Audio', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            _audioSection('es'),
-            _audioSection('en'),
-            if (_draft?.step == 'audio')
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: OutlinedButton.icon(
-                  onPressed: () => context.go('/drafts/${_draftId!}'),
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Ver borrador completo →'),
-                ),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Texto — Español', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  _textField(label: 'Nombre', controller: _nameEsController),
+                  _textField(label: 'Descripción', controller: _descriptionEsController, maxLines: 2),
+                  _textField(label: 'Cuento', controller: _specificationsEsController, maxLines: 10, showWordCount: true),
+                ],
               ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Texto — English', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  _textField(label: 'Nombre', controller: _nameEnController),
+                  _textField(label: 'Descripción', controller: _descriptionEnController, maxLines: 2),
+                  _textField(label: 'Cuento', controller: _specificationsEnController, maxLines: 10, showWordCount: true),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Imagen', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  _imageSection(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Audio', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: AppSpacing.sm),
+                  _audioSection('es'),
+                  _audioSection('en'),
+                  if (_draft?.step == 'audio')
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
+                      child: OutlinedButton.icon(
+                        onPressed: () => context.go('/drafts/${_draftId!}'),
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('Ver borrador completo →'),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
