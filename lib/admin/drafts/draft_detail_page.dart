@@ -134,7 +134,7 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                           else
                             const Text('Sin audio'),
                           const SizedBox(height: 24),
-                          if (d.step != 'audio' || d.audioUrlEs.isEmpty || d.audioUrlEn.isEmpty)
+                          if (d.step != 'audio')
                             Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: Text(
@@ -150,7 +150,7 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                                 child: const Text('Rechazar'),
                               ),
                               const SizedBox(width: 12),
-                              if (d.step == 'audio' && d.audioUrlEs.isNotEmpty && d.audioUrlEn.isNotEmpty)
+                              if (d.step == 'audio')
                                 FilledButton.icon(
                                   onPressed: () => _approve(d.id),
                                   icon: const Icon(Icons.publish),
