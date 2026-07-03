@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { jsonrepair } = require("jsonrepair");
 
 const BASE_URL = "https://openrouter.ai/api/v1";
 
@@ -34,12 +35,19 @@ async function generateTaleText({ theme, feedback, apiKey }) {
   let parsed;
   try {
     parsed = JSON.parse(cleaned);
-  } catch (e) {
-    console.error("JSON Parse Error details:", e.message);
-    console.error("Raw content starts with:", content.slice(0, 500));
-    console.error("Raw content ends with:", content.slice(-500));
-    
-    throw new Error(`Model did not return valid tale JSON. Parse error: ${e.message}`);
+  } catch (firstError) {
+    // Attempt repair (handles literal newlines, unescaped quotes, etc.)
+    console.warn("JSON parse failed, attempting repair...", firstError.message);
+    try {
+      const repaired = jsonrepair(cleaned);
+      parsed = JSON.parse(repaired);
+      console.warn("JSON repair succeeded.");
+    } catch (repairError) {
+      console.error("JSON Parse Error details:", firstError.message);
+      console.error("Raw content starts with:", content.slice(0, 500));
+      console.error("Raw content ends with:", content.slice(-500));
+      throw new Error(`Model did not return valid tale JSON. Parse error: ${firstError.message}`);
+    }
   }
   const required = [
     "name_es", "description_es", "specifications_es",

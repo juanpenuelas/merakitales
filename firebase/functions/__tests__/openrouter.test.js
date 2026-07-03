@@ -56,4 +56,57 @@ describe("openrouter client", () => {
     expect(Buffer.isBuffer(result)).toBe(true);
     expect(result.toString()).toBe("audio-bytes");
   });
+
+  test("should repair and parse JSON with literal newlines in string values", async () => {
+    // Simulate model returning JSON with literal newlines inside strings.
+    // We build the raw string manually so \n are literal (not escaped).
+    const brokenJson = [
+      '{',
+      '  "name_es": "Test",',
+      '  "description_es": "Desc",',
+      '  "specifications_es": "Line one.',  // literal newline inside the string value
+      'Line two.',
+      'Line three.",',
+      '  "name_en": "Test",',
+      '  "description_en": "Desc",',
+      '  "specifications_en": "Line one.',
+      'Line two.",',
+      '  "image_prompt": "A test image"',
+      '}',
+    ].join("\n");
+
+    nock(BASE)
+      .post("/api/v1/chat/completions")
+      .reply(200, {
+        choices: [{ message: { content: brokenJson } }],
+      });
+
+    const result = await generateTaleText({ apiKey: KEY });
+    expect(result.name_es).toBe("Test");
+    expect(result.specifications_es).toContain("Line one.");
+  });
+
+  test("should repair and parse JSON with unescaped quotes in string values", async () => {
+    // Simulate model returning JSON with unescaped double quotes inside strings.
+    const brokenJson = '{\n  "name_es": "Test",\n  "description_es": "Desc",\n  "specifications_es": "She said "hello" to him.",\n  "name_en": "Test",\n  "description_en": "Desc",\n  "specifications_en": "Story",\n  "image_prompt": "A test image"\n}';
+
+    nock(BASE)
+      .post("/api/v1/chat/completions")
+      .reply(200, {
+        choices: [{ message: { content: brokenJson } }],
+      });
+
+    const result = await generateTaleText({ apiKey: KEY });
+    expect(result.name_es).toBe("Test");
+  });
+
+  test("should still throw on completely invalid content", async () => {
+    nock(BASE)
+      .post("/api/v1/chat/completions")
+      .reply(200, {
+        choices: [{ message: { content: "This is not JSON at all, just plain text." } }],
+      });
+
+    await expect(generateTaleText({ apiKey: KEY })).rejects.toThrow();
+  });
 });
