@@ -12,6 +12,7 @@ Write a COMPLETE, original bedtime story. Rules:
 - Generate a short "image_prompt" (one sentence in English) describing a single warm, friendly illustration that captures the story's mood (children's book illustration style, soft colors, no text in image, no characters with copyrighted likenesses).
 - "description" is a 1-2 sentence teaser for the list view.
 - "name" is the story title.
+7. ESCAPING (CRITICAL): Since you are outputting raw JSON, you MUST properly escape all double quotes (\\") inside the story text (especially in dialogues). You MUST escape all newlines as \\n. Do not use unescaped double quotes or literal newlines inside JSON string values.
 
 Respond ONLY with a JSON object matching this exact shape:
 {
