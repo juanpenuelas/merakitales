@@ -13,6 +13,7 @@
     "rules": "storage.rules"
   },
   "hosting": {
+    "target": "admin",
     "public": "build/web",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [

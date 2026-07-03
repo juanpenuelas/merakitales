@@ -3,31 +3,20 @@ const { moveFile } = require("./storage");
 const { computeStep } = require("./draftStep");
 
 /**
- * @param {import("firebase-functions/v2/https").CallableRequest} req
- * @returns {Promise<{ taleId: number }>}
+ * Core logic to publish a draft. Can be called by HTTP handler or Cron Job.
  */
-async function approveDraftHandler(req) {
-  requireAuth(req);
-  const { draftId } = req.data;
-  if (!draftId) {
-    const { HttpsError } = require("firebase-functions/v2/https");
-    throw new HttpsError("invalid-argument", "draftId required");
-  }
-
+async function publishDraft(draftId, decidedByUid) {
   const draftRef = db.collection("tale_drafts").doc(draftId);
   const draftSnap = await draftRef.get();
   if (!draftSnap.exists) {
-    const { HttpsError } = require("firebase-functions/v2/https");
-    throw new HttpsError("not-found", "Draft not found");
+    throw new Error("Draft not found");
   }
   const d = draftSnap.data();
-  if (d.status !== "pending") {
-    const { HttpsError } = require("firebase-functions/v2/https");
-    throw new HttpsError("failed-precondition", `Draft already ${d.status}`);
+  if (d.status !== "pending" && d.status !== "scheduled") {
+    throw new Error(`Draft is already ${d.status}`);
   }
   if (computeStep(d) !== "audio") {
-    const { HttpsError } = require("firebase-functions/v2/https");
-    throw new HttpsError("failed-precondition", "Draft is missing image/audio assets and cannot be published yet");
+    throw new Error("Draft is missing image/audio assets and cannot be published yet");
   }
 
   // Assign next tale_id in a transaction
@@ -97,11 +86,32 @@ async function approveDraftHandler(req) {
   await draftRef.update({
     status: "approved",
     decided_at: now,
-    decided_by: req.auth.uid,
+    decided_by: decidedByUid,
     assigned_tale_id: taleId,
   });
 
-  return { taleId };
+  return taleId;
 }
 
-module.exports = { approveDraftHandler };
+/**
+ * @param {import("firebase-functions/v2/https").CallableRequest} req
+ * @returns {Promise<{ taleId: number }>}
+ */
+async function approveDraftHandler(req) {
+  requireAuth(req);
+  const { draftId } = req.data;
+  if (!draftId) {
+    const { HttpsError } = require("firebase-functions/v2/https");
+    throw new HttpsError("invalid-argument", "draftId required");
+  }
+
+  try {
+    const taleId = await publishDraft(draftId, req.auth.uid);
+    return { taleId };
+  } catch (e) {
+    const { HttpsError } = require("firebase-functions/v2/https");
+    throw new HttpsError("failed-precondition", e.message);
+  }
+}
+
+module.exports = { approveDraftHandler, publishDraft };

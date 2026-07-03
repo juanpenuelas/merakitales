@@ -2,10 +2,10 @@ const axios = require("axios");
 
 const BASE_URL = "https://openrouter.ai/api/v1";
 
-const TEXT_MODEL = "openai/gpt-4o-mini";
+const TEXT_MODEL = "anthropic/claude-sonnet-4.6";
 const IMAGE_MODEL = "bytedance-seed/seedream-4.5";
-const TTS_EN_MODEL = "hexgrad/kokoro-82m";
-const TTS_EN_VOICE = "am_adam";
+const TTS_EN_MODEL = "microsoft/mai-voice-2";
+const TTS_EN_VOICE = "es-MX-Valeria:MAI-Voice-2";
 const TTS_ES_MODEL = "microsoft/mai-voice-2";
 const TTS_ES_VOICE = "es-MX-Valeria:MAI-Voice-2";
 
@@ -20,17 +20,26 @@ async function generateTaleText({ theme, feedback, apiKey }) {
     {
       model: TEXT_MODEL,
       messages: buildMessages({ theme, feedback }),
-      response_format: { type: "json_object" },
+      max_tokens: 8000,
     },
     { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 120000 }
   );
   const content = resp.data.choices[0].message.content;
-  const cleaned = content.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
+  let cleaned = content.trim();
+  const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (jsonMatch) {
+    cleaned = jsonMatch[1].trim();
+  }
+  
   let parsed;
   try {
     parsed = JSON.parse(cleaned);
   } catch (e) {
-    throw new Error("Model did not return valid tale JSON: " + content.slice(0, 200));
+    console.error("JSON Parse Error details:", e.message);
+    console.error("Raw content starts with:", content.slice(0, 500));
+    console.error("Raw content ends with:", content.slice(-500));
+    
+    throw new Error(`Model did not return valid tale JSON. Parse error: ${e.message}`);
   }
   const required = [
     "name_es", "description_es", "specifications_es",
@@ -48,9 +57,15 @@ async function generateTaleText({ theme, feedback, apiKey }) {
  * @returns {Promise<{ b64: string, mediaType?: string }>}
  */
 async function generateImage({ prompt, feedback, apiKey }) {
-  const finalPrompt = feedback && feedback.trim().length > 0
-    ? `${prompt}. Style adjustment: ${feedback.trim().slice(0, 500)}`
-    : prompt;
+  let finalPrompt = "";
+  if (prompt && prompt.trim().length > 0) {
+    finalPrompt = feedback && feedback.trim().length > 0
+      ? `${prompt.trim()}. Style adjustment: ${feedback.trim().slice(0, 500)}`
+      : prompt.trim();
+  } else {
+    finalPrompt = feedback ? feedback.trim().slice(0, 500) : "A beautiful illustration for a children's storybook, colorful, magic.";
+  }
+  
   const resp = await axios.post(
     `${BASE_URL}/images`,
     {
@@ -59,10 +74,18 @@ async function generateImage({ prompt, feedback, apiKey }) {
       resolution: "2K",
       aspect_ratio: "1:1",
       output_format: "png",
+      response_format: "b64_json",
     },
     { headers: { Authorization: `Bearer ${apiKey}` }, timeout: 90000 }
   );
   const img = resp.data.data[0];
+  
+  if (!img.b64_json && img.url) {
+    // If API ignores response_format and returns a URL instead, we fetch it and convert to b64.
+    const imageResp = await axios.get(img.url, { responseType: 'arraybuffer' });
+    return { b64: Buffer.from(imageResp.data).toString('base64'), mediaType: 'image/png' };
+  }
+  
   return { b64: img.b64_json, mediaType: img.media_type };
 }
 

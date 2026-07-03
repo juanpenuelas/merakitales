@@ -24,23 +24,37 @@ async function generateTaleImageHandler(req) {
   const d = snap.data();
   const storagePrefix = `drafts/${draftId}`;
 
-  if (!d.image_prompt && !feedback) {
-    const { HttpsError } = require("firebase-functions/v2/https");
-    throw new HttpsError("failed-precondition", "Cannot regenerate image: draft has no image_prompt and no feedback was provided. Please provide feedback to generate a new image.");
+  let promptToUse = d.image_prompt;
+  if (!promptToUse || promptToUse.trim().length === 0) {
+    const storyText = d.specifications_en || d.specifications_es || "";
+    if (storyText.trim().length > 0) {
+      const preview = storyText.trim().slice(0, 400).replace(/\n/g, " ");
+      promptToUse = `A beautiful illustration for a children's storybook, colorful, magic, cute. Story context: ${preview}`;
+    }
   }
 
-  const { b64 } = await generateImage({ prompt: d.image_prompt, feedback, apiKey });
-  const imageBuffer = Buffer.from(b64, "base64");
-  const image640 = await resizeToWidth({ buffer: imageBuffer, width: 640 });
-  const imageUrl = await uploadBase64Image({ bucket, path: `${storagePrefix}/image_1024.png`, b64 });
-  const imageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
+  try {
+    const { b64 } = await generateImage({ prompt: promptToUse, feedback, apiKey });
+    const imageBuffer = Buffer.from(b64, "base64");
+    const image640 = await resizeToWidth({ buffer: imageBuffer, width: 640 });
+    const rawImageUrl = await uploadBase64Image({ bucket, path: `${storagePrefix}/image_1024.png`, b64 });
+    const rawImageUrl640 = await uploadBuffer({ bucket, path: `${storagePrefix}/image_640.png`, buffer: image640, contentType: "image/png" });
+    
+    const ts = Date.now();
+    const imageUrl = `${rawImageUrl}?v=${ts}`;
+    const imageUrl640 = `${rawImageUrl640}?v=${ts}`;
 
-  await draftRef.update({
-    image_url: imageUrl,
-    image_url_640px: imageUrl640,
-  });
+    await draftRef.update({
+      image_url: imageUrl,
+      image_url_640px: imageUrl640,
+      is_generating_image: false,
+    });
 
-  return { imageUrl, imageUrl640 };
+    return { imageUrl, imageUrl640 };
+  } catch (err) {
+    await draftRef.update({ is_generating_image: false });
+    throw err;
+  }
 }
 
 module.exports = { generateTaleImageHandler };

@@ -37,18 +37,27 @@ async function generateTaleAudioHandler(req) {
     throw new HttpsError("failed-precondition", "Draft has no text for " + lang);
   }
 
-  const audioBuffer = await generateSpeech({ input: text, lang, feedback, apiKey });
-  const audioUrl = await uploadBuffer({
-    bucket,
-    path: `drafts/${draftId}/audio_${lang}.mp3`,
-    buffer: audioBuffer,
-    contentType: "audio/mpeg",
-  });
+  try {
+    const audioBuffer = await generateSpeech({ input: text, lang, feedback, apiKey });
+    const rawAudioUrl = await uploadBuffer({
+      bucket,
+      path: `drafts/${draftId}/audio_${lang}.mp3`,
+      buffer: audioBuffer,
+      contentType: "audio/mpeg",
+    });
+    
+    // Append timestamp to bypass aggressive Flutter audio caching
+    const audioUrl = `${rawAudioUrl}?v=${Date.now()}`;
 
-  const update = lang === "es" ? { audio_url_es: audioUrl } : { audio_url_en: audioUrl };
-  await draftRef.update(update);
+    const update = lang === "es" ? { audio_url_es: audioUrl, is_generating_audio_es: false } : { audio_url_en: audioUrl, is_generating_audio_en: false };
+    await draftRef.update(update);
 
-  return { audioUrl };
+    return { audioUrl };
+  } catch (err) {
+    const update = lang === "es" ? { is_generating_audio_es: false } : { is_generating_audio_en: false };
+    await draftRef.update(update);
+    throw err;
+  }
 }
 
 module.exports = { generateTaleAudioHandler };
