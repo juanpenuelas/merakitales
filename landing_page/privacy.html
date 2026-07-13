@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidad - Abuela Meraki</title>
+    <link rel="icon" type="image/png" href="assets/app_launcher_icon.png">
+    <meta name="description" content="Política de Privacidad de Abuela Meraki. Descubre cómo protegemos la privacidad infantil y de nuestros usuarios.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        magical: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            gold: '#FBBF24',
+                            dark: '#0B0F19',
+                            darker: '#06080D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080D;
+            color: #E0E7FF;
+        }
+        /* Magical Sparkles Background */
+        .sparkles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #E0E7FF, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        @keyframes twinkle {
+            0% { transform: translateY(0); opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-200px); opacity: 0.2; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .golden-text {
+            background: linear-gradient(to right, #FCD34D, #F59E0B, #FCD34D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="font-nunito antialiased overflow-x-hidden selection:bg-magical-purple selection:text-white flex flex-col min-h-screen">
+    <div class="sparkles z-0"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-magical-darker/80 backdrop-blur-md border-b border-white/5" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative z-10">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <img src="assets/app_launcher_icon.png" alt="Abuela Meraki Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <span class="font-playfair font-bold tracking-wide text-lg sm:text-2xl text-white drop-shadow-md">Abuela Meraki</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 text-sm font-semibold tracking-wider">
+                    <span class="text-magical-gold drop-shadow-md">ES</span>
+                    <span class="text-white/20">|</span>
+                    <a href="en/privacy.html" class="text-white hover:text-magical-gold transition-colors">EN</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-28 pb-20 relative z-10 px-4">
+        <div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-magical-purple rounded-full mix-blend-screen filter blur-[100px] opacity-10"></div>
+            
+            <h1 class="font-playfair text-4xl md:text-5xl font-bold mb-4 golden-text">Política de Privacidad</h1>
+            <p class="text-sm text-indigo-200/50 mb-8">Última actualización: 13 de julio de 2026</p>
+
+            <div class="prose prose-invert prose-indigo max-w-none space-y-6 text-indigo-200/90 leading-relaxed font-light">
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">1. Compromiso de Privacidad e Infancia</h2>
+                    <p>
+                        En <strong>Abuela Meraki</strong> (en adelante, la "Aplicación"), entendemos que la privacidad de los niños y las familias es lo más importante. Por ello, diseñamos nuestra plataforma con los más altos estándares de protección y seguridad de datos, ofreciendo una experiencia totalmente segura, educativa y libre de riesgos para los menores.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">2. No Recopilación de Datos Personales (Fase 1)</h2>
+                    <p>
+                        Bajo el estado actual de la Fase 1 del desarrollo de la Aplicación:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>No solicitamos, recopilamos ni almacenamos datos personales</strong> como nombres, apellidos, direcciones de correo electrónico, números de teléfono o ubicaciones físicas de los niños, ni de usuarios que accedan en calidad de invitados anónimos.</li>
+                        <li>No se requiere la creación de una cuenta de usuario tradicional ni perfiles que recopilen información de identificación personal para poder disfrutar de los cuentos o reproducir los audios.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">3. Compras dentro de la Aplicación y Suscripción Premium</h2>
+                    <p>
+                        La Aplicación ofrece una suscripción de pago mensual auto-renovable para eliminar anuncios de la plataforma. La gestión de estas compras se realiza de forma totalmente segura y privada:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li>El procesamiento de las transacciones y pagos se realiza de forma <strong>anónima</strong> a través del servicio de <strong>RevenueCat</strong> y de las plataformas oficiales de distribución: <strong>Apple App Store</strong> y <strong>Google Play Store</strong>.</li>
+                        <li>La Aplicación no tiene acceso directo, ni recopila, ni almacena información financiera sensible de sus usuarios (como datos de tarjetas de crédito o credenciales de pago). Todo el proceso de facturación está sujeto a las políticas de privacidad de Apple y Google.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">4. Cumplimiento Normativo (GDPR y COPPA)</h2>
+                    <p>
+                        Nuestras políticas cumplen estrictamente con la legislación internacional de protección de menores:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>GDPR (Reglamento General de Protección de Datos de la UE)</strong>: Respetamos los derechos de los usuarios y garantizamos la seguridad en el tratamiento de la información técnica del dispositivo. Al no recolectar datos personales de menores de 16 años (o la edad establecida en su estado miembro), cumplimos plenamente con la protección pediátrica exigida por esta norma.</li>
+                        <li><strong>COPPA (Children's Online Privacy Protection Act de EE. UU.)</strong>: La Aplicación está dirigida a un público infantil y familiar, pero no recopila de forma activa ninguna información personal de menores de 13 años. No existen funciones de interacción social, salas de chat ni perfiles públicos que puedan poner en riesgo la privacidad de los menores.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">5. Información Técnica y Proveedores de Servicios</h2>
+                    <p>
+                        Para garantizar el correcto funcionamiento técnico de la Aplicación, analizar el rendimiento y mostrar anuncios (en la versión gratuita), la Aplicación puede recopilar ciertos identificadores anónimos de dispositivo e información de uso técnico que no identifican a la persona.
+                    </p>
+                    <p class="mt-2">
+                        Nuestros proveedores de servicios analíticos y de publicidad están contractualmente obligados a procesar esta información técnica de forma agregada, anónima y cumpliendo con las regulaciones de protección infantil correspondientes.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">6. Modificaciones de esta Política</h2>
+                    <p>
+                        Podemos actualizar nuestra Política de Privacidad de forma periódica para reflejar cambios en la funcionalidad de la Aplicación o modificaciones legislativas. Cualquier cambio futuro se publicará en esta página con su correspondiente fecha de actualización.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">7. Contacto</h2>
+                    <p>
+                        Si tiene alguna duda o consulta sobre esta Política de Privacidad o sobre nuestras prácticas de privacidad, puede ponerse en contacto con nosotros a través de nuestro correo electrónico: <a href="mailto:soporte@merakily.com" class="text-magical-gold hover:underline">soporte@merakily.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/80 border-t border-white/5 text-indigo-200/40 py-10 text-center relative z-10">
+        <div class="flex justify-center items-center gap-2 mb-4">
+            <img src="assets/app_launcher_icon.png" alt="Logo" class="w-6 h-6 rounded-md opacity-50 grayscale">
+            <span class="font-playfair italic">Abuela Meraki</span>
+        </div>
+        <div class="flex justify-center gap-6 mb-6 text-xs font-semibold uppercase tracking-wider text-indigo-200/60">
+            <a href="index.html" class="hover:text-magical-gold transition-colors">Inicio</a>
+            <a href="privacy.html" class="text-magical-gold transition-colors">Política de Privacidad</a>
+            <a href="terms.html" class="hover:text-magical-gold transition-colors">Términos de Servicio</a>
+        </div>
+        <p class="font-nunito text-xs">&copy; 2026 Abuela Meraki. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

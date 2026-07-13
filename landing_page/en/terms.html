@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Grandma Meraki</title>
+    <link rel="icon" type="image/png" href="../assets/app_launcher_icon.png">
+    <meta name="description" content="Terms of Service of Grandma Meraki. Read our terms of use, subscriptions, and content availability rules.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        magical: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            gold: '#FBBF24',
+                            dark: '#0B0F19',
+                            darker: '#06080D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080D;
+            color: #E0E7FF;
+        }
+        /* Magical Sparkles Background */
+        .sparkles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #E0E7FF, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        @keyframes twinkle {
+            0% { transform: translateY(0); opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-200px); opacity: 0.2; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .golden-text {
+            background: linear-gradient(to right, #FCD34D, #F59E0B, #FCD34D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="font-nunito antialiased overflow-x-hidden selection:bg-magical-purple selection:text-white flex flex-col min-h-screen">
+    <div class="sparkles z-0"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-magical-darker/80 backdrop-blur-md border-b border-white/5" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative z-10">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <img src="../assets/app_launcher_icon.png" alt="Grandma Meraki Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <span class="font-playfair font-bold tracking-wide text-lg sm:text-2xl text-white drop-shadow-md">Grandma Meraki</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 text-sm font-semibold tracking-wider">
+                    <a href="../terms.html" class="text-white hover:text-magical-gold transition-colors">ES</a>
+                    <span class="text-white/20">|</span>
+                    <span class="text-magical-gold drop-shadow-md">EN</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-28 pb-20 relative z-10 px-4">
+        <div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-magical-purple rounded-full mix-blend-screen filter blur-[100px] opacity-10"></div>
+            
+            <h1 class="font-playfair text-4xl md:text-5xl font-bold mb-4 golden-text">Terms of Service</h1>
+            <p class="text-sm text-indigo-200/50 mb-8">Last updated: July 13, 2026</p>
+
+            <div class="prose prose-invert prose-indigo max-w-none space-y-6 text-indigo-200/90 leading-relaxed font-light">
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">1. Acceptance of Terms</h2>
+                    <p>
+                        By downloading, installing, or using the <strong>Grandma Meraki</strong> mobile application (hereinafter, the "App"), you agree to comply with and be bound by the following Terms of Service. If you do not agree to these terms, please do not use the App.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">2. Access to Content and Free Availability</h2>
+                    <p>
+                        Our mission is to bring magical illustrated stories to every home. Therefore, <strong>all stories, illustrations, and audio narrations in the App are freely accessible, open, and free of charge</strong> for all users. We do not restrict access to content behind paywalls; reading and listening to the stories is completely open and free for the community.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">3. Premium Subscription and Billing Conditions</h2>
+                    <p>
+                        For users who wish to enjoy an immersive experience free of interruptions, the App offers an optional paid subscription (Premium Subscription):
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>Premium Benefit</strong>: The sole benefit of the premium subscription is the <strong>complete removal of advertisements</strong> within the App. The entire library of stories remains available to free users.</li>
+                        <li><strong>Recurring Billing</strong>: The premium subscription is an auto-renewable monthly plan. The charge will be billed to your account on the respective store platform (Apple App Store or Google Play Store) upon confirmation of purchase.</li>
+                        <li><strong>Automatic Renewal</strong>: The subscription automatically renews at the end of each monthly billing cycle unless automatic renewal is turned off at least 24 hours before the end of the current billing period.</li>
+                        <li><strong>Cancellation and Management</strong>: Users can manage their subscriptions and turn off auto-renewal at any time by visiting their Account Settings in the Apple App Store or Google Play Store.</li>
+                        <li><strong>Refunds</strong>: Subscription refund requests are handled directly by the respective distribution platform (Apple or Google) in accordance with their respective refund policies.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">4. Intellectual Property</h2>
+                    <p>
+                        All content included in the App, such as texts, original stories, audio recordings, narrations, illustrations, logos, interfaces, animations, and software code, is the exclusive property of Grandma Meraki or its licensors and is protected by international intellectual property laws. Any reproduction, distribution, commercialization, or modification of any material is prohibited without the prior written consent of its authors.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">5. Acceptable Use</h2>
+                    <p>
+                        Users agree to make lawful and appropriate use of the App. It is strictly forbidden to attempt to compromise the security of the software, decompile the App, or perform actions that could impair, overload, or disable the servers or networks associated with Grandma Meraki's services.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">6. Limitation of Liability</h2>
+                    <p>
+                        The App is provided "as is" and "as available". While we strive to offer the highest quality stories and narratives and an uninterrupted service, we do not warrant that the software will be free from technical errors or temporary connection failures.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">7. Changes to Terms</h2>
+                    <p>
+                        We reserve the right to modify these Terms of Service at any time. The last updated date at the beginning of this document will indicate when the latest changes were made. Continued use of the App after the implementation of new terms constitutes acceptance of those changes.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">8. Governing Law</h2>
+                    <p>
+                        These terms shall be governed by and construed in accordance with the laws of the territory in which our services operate, without giving effect to any principles of conflict of laws.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">9. Contact Us</h2>
+                    <p>
+                        If you have any questions or concerns regarding these Terms of Service, you can reach us via email at: <a href="mailto:soporte@merakily.com" class="text-magical-gold hover:underline">soporte@merakily.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/80 border-t border-white/5 text-indigo-200/40 py-10 text-center relative z-10">
+        <div class="flex justify-center items-center gap-2 mb-4">
+            <img src="../assets/app_launcher_icon.png" alt="Logo" class="w-6 h-6 rounded-md opacity-50 grayscale">
+            <span class="font-playfair italic">Grandma Meraki</span>
+        </div>
+        <div class="flex justify-center gap-6 mb-6 text-xs font-semibold uppercase tracking-wider text-indigo-200/60">
+            <a href="index.html" class="hover:text-magical-gold transition-colors">Home</a>
+            <a href="privacy.html" class="hover:text-magical-gold transition-colors">Privacy Policy</a>
+            <a href="terms.html" class="text-magical-gold transition-colors">Terms of Service</a>
+        </div>
+        <p class="font-nunito text-xs">&copy; 2026 Grandma Meraki. All rights reserved.</p>
+    </footer>
+</body>
+</html>

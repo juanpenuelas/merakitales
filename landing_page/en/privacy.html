@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Grandma Meraki</title>
+    <link rel="icon" type="image/png" href="../assets/app_launcher_icon.png">
+    <meta name="description" content="Privacy Policy of Grandma Meraki. Learn how we protect children's privacy and manage user data securely.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        magical: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            gold: '#FBBF24',
+                            dark: '#0B0F19',
+                            darker: '#06080D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080D;
+            color: #E0E7FF;
+        }
+        /* Magical Sparkles Background */
+        .sparkles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #E0E7FF, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        @keyframes twinkle {
+            0% { transform: translateY(0); opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-200px); opacity: 0.2; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .golden-text {
+            background: linear-gradient(to right, #FCD34D, #F59E0B, #FCD34D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="font-nunito antialiased overflow-x-hidden selection:bg-magical-purple selection:text-white flex flex-col min-h-screen">
+    <div class="sparkles z-0"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-magical-darker/80 backdrop-blur-md border-b border-white/5" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative z-10">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <img src="../assets/app_launcher_icon.png" alt="Grandma Meraki Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <span class="font-playfair font-bold tracking-wide text-lg sm:text-2xl text-white drop-shadow-md">Grandma Meraki</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 text-sm font-semibold tracking-wider">
+                    <a href="../privacy.html" class="text-white hover:text-magical-gold transition-colors">ES</a>
+                    <span class="text-white/20">|</span>
+                    <span class="text-magical-gold drop-shadow-md">EN</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-28 pb-20 relative z-10 px-4">
+        <div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-magical-purple rounded-full mix-blend-screen filter blur-[100px] opacity-10"></div>
+            
+            <h1 class="font-playfair text-4xl md:text-5xl font-bold mb-4 golden-text">Privacy Policy</h1>
+            <p class="text-sm text-indigo-200/50 mb-8">Last updated: July 13, 2026</p>
+
+            <div class="prose prose-invert prose-indigo max-w-none space-y-6 text-indigo-200/90 leading-relaxed font-light">
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">1. Commitment to Privacy and Children</h2>
+                    <p>
+                        At <strong>Grandma Meraki</strong> (hereinafter, the "App"), we understand that the privacy of children and families is of paramount importance. Therefore, we design our platform with the highest standards of data protection and security, offering an environment that is completely safe, educational, and free of risks for minors.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">2. No Collection of Personal Data (Phase 1 Status)</h2>
+                    <p>
+                        Under the current Phase 1 development status of the App:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>We do not request, collect, or store any personal data</strong> such as names, email addresses, phone numbers, or physical locations from children, nor from users accessing the App as anonymous guests.</li>
+                        <li>No traditional user account creation or profiles that collect personally identifiable information are required to enjoy the stories or play the audio recordings.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">3. In-App Purchases and Premium Subscription</h2>
+                    <p>
+                        The App offers an auto-renewable monthly paid subscription to remove advertisements from the platform. The management of these purchases is carried out in a completely secure and private manner:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li>Processing of transactions and payments is handled <strong>anonymously</strong> via the <strong>RevenueCat</strong> service and the official distribution platforms: the <strong>Apple App Store</strong> and <strong>Google Play Store</strong>.</li>
+                        <li>The App does not have direct access to, nor does it collect or store sensitive financial information from its users (such as credit card details or payment credentials). The entire billing process is subject to Apple's and Google's respective privacy policies.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">4. Regulatory Compliance (GDPR & COPPA)</h2>
+                    <p>
+                        Our policies strictly comply with international legislation protecting minors:
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>GDPR (EU General Data Protection Regulation)</strong>: We respect user rights and ensure security when processing technical device information. By not collecting personal data from minors under the age of 16 (or the age established in their EU member state), we fully comply with the pediatric protection required by this regulation.</li>
+                        <li><strong>COPPA (US Children's Online Privacy Protection Act)</strong>: The App is intended for a child and family audience, but it does not actively collect any personal information from children under the age of 13. There are no social interaction features, chat rooms, or public profiles that could compromise the privacy of minors.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">5. Technical Information and Service Providers</h2>
+                    <p>
+                        To ensure the correct technical performance of the App, analyze metrics, and show advertisements (in the free version), the App may collect certain anonymous device identifiers and technical usage information that does not identify the individual.
+                    </p>
+                    <p class="mt-2">
+                        Our analytical and advertising service providers are contractually obligated to process this technical information in an aggregated, anonymous form, complying with the relevant child protection regulations.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">6. Changes to this Policy</h2>
+                    <p>
+                        We may update our Privacy Policy from time to time to reflect changes in App functionality or legal amendments. Any future changes will be posted on this page with the corresponding updated date.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">7. Contact Us</h2>
+                    <p>
+                        If you have any questions or concerns regarding this Privacy Policy or our privacy practices, you can contact us via email at: <a href="mailto:soporte@merakily.com" class="text-magical-gold hover:underline">soporte@merakily.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/80 border-t border-white/5 text-indigo-200/40 py-10 text-center relative z-10">
+        <div class="flex justify-center items-center gap-2 mb-4">
+            <img src="../assets/app_launcher_icon.png" alt="Logo" class="w-6 h-6 rounded-md opacity-50 grayscale">
+            <span class="font-playfair italic">Grandma Meraki</span>
+        </div>
+        <div class="flex justify-center gap-6 mb-6 text-xs font-semibold uppercase tracking-wider text-indigo-200/60">
+            <a href="index.html" class="hover:text-magical-gold transition-colors">Home</a>
+            <a href="privacy.html" class="text-magical-gold transition-colors">Privacy Policy</a>
+            <a href="terms.html" class="hover:text-magical-gold transition-colors">Terms of Service</a>
+        </div>
+        <p class="font-nunito text-xs">&copy; 2026 Grandma Meraki. All rights reserved.</p>
+    </footer>
+</body>
+</html>

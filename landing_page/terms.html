@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos de Servicio - Abuela Meraki</title>
+    <link rel="icon" type="image/png" href="assets/app_launcher_icon.png">
+    <meta name="description" content="Términos de Servicio de Abuela Meraki. Conoce las condiciones de uso, suscripciones y acceso al contenido.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['"Playfair Display"', 'serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        magical: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            gold: '#FBBF24',
+                            dark: '#0B0F19',
+                            darker: '#06080D'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #06080D;
+            color: #E0E7FF;
+        }
+        /* Magical Sparkles Background */
+        .sparkles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #E0E7FF, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #FDE68A, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #E0E7FF, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        @keyframes twinkle {
+            0% { transform: translateY(0); opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-200px); opacity: 0.2; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .golden-text {
+            background: linear-gradient(to right, #FCD34D, #F59E0B, #FCD34D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="font-nunito antialiased overflow-x-hidden selection:bg-magical-purple selection:text-white flex flex-col min-h-screen">
+    <div class="sparkles z-0"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-magical-darker/80 backdrop-blur-md border-b border-white/5" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center relative z-10">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <img src="assets/app_launcher_icon.png" alt="Abuela Meraki Logo" class="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <span class="font-playfair font-bold tracking-wide text-lg sm:text-2xl text-white drop-shadow-md">Abuela Meraki</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 text-sm font-semibold tracking-wider">
+                    <span class="text-magical-gold drop-shadow-md">ES</span>
+                    <span class="text-white/20">|</span>
+                    <a href="en/terms.html" class="text-white hover:text-magical-gold transition-colors">EN</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-28 pb-20 relative z-10 px-4">
+        <div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-magical-purple rounded-full mix-blend-screen filter blur-[100px] opacity-10"></div>
+            
+            <h1 class="font-playfair text-4xl md:text-5xl font-bold mb-4 golden-text">Términos de Servicio</h1>
+            <p class="text-sm text-indigo-200/50 mb-8">Última actualización: 13 de julio de 2026</p>
+
+            <div class="prose prose-invert prose-indigo max-w-none space-y-6 text-indigo-200/90 leading-relaxed font-light">
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">1. Aceptación de los Términos</h2>
+                    <p>
+                        Al descargar, instalar o utilizar la aplicación móvil <strong>Abuela Meraki</strong> (en adelante, la "Aplicación"), usted acepta cumplir y estar sujeto a los siguientes Términos de Servicio. Si no está de acuerdo con estos términos, le solicitamos que no utilice la Aplicación.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">2. Acceso al Contenido y Gratuidad</h2>
+                    <p>
+                        Nuestra misión es hacer llegar cuentos mágicos e ilustrados a todos los hogares. Por ello, <strong>todos los cuentos, ilustraciones y audios de la Aplicación son de acceso libre, gratuito y abierto</strong> para todos los usuarios. No limitamos el contenido bajo barreras de pago; la lectura y escucha de las historias está disponible de forma completa para la comunidad de manera gratuita.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">3. Suscripción Premium y Condiciones de Facturación</h2>
+                    <p>
+                        Para aquellos usuarios que deseen disfrutar de una experiencia inmersiva libre de interrupciones, la Aplicación ofrece una opción de suscripción de pago (Suscripción Premium):
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li><strong>Beneficio Premium</strong>: El único beneficio de la suscripción premium es la <strong>eliminación completa de anuncios publicitarios</strong> dentro de la Aplicación. Todo el catálogo de cuentos sigue estando disponible para los usuarios gratuitos.</li>
+                        <li><strong>Facturación Recurrente</strong>: Se trata de una suscripción mensual auto-renovable. El cargo se realizará a la cuenta de usuario de la plataforma correspondiente (Apple App Store o Google Play Store) al confirmar la compra.</li>
+                        <li><strong>Renovación Automática</strong>: La suscripción se renueva automáticamente al final de cada ciclo mensual a menos que la renovación automática se desactive al menos 24 horas antes del vencimiento del período de facturación actual.</li>
+                        <li><strong>Cancelación y Gestión</strong>: El usuario puede gestionar su suscripción y desactivar la renovación automática en cualquier momento accediendo a la configuración de su cuenta en la App Store de Apple o en la Google Play Store de Google.</li>
+                        <li><strong>Reembolsos</strong>: Las solicitudes de reembolso de suscripciones premium se procesan directamente a través de las respectivas plataformas de distribución (Apple o Google), de acuerdo con sus términos y directrices aplicables.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">4. Propiedad Intelectual</h2>
+                    <p>
+                        Todos los contenidos incluidos en la Aplicación, tales como textos, cuentos originales, grabaciones de audio, narraciones, ilustraciones, logotipos, interfaces, animaciones y código de software, son propiedad exclusiva de Abuela Meraki o de sus licenciantes y están protegidos por las leyes de propiedad intelectual internacionales. Queda prohibida la reproducción, distribución, comercialización o modificación de cualquier material sin la autorización previa y por escrito de sus autores.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">5. Uso Aceptable</h2>
+                    <p>
+                        El usuario se compromete a hacer un uso lícito y adecuado de la Aplicación. Queda estrictamente prohibido intentar vulnerar las medidas de seguridad del software, descompilar la Aplicación o realizar acciones que puedan deteriorar, sobrecargar o inutilizar los servidores o redes asociados a los servicios de Abuela Meraki.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">6. Limitación de Responsabilidad</h2>
+                    <p>
+                        La Aplicación se proporciona "tal cual" y "según disponibilidad". Aunque nos esforzamos por ofrecer cuentos y narraciones de la más alta calidad y un servicio sin interrupciones, no garantizamos que el software esté libre de errores técnicos o fallos de conexión temporales.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">7. Modificaciones de los Términos</h2>
+                    <p>
+                        Nos reservamos el derecho de modificar estos Términos de Servicio en cualquier momento. La fecha de última actualización al principio de este documento indicará cuándo se realizaron los últimos cambios. El uso continuo de la Aplicación tras la entrada en vigor de los nuevos términos constituye la aceptación de estos.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">8. Ley Aplicable</h2>
+                    <p>
+                        Estos términos se regirán e interpretarán de conformidad con las leyes vigentes del territorio de operación de los servicios, sin dar efecto a ningún principio de conflictos de leyes.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="font-playfair text-2xl font-bold text-white mb-3">9. Contacto</h2>
+                    <p>
+                        Para resolver cualquier duda o consulta relacionada con estos Términos de Servicio, puede comunicarse con nosotros escribiendo al correo electrónico: <a href="mailto:soporte@merakily.com" class="text-magical-gold hover:underline">soporte@merakily.com</a>.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/80 border-t border-white/5 text-indigo-200/40 py-10 text-center relative z-10">
+        <div class="flex justify-center items-center gap-2 mb-4">
+            <img src="assets/app_launcher_icon.png" alt="Logo" class="w-6 h-6 rounded-md opacity-50 grayscale">
+            <span class="font-playfair italic">Abuela Meraki</span>
+        </div>
+        <div class="flex justify-center gap-6 mb-6 text-xs font-semibold uppercase tracking-wider text-indigo-200/60">
+            <a href="index.html" class="hover:text-magical-gold transition-colors">Inicio</a>
+            <a href="privacy.html" class="hover:text-magical-gold transition-colors">Política de Privacidad</a>
+            <a href="terms.html" class="text-magical-gold transition-colors">Términos de Servicio</a>
+        </div>
+        <p class="font-nunito text-xs">&copy; 2026 Abuela Meraki. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
