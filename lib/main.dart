@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'merakitales',
+      onGenerateTitle: (context) => FFLocalizations.of(context).getText('3ico71tb'),
       localizationsDelegates: [
         FFLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,

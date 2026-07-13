@@ -172,8 +172,8 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
   // drawerComponent
   {
     '3ico71tb': {
-      'es': 'Meraki Tales',
-      'en': 'Meraki Tales',
+      'es': 'Abuela Meraki',
+      'en': 'Grandma Meraki',
     },
     '6nifias4': {
       'es': 'Politica de privacidad',
@@ -183,8 +183,8 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
   // taleListMobileComponent
   {
     'li3thkua': {
-      'es': 'Meraki Tales',
-      'en': 'Meraki Tales',
+      'es': 'Abuela Meraki',
+      'en': 'Grandma Meraki',
     },
     'ks0xaoap': {
       'es': 'Historias para soñar y aprender',
@@ -210,8 +210,8 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
   // taleListLargeComponent
   {
     'r2qzxdbb': {
-      'es': 'Meraki Tales',
-      'en': 'Meraki Tales',
+      'es': 'Abuela Meraki',
+      'en': 'Grandma Meraki',
     },
     'knh5f1g0': {
       'es': 'Historias para soñar y aprender',
@@ -237,8 +237,8 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
   // taleListTabletComponent
   {
     't33crdqn': {
-      'es': 'Meraki Tales',
-      'en': 'Meraki Tales',
+      'es': 'Abuela Meraki',
+      'en': 'Grandma Meraki',
     },
     'octup6ez': {
       'es': 'Historias para soñar y aprender',
