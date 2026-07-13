@@ -7,9 +7,9 @@ import 'backend/firebase/firebase_config.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
+import 'services/subscription_service.dart';
 
 import '/flutter_flow/admob_util.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,8 +27,21 @@ void main() async {
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => appState,
+  final premiumProvider = PremiumProvider();
+  await premiumProvider.init();
+
+  // Listen to premium transitions and clean up loaded ads:
+  premiumProvider.addListener(() {
+    if (premiumProvider.isPremium) {
+      clearLoadedInterstitialAd();
+    }
+  });
+
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(value: appState),
+      ChangeNotifierProvider.value(value: premiumProvider),
+    ],
     child: MyApp(),
   ));
 }
