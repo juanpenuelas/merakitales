@@ -94,6 +94,7 @@ dependencies:
   firebase_storage: ^12.4.7
   cloud_functions: ^5.5.2
   file_picker: ^11.0.2
+  purchases_flutter: ^6.8.0
 
 dependency_overrides:
   http: 1.4.0
