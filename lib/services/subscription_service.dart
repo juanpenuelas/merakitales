@@ -10,6 +10,9 @@ class PurchasesWrapper {
   void addCustomerInfoUpdateListener(void Function(CustomerInfo) listener) =>
       Purchases.addCustomerInfoUpdateListener(listener);
   Future<void> setLogLevel(LogLevel level) => Purchases.setLogLevel(level);
+  Future<Offerings> getOfferings() => Purchases.getOfferings();
+  Future<CustomerInfo> purchasePackage(Package package) => Purchases.purchasePackage(package);
+  Future<CustomerInfo> restorePurchases() => Purchases.restorePurchases();
 }
 
 class PremiumProvider extends ChangeNotifier {
@@ -74,6 +77,49 @@ class PremiumProvider extends ChangeNotifier {
       } catch (e) {
         debugPrint("Failed to write premium status to cache: $e");
       }
+    }
+  }
+
+  Offerings? _offerings;
+  Offerings? get offerings => _offerings;
+  bool _isLoadingOfferings = false;
+  bool get isLoadingOfferings => _isLoadingOfferings;
+
+  Future<void> loadOfferings() async {
+    if (kIsWeb) return;
+    _isLoadingOfferings = true;
+    notifyListeners();
+    try {
+      _offerings = await _purchases.getOfferings();
+    } catch (e) {
+      debugPrint("Failed to load RevenueCat offerings: $e");
+    } finally {
+      _isLoadingOfferings = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> purchasePackage(Package package) async {
+    if (kIsWeb) return false;
+    try {
+      final customerInfo = await _purchases.purchasePackage(package);
+      await _updateWithCustomerInfo(customerInfo);
+      return customerInfo.entitlements.all[RevenueCatConfig.entitlementId]?.isActive ?? false;
+    } catch (e) {
+      debugPrint("Purchase failed: $e");
+      return false;
+    }
+  }
+
+  Future<bool> restorePurchases() async {
+    if (kIsWeb) return false;
+    try {
+      final customerInfo = await _purchases.restorePurchases();
+      await _updateWithCustomerInfo(customerInfo);
+      return customerInfo.entitlements.all[RevenueCatConfig.entitlementId]?.isActive ?? false;
+    } catch (e) {
+      debugPrint("Restore failed: $e");
+      return false;
     }
   }
 }

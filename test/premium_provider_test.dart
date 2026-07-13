@@ -13,6 +13,12 @@ class MockPurchasesWrapper implements PurchasesWrapper {
   int configureCallCount = 0;
   bool throwOnGetCustomerInfo = false;
   bool throwOnConfigure = false;
+  bool throwOnGetOfferings = false;
+  bool throwOnPurchase = false;
+  bool throwOnRestore = false;
+  Offerings? mockOfferings;
+  CustomerInfo? mockPurchaseResult;
+  CustomerInfo? mockRestoreResult;
 
   MockPurchasesWrapper({
     required this.initialCustomerInfo,
@@ -45,6 +51,30 @@ class MockPurchasesWrapper implements PurchasesWrapper {
   @override
   Future<void> setLogLevel(LogLevel level) async {
     configuredLogLevel = level;
+  }
+
+  @override
+  Future<Offerings> getOfferings() async {
+    if (throwOnGetOfferings) {
+      throw Exception('Get offerings failed');
+    }
+    return mockOfferings ?? Offerings(const {});
+  }
+
+  @override
+  Future<CustomerInfo> purchasePackage(Package package) async {
+    if (throwOnPurchase) {
+      throw Exception('Purchase failed');
+    }
+    return mockPurchaseResult ?? initialCustomerInfo;
+  }
+
+  @override
+  Future<CustomerInfo> restorePurchases() async {
+    if (throwOnRestore) {
+      throw Exception('Restore failed');
+    }
+    return mockRestoreResult ?? initialCustomerInfo;
   }
 
   void triggerUpdate(CustomerInfo customerInfo) {
@@ -202,5 +232,66 @@ void main() {
     await provider.init();
     expect(provider.isPremium, false);
     expect(mockPurchasesConfigError.configureCallCount, 0); // threw before count incremented or failed configure
+  });
+
+  test('loadOfferings updates offerings in provider', () async {
+    final provider = PremiumProvider(purchases: mockPurchases);
+    await provider.init();
+
+    final expectedOfferings = Offerings(const {});
+    mockPurchases.mockOfferings = expectedOfferings;
+
+    int notifyCount = 0;
+    provider.addListener(() {
+      notifyCount++;
+    });
+
+    await provider.loadOfferings();
+
+    expect(provider.offerings, expectedOfferings);
+    expect(provider.isLoadingOfferings, false);
+    expect(notifyCount, 2); // true on load start, true on load end
+  });
+
+  test('purchasePackage updates premium status on success', () async {
+    final provider = PremiumProvider(purchases: mockPurchases);
+    await provider.init();
+    expect(provider.isPremium, false);
+
+    final mockPackage = Package(
+      'premium_pkg',
+      PackageType.monthly,
+      StoreProduct('premium_pkg', 'Premium Month', 'Premium Monthly Subscription', 9.99, '9.99 USD', 'USD'),
+      PresentedOfferingContext('offering_id', null, null),
+    );
+    mockPurchases.mockPurchaseResult = createMockCustomerInfo(isPremium: true);
+
+    int notifyCount = 0;
+    provider.addListener(() {
+      notifyCount++;
+    });
+
+    final success = await provider.purchasePackage(mockPackage);
+    expect(success, true);
+    expect(provider.isPremium, true);
+    expect(notifyCount, 1);
+  });
+
+  test('restorePurchases updates premium status on success', () async {
+    final provider = PremiumProvider(purchases: mockPurchases);
+    await provider.init();
+    expect(provider.isPremium, false);
+
+    mockPurchases.mockRestoreResult = createMockCustomerInfo(isPremium: true);
+
+    int notifyCount = 0;
+    provider.addListener(() {
+      notifyCount++;
+    });
+
+    final success = await provider.restorePurchases();
+    expect(success, true);
+    expect(provider.isPremium, true);
+    expect(notifyCount, 1);
   });
 }
