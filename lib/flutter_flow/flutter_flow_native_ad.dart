@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform, kDebugMode, kProfileMode;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
+import 'package:merakitales/services/subscription_service.dart';
 
 // Global toggle for Native Ads: set to true to use AdMob test unit IDs, false for production IDs.
 const bool kNativeAdsShowTestAds = false;
@@ -24,6 +26,19 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
   static const String _iosAdUnitId = 'ca-app-pub-6049242703708474/2668880303';
   static const String _androidAdUnitId = 'ca-app-pub-6049242703708474/6416553624';
 
+  final Expando<bool> _disposedAds = Expando('disposedAds');
+
+  void _safeDisposeAd(Ad? ad) {
+    if (ad == null) return;
+    if (_disposedAds[ad] == true) return;
+    _disposedAds[ad] = true;
+    try {
+      ad.dispose();
+    } catch (e) {
+      debugPrint('Error disposing ad: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +46,14 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
   }
 
   void _scheduleRetry() {
+    if (!mounted) return;
+    try {
+      final isPremium = Provider.of<PremiumProvider>(context, listen: false).isPremium;
+      if (isPremium) {
+        return;
+      }
+    } catch (_) {}
+
     final delayMs = (1000 * (1 << _retryAttempt)).clamp(1000, 30000);
     debugPrint('[NativeAd] scheduling retry in ${delayMs}ms (attempt=${_retryAttempt + 1})');
     Future.delayed(Duration(milliseconds: delayMs), () {
@@ -45,6 +68,13 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
       // Native ads are not supported on web.
       return;
     }
+    try {
+      final isPremium = Provider.of<PremiumProvider>(context, listen: false).isPremium;
+      if (isPremium) {
+        return;
+      }
+    } catch (_) {}
+
     if (_isLoading || _isLoaded) {
       return;
     }
@@ -63,12 +93,27 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
 
     debugPrint('[NativeAd] useTestAds=$useTestAds, platform=${isAndroid ? 'android' : 'ios'}, adUnitId=$adUnitId');
 
-    final nativeAd = NativeAd(
+    _safeDisposeAd(_nativeAd);
+
+    _nativeAd = NativeAd(
       adUnitId: adUnitId,
       factoryId: 'listTile',
       request: const AdRequest(),
       listener: NativeAdListener(
         onAdLoaded: (ad) {
+          if (_nativeAd != ad) {
+            _safeDisposeAd(ad);
+            return;
+          }
+          if (!mounted) return;
+          final isPremiumNow = Provider.of<PremiumProvider>(context, listen: false).isPremium;
+          if (isPremiumNow) {
+            _safeDisposeAd(ad);
+            _nativeAd = null;
+            _isLoaded = false;
+            _isLoading = false;
+            return;
+          }
           setState(() {
             _nativeAd = ad as NativeAd;
             _isLoaded = true;
@@ -79,23 +124,53 @@ class _NativeAdListTileState extends State<NativeAdListTile> {
         onAdFailedToLoad: (ad, error) {
           debugPrint('Native Ad failed to load: $error');
           _isLoading = false;
-          ad.dispose();
+          if (_nativeAd != ad) {
+            _safeDisposeAd(ad);
+            return;
+          }
+          _safeDisposeAd(ad);
+          _nativeAd = null;
+          if (mounted) {
+            setState(() {
+              _isLoaded = false;
+            });
+          }
           // Retry on no-fill/code 1 and other transient errors.
           _scheduleRetry();
         },
       ),
     );
-    nativeAd.load();
+    _nativeAd!.load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    try {
+      final isPremium = Provider.of<PremiumProvider>(context).isPremium;
+      if (isPremium && _nativeAd != null) {
+        _safeDisposeAd(_nativeAd);
+        _nativeAd = null;
+        _isLoaded = false;
+        _isLoading = false;
+      }
+    } catch (_) {}
   }
 
   @override
   void dispose() {
-    _nativeAd?.dispose();
+    _safeDisposeAd(_nativeAd);
+    _nativeAd = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isPremium = Provider.of<PremiumProvider>(context).isPremium;
+    if (isPremium) {
+      return const SizedBox.shrink();
+    }
+
     if (kIsWeb) {
       return const SizedBox.shrink();
     }

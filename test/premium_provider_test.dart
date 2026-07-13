@@ -93,6 +93,7 @@ void main() {
     mockPurchases = MockPurchasesWrapper(
       initialCustomerInfo: createMockCustomerInfo(isPremium: false),
     );
+    PremiumProvider.isPremiumStatic = false;
   });
 
   tearDown(() {
@@ -103,6 +104,7 @@ void main() {
     final provider = PremiumProvider(purchases: mockPurchases);
     await provider.init();
     expect(provider.isPremium, false);
+    expect(PremiumProvider.isPremiumStatic, false);
   });
 
   test('PremiumProvider loads true if cache has true', () async {
@@ -113,6 +115,7 @@ void main() {
     final provider = PremiumProvider(purchases: mockPurchasesPremium);
     await provider.init();
     expect(provider.isPremium, true);
+    expect(PremiumProvider.isPremiumStatic, true);
   });
 
   test('updatePremiumStatus updates state, persists to cache and notifies listeners', () async {
@@ -126,6 +129,7 @@ void main() {
 
     await provider.updatePremiumStatus(true);
     expect(provider.isPremium, true);
+    expect(PremiumProvider.isPremiumStatic, true);
     expect(notifyCount, 1);
 
     final prefs = await SharedPreferences.getInstance();

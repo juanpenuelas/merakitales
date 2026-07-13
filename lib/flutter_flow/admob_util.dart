@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:merakitales/services/subscription_service.dart';
 export 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // Learn more about displaying interstitial ads:
@@ -14,11 +15,31 @@ const bool kInterstitialsEnabled = false;
 InterstitialAd? _interstitialAd;
 String? _loadingInterstitialAdUnitId;
 
+final Expando<bool> _disposedAds = Expando('disposedAds');
+
+void _safeDisposeAd(Ad? ad) {
+  if (ad == null) return;
+  if (_disposedAds[ad] == true) return;
+  _disposedAds[ad] = true;
+  try {
+    ad.dispose();
+  } catch (e) {
+    print('Error disposing ad: $e');
+  }
+}
+
 void loadInterstitialAd(
   String iosAdUnitId,
   String androidAdUnitId,
   bool showTestAds,
 ) {
+  if (PremiumProvider.isPremiumStatic) {
+    if (_interstitialAd != null) {
+      _safeDisposeAd(_interstitialAd);
+      _interstitialAd = null;
+    }
+    return;
+  }
   if (!kInterstitialsEnabled) {
     return;
   }
@@ -54,9 +75,19 @@ void loadInterstitialAd(
     request: AdRequest(),
     adLoadCallback: InterstitialAdLoadCallback(
       onAdLoaded: (InterstitialAd ad) {
+        if (PremiumProvider.isPremiumStatic) {
+          _safeDisposeAd(ad);
+          _loadingInterstitialAdUnitId = null;
+          return;
+        }
         if (adUnitId == _loadingInterstitialAdUnitId) {
+          if (_interstitialAd != null) {
+            _safeDisposeAd(_interstitialAd);
+          }
           _interstitialAd = ad;
           _loadingInterstitialAdUnitId = null;
+        } else {
+          _safeDisposeAd(ad);
         }
       },
       onAdFailedToLoad: (LoadAdError error) {
@@ -68,6 +99,13 @@ void loadInterstitialAd(
 }
 
 Future<bool> showInterstitialAd() async {
+  if (PremiumProvider.isPremiumStatic) {
+    if (_interstitialAd != null) {
+      _safeDisposeAd(_interstitialAd);
+      _interstitialAd = null;
+    }
+    return true;
+  }
   if (!kInterstitialsEnabled) {
     // Pretend success so the app flow is unaffected and counters can reset.
     return true;
@@ -82,13 +120,13 @@ Future<bool> showInterstitialAd() async {
   final completer = Completer<bool>();
   _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
     onAdDismissedFullScreenContent: (InterstitialAd ad) {
-      ad.dispose();
+      _safeDisposeAd(ad);
       _interstitialAd = null;
       completer.complete(true);
     },
     onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
       print('$ad onAdFailedToShowFullScreenContent: $error');
-      ad.dispose();
+      _safeDisposeAd(ad);
       _interstitialAd = null;
       completer.complete(false);
     },
@@ -144,4 +182,12 @@ void adMobUpdateRequestConfiguration() {
     testDeviceIds: testIds,
   );
   MobileAds.instance.updateRequestConfiguration(requestConfiguration);
+}
+
+void clearLoadedInterstitialAd() {
+  if (kIsWeb) return;
+  if (_interstitialAd != null) {
+    _safeDisposeAd(_interstitialAd);
+    _interstitialAd = null;
+  }
 }

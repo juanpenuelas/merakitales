@@ -1,4 +1,3 @@
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -14,6 +13,8 @@ class PurchasesWrapper {
 }
 
 class PremiumProvider extends ChangeNotifier {
+  static bool isPremiumStatic = false;
+
   bool _isPremium = false;
   bool get isPremium => _isPremium;
   final PurchasesWrapper _purchases;
@@ -26,6 +27,7 @@ class PremiumProvider extends ChangeNotifier {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     _isPremium = _prefs?.getBool('premium_status_cached') ?? false;
+    isPremiumStatic = _isPremium;
 
     if (kIsWeb) {
       debugPrint("RevenueCat is not supported on Web.");
@@ -62,6 +64,7 @@ class PremiumProvider extends ChangeNotifier {
   }
 
   Future<void> updatePremiumStatus(bool active) async {
+    isPremiumStatic = active;
     if (_isPremium != active) {
       _isPremium = active;
       notifyListeners();
