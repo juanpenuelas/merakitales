@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_native_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/notification_service.dart';
 import 'tale_detail_tablet_component_model.dart';
 export 'tale_detail_tablet_component_model.dart';
 
@@ -172,7 +173,7 @@ class _TaleDetailTabletComponentWidgetState
   @override
   void dispose() {
     _model.maybeDispose();
-
+    NotificationService().requestPermissionsAndSubscribe();
     super.dispose();
   }
 
