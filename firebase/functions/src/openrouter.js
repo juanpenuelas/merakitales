@@ -1,12 +1,25 @@
 const axios = require("axios");
 const { jsonrepair } = require("jsonrepair");
 
+function escapeXml(unsafe) {
+  if (typeof unsafe !== 'string') return String(unsafe || '');
+  return unsafe.replace(/[<>&'"]/g, function (c) {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+    }
+  });
+}
+
 const BASE_URL = "https://openrouter.ai/api/v1";
 
 const TEXT_MODEL = "anthropic/claude-sonnet-4.6";
 const IMAGE_MODEL = "bytedance-seed/seedream-4.5";
 const TTS_EN_MODEL = "microsoft/mai-voice-2";
-const TTS_EN_VOICE = "es-MX-Valeria:MAI-Voice-2";
+const TTS_EN_VOICE = "en-US-Aria:MAI-Voice-2";
 const TTS_ES_MODEL = "microsoft/mai-voice-2";
 const TTS_ES_VOICE = "es-MX-Valeria:MAI-Voice-2";
 
@@ -104,9 +117,25 @@ async function generateImage({ prompt, feedback, apiKey }) {
 async function generateSpeech({ input, apiKey, lang = "en", voice }) {
   const model = lang === "es" ? TTS_ES_MODEL : TTS_EN_MODEL;
   const defaultVoice = lang === "es" ? TTS_ES_VOICE : TTS_EN_VOICE;
+  const targetVoice = voice || defaultVoice;
+  
+  const escapedInput = escapeXml(input);
+  const xmlLang = lang === "es" ? "es-MX" : "en-US";
+  
+  const ssmlInput = `
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${xmlLang}">
+  <voice name="${targetVoice}">
+    <mstts:express-as style="affectionate" styledegree="1.2">
+      <prosody rate="-15%" pitch="-5%">
+        ${escapedInput}
+      </prosody>
+    </mstts:express-as>
+  </voice>
+</speak>`.trim();
+
   const resp = await axios.post(
     `${BASE_URL}/audio/speech`,
-    { model, input, voice: voice || defaultVoice, response_format: "mp3" },
+    { model, input: ssmlInput, voice: targetVoice, response_format: "mp3" },
     {
       headers: { Authorization: `Bearer ${apiKey}` },
       responseType: "arraybuffer",
