@@ -8,7 +8,7 @@ const BASE_URL = "https://openrouter.ai/api/v1";
 const TEXT_MODEL = "anthropic/claude-sonnet-4.6";
 const IMAGE_MODEL = "bytedance-seed/seedream-4.5";
 const TTS_EN_MODEL = "microsoft/mai-voice-2";
-const TTS_EN_VOICE = "en-US-JennyNeural";
+const TTS_EN_VOICE = "es-MX-Valeria:MAI-Voice-2";
 const TTS_ES_MODEL = "microsoft/mai-voice-2";
 const TTS_ES_VOICE = "es-MX-Valeria:MAI-Voice-2";
 
