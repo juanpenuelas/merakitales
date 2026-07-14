@@ -28,4 +28,20 @@ function getOpenRouterApiKey() {
   return process.env.OPENROUTER_API_KEY;
 }
 
-module.exports = { db, bucket, getOpenRouterApiKey, requireAuth };
+/**
+ * Reads the Azure Speech Key from the env var mounted via secrets.
+ * @returns {string}
+ */
+function getAzureSpeechKey() {
+  return process.env.AZURE_SPEECH_KEY;
+}
+
+/**
+ * Reads the Azure Speech Region from the env var mounted via secrets.
+ * @returns {string}
+ */
+function getAzureSpeechRegion() {
+  return process.env.AZURE_SPEECH_REGION;
+}
+
+module.exports = { db, bucket, getOpenRouterApiKey, getAzureSpeechKey, getAzureSpeechRegion, requireAuth };

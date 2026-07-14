@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "merakitales-5rltbl": {
+      "hosting": {
+        "admin": [
+          "merakitales-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -16,6 +16,7 @@ const { onSchedule } = require("firebase-functions/v2/scheduler");
 setGlobalOptions({ maxInstances: 10 });
 
 const SECRETS = ["OPENROUTER_API_KEY", "ADMIN_UID"];
+const AUDIO_SECRETS = ["OPENROUTER_API_KEY", "ADMIN_UID", "AZURE_SPEECH_KEY", "AZURE_SPEECH_REGION"];
 
 exports.generateTaleText = onCall(
   { timeoutSeconds: 180, memory: "512MiB", region: "europe-west1", secrets: SECRETS },
@@ -28,7 +29,7 @@ exports.generateTaleImage = onCall(
 );
 
 exports.generateTaleAudio = onCall(
-  { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: SECRETS },
+  { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: AUDIO_SECRETS },
   generateTaleAudioHandler
 );
 
