@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../components/premium_badge_widget.dart';
 import 'home_page_model.dart';
 export 'home_page_model.dart';
 
@@ -66,7 +67,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       FlutterFlowTheme.of(context).headlineMedium.fontStyle,
                 ),
           ),
-          actions: [],
+          actions: [
+            PremiumBadgeWidget(),
+          ],
           centerTitle: false,
           elevation: 2.0,
         ),
