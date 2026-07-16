@@ -29,15 +29,9 @@ class _DraftsListPageState extends State<DraftsListPage> {
             child: Row(
               children: [
                 FilledButton.icon(
-                  onPressed: () => context.go('/drafts/new'),
+                  onPressed: () => context.go('/drafts/workspace'),
                   icon: const Icon(Icons.add),
-                  label: const Text('Nuevo cuento'),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                OutlinedButton.icon(
-                  onPressed: () => context.go('/drafts/manual'),
-                  icon: const Icon(Icons.edit_note),
-                  label: const Text('Crear a mano'),
+                  label: const Text('Workspace (IA y Manual)'),
                 ),
                 const Spacer(),
                 TextButton.icon(
@@ -78,7 +72,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
             itemBuilder: (c, i) {
               final d = drafts[i];
               return AppCard(
-                onTap: () => context.go('/drafts/${d.id}'),
+                onTap: () => context.go('/drafts/workspace/${d.id}'),
                 child: Row(
                   children: [
                     ClipRRect(

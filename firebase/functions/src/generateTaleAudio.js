@@ -1,5 +1,5 @@
-const { db, bucket, getOpenRouterApiKey, requireAuth } = require("./admin");
-const { generateSpeech } = require("./openrouter");
+const { db, bucket, getAzureSpeechKey, getAzureSpeechRegion, requireAuth } = require("./admin");
+const { generateSpeechFromAzure } = require("./azure_tts");
 const { uploadBuffer } = require("./storage");
 
 /**
@@ -8,7 +8,8 @@ const { uploadBuffer } = require("./storage");
  */
 async function generateTaleAudioHandler(req) {
   requireAuth(req);
-  const apiKey = getOpenRouterApiKey();
+  const apiKey = getAzureSpeechKey();
+  const region = getAzureSpeechRegion();
   const { draftId, lang, feedback = null } = req.data || {};
   if (!draftId) {
     const { HttpsError } = require("firebase-functions/v2/https");
@@ -38,7 +39,7 @@ async function generateTaleAudioHandler(req) {
   }
 
   try {
-    const audioBuffer = await generateSpeech({ input: text, lang, feedback, apiKey });
+    const audioBuffer = await generateSpeechFromAzure({ input: text, lang, apiKey, region });
     const rawAudioUrl = await uploadBuffer({
       bucket,
       path: `drafts/${draftId}/audio_${lang}.mp3`,

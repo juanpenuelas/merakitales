@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'theme/app_theme.dart';
 import 'auth/auth_gate.dart';
 import 'login/login_page.dart';
+import 'dashboard/dashboard_page.dart';
+import 'widgets/admin_scaffold.dart';
 import 'drafts/drafts_list_page.dart';
-import 'drafts/draft_detail_page.dart';
-import 'drafts/draft_create_page.dart';
-import 'drafts/draft_create_manual_page.dart';
+import 'drafts/draft_workspace_page.dart';
 import 'published/published_list_page.dart';
 import 'published/published_tale_detail_page.dart';
 import 'categories/categories_page.dart';
@@ -35,52 +35,60 @@ class MerakiAdminApp extends StatelessWidget {
 
   GoRouter _buildRouter(bool authed) {
     return GoRouter(
-      initialLocation: '/drafts',
+      initialLocation: '/dashboard',
       redirect: (context, state) {
         final onLogin = state.matchedLocation == '/login';
         if (!authed && !onLogin) return '/login';
-        if (authed && onLogin) return '/drafts';
+        if (authed && onLogin) return '/dashboard';
         return null;
       },
       routes: [
         GoRoute(path: '/login', builder: (c, s) => const LoginPage()),
-        GoRoute(
-          path: '/drafts',
-          builder: (c, s) => const DraftsListPage(),
+        ShellRoute(
+          builder: (context, state, child) => AdminScaffold(child: child),
           routes: [
-            GoRoute(path: 'new', builder: (c, s) => const DraftCreatePage()),
             GoRoute(
-              path: 'manual',
-              builder: (c, s) => const DraftCreateManualPage(),
+              path: '/dashboard',
+              builder: (c, s) => const DashboardPage(),
+            ),
+            GoRoute(
+              path: '/drafts',
+              builder: (c, s) => const DraftsListPage(),
               routes: [
-                GoRoute(path: ':id', builder: (c, s) => DraftCreateManualPage(draftId: s.pathParameters['id'])),
+                GoRoute(
+                  path: 'workspace',
+                  builder: (c, s) => const DraftWorkspacePage(),
+                ),
+                GoRoute(
+                  path: 'workspace/:id',
+                  builder: (c, s) => DraftWorkspacePage(draftId: s.pathParameters['id']),
+                ),
               ],
             ),
-            GoRoute(path: ':id', builder: (c, s) => DraftDetailPage(draftId: s.pathParameters['id']!)),
-          ],
-        ),
-        GoRoute(
-          path: '/published',
-          builder: (c, s) => const PublishedListPage(),
-          routes: [
             GoRoute(
-              path: ':taleId',
-              builder: (c, s) {
-                final taleId = int.tryParse(s.pathParameters['taleId']!);
-                if (taleId == null) {
-                  return Scaffold(
-                    appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => c.go('/published'))),
-                    body: const Center(child: Text('ID de cuento inválido')),
-                  );
-                }
-                return PublishedTaleDetailPage(taleId: taleId);
-              },
+              path: '/published',
+              builder: (c, s) => const PublishedListPage(),
+              routes: [
+                GoRoute(
+                  path: ':taleId',
+                  builder: (c, s) {
+                    final taleId = int.tryParse(s.pathParameters['taleId']!);
+                    if (taleId == null) {
+                      return Scaffold(
+                        appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => c.go('/published'))),
+                        body: const Center(child: Text('ID de cuento inválido')),
+                      );
+                    }
+                    return PublishedTaleDetailPage(taleId: taleId);
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
+              path: '/categories',
+              builder: (c, s) => const CategoriesPage(),
             ),
           ],
-        ),
-        GoRoute(
-          path: '/categories',
-          builder: (c, s) => const CategoriesPage(),
         ),
       ],
     );

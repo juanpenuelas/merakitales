@@ -29,7 +29,7 @@ exports.generateTaleImage = onCall(
 );
 
 exports.generateTaleAudio = onCall(
-  { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: SECRETS },
+  { timeoutSeconds: 60, memory: "512MiB", region: "europe-west1", secrets: AUDIO_SECRETS },
   generateTaleAudioHandler
 );
 
