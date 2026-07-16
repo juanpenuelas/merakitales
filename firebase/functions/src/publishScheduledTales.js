@@ -27,8 +27,7 @@ async function publishScheduledTalesHandler(event) {
       const taleId = await publishDraft(doc.id, "system-cron");
       console.log(`Successfully published draft ${doc.id} as tale ${taleId}.`);
       
-      // TODO: Here is where we will trigger Push Notifications to users in the future
-      
+      // FCM push notifications are dispatched inside publishDraft().
     } catch (e) {
       console.error(`Failed to publish scheduled draft ${doc.id}:`, e);
       // Optional: Update draft to a "failed" status so it doesn't get stuck in a loop
