@@ -4,6 +4,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/drafts_service.dart';
 import '../models/draft.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../widgets/app_card.dart';
+import '../widgets/status_badge.dart';
 
 class DraftDetailPage extends StatefulWidget {
   const DraftDetailPage({super.key, required this.draftId});
@@ -44,16 +48,6 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
     }
   }
 
-  String _stepLabel(String step) {
-    switch (step) {
-      case 'text': return 'Texto pendiente de aprobar';
-      case 'image': return 'Imagen pendiente de aprobar';
-      case 'audio': return 'Audio pendiente de aprobar';
-      case 'approved': return 'Publicado';
-      default: return step;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Draft?>(
@@ -70,19 +64,17 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
           appBar: AppBar(
             title: Text(name),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(20),
+              preferredSize: const Size.fromHeight(48),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                 child: Row(
                   children: [
-                    const Icon(Icons.fiber_manual_record, size: 10, color: Colors.green),
-                    const SizedBox(width: 6),
-                    Text('Paso: ${_stepLabel(d.step)}', style: const TextStyle(fontSize: 12)),
+                    StatusBadge.step(d.step),
                     if (d.retractedFromTaleId != null) ...[
-                      const SizedBox(width: 12),
-                      const Icon(Icons.history, size: 12, color: Colors.orange),
+                      const SizedBox(width: AppSpacing.sm),
+                      StatusBadge.retracted(),
                       const SizedBox(width: 4),
-                      Text('retractado de tale_id=${d.retractedFromTaleId}', style: const TextStyle(fontSize: 11, color: Colors.orange)),
+                      Text('de tale_id=${d.retractedFromTaleId}', style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ],
                 ),
@@ -94,62 +86,82 @@ class _DraftDetailPageState extends State<DraftDetailPage> {
                 onPressed: (i) => setState(() => _es = i == 0),
                 children: const [Text('ES'), Text('EN')],
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
             ],
           ),
           body: _busy
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 720),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              d.imageUrl,
-                              errorBuilder: (c, e, s) => Container(
-                                height: 200,
-                                color: Colors.grey.shade200,
-                                child: const Center(child: Icon(Icons.broken_image, size: 48)),
+                          AppCard(
+                            padding: EdgeInsets.zero,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                d.imageUrl,
+                                errorBuilder: (c, e, s) => Container(
+                                  height: 200,
+                                  color: Colors.grey.shade200,
+                                  child: const Center(child: Icon(Icons.broken_image, size: 48)),
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Text('Descripción', style: Theme.of(context).textTheme.titleSmall),
-                          Text(desc),
-                          const SizedBox(height: 16),
-                          Text('Texto del cuento', style: Theme.of(context).textTheme.titleSmall),
-                          Text(spec, style: const TextStyle(fontSize: 18, height: 1.5)),
-                          const SizedBox(height: 16),
-                          Text("Audio (${_es ? 'ES' : 'EN'})", style: Theme.of(context).textTheme.titleSmall),
-                          if (audio.isNotEmpty)
-                            InkWell(
-                              onTap: () => launchUrl(Uri.parse(audio)),
-                              child: const Row(children: [Icon(Icons.play_circle, size: 32), SizedBox(width: 8), Text('Reproducir audio')]),
-                            )
-                          else
-                            const Text('Sin audio'),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: AppSpacing.md),
+                          AppCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Descripción', style: Theme.of(context).textTheme.titleSmall),
+                                const SizedBox(height: 4),
+                                Text(desc),
+                                const SizedBox(height: AppSpacing.md),
+                                Text('Texto del cuento', style: Theme.of(context).textTheme.titleSmall),
+                                const SizedBox(height: 4),
+                                Text(spec, style: const TextStyle(fontSize: 18, height: 1.5)),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Audio (${_es ? 'ES' : 'EN'})", style: Theme.of(context).textTheme.titleSmall),
+                                const SizedBox(height: 4),
+                                if (audio.isNotEmpty)
+                                  InkWell(
+                                    onTap: () => launchUrl(Uri.parse(audio)),
+                                    child: const Row(children: [Icon(Icons.play_circle, size: 32), SizedBox(width: 8), Text('Reproducir audio')]),
+                                  )
+                                else
+                                  const Text('Sin audio'),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
                           if (d.step != 'audio')
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                               child: Text(
                                 'Este borrador aún no ha completado los 3 pasos (texto, imagen, audio ES/EN) y no se puede publicar todavía.',
-                                style: TextStyle(color: Colors.orange.shade800, fontSize: 12),
+                                style: TextStyle(color: AppColors.warning, fontSize: 12),
                               ),
                             ),
                           Row(
                             children: [
                               OutlinedButton(
                                 onPressed: () => _reject(d.id),
-                                style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                                style: OutlinedButton.styleFrom(foregroundColor: AppColors.destructive),
                                 child: const Text('Rechazar'),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: AppSpacing.sm),
                               if (d.step == 'audio')
                                 FilledButton.icon(
                                   onPressed: () => _approve(d.id),

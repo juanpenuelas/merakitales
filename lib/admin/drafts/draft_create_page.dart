@@ -4,6 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/drafts_service.dart';
 import '../models/draft.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
+import '../widgets/app_card.dart';
 
 class DraftCreatePage extends StatefulWidget {
   const DraftCreatePage({super.key});
@@ -153,33 +156,35 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
 
   Widget _buildStep1() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Paso 1: Texto', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text('Tema (opcional) y feedback para la IA (opcional).'),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _themeController,
-            decoration: const InputDecoration(labelText: 'Tema', hintText: 'amistad, valentía, naturaleza…'),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _feedback1Controller,
-            decoration: const InputDecoration(labelText: 'Feedback (opcional)', hintText: 'hazlo más corto, el protagonista debe ser un oso…'),
-            maxLines: 3,
-          ),
-          const SizedBox(height: 20),
-          FilledButton.icon(
-            onPressed: _generatingText ? null : _generateText,
-            icon: _generatingText
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.auto_awesome),
-            label: const Text('Generar texto'),
-          ),
-        ],
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Paso 1: Texto', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: AppSpacing.sm),
+            const Text('Tema (opcional) y feedback para la IA (opcional).'),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: _themeController,
+              decoration: const InputDecoration(labelText: 'Tema', hintText: 'amistad, valentía, naturaleza…'),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            TextField(
+              controller: _feedback1Controller,
+              decoration: const InputDecoration(labelText: 'Feedback (opcional)', hintText: 'hazlo más corto, el protagonista debe ser un oso…'),
+              maxLines: 3,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton.icon(
+              onPressed: _generatingText ? null : _generateText,
+              icon: _generatingText
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.auto_awesome),
+              label: const Text('Generar texto'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -187,101 +192,123 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
   Widget _buildLaterSteps() {
     final d = _draft!;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Text('Cuento: ${d.nameEs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Cuento: ${d.nameEs}', style: Theme.of(context).textTheme.titleMedium),
           if (d.retractedFromTaleId != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text('Retractado de tale_id=${d.retractedFromTaleId}', style: const TextStyle(color: Colors.orange)),
+              child: Text('Retractado de tale_id=${d.retractedFromTaleId}', style: const TextStyle(color: AppColors.warning)),
             ),
-          const Divider(height: 32),
+          const SizedBox(height: AppSpacing.md),
 
           // Step 1: Text (editable)
-          const Text('Paso 1: Texto (editable)', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          _editableTextField(
-            label: 'Cuento en español',
-            initial: d.specificationsEs,
-            onChanged: (v) => d.specificationsEs.length,
-            onSaved: (newText) => _saveDraftText('es', newText),
-          ),
-          const SizedBox(height: 12),
-          _editableTextField(
-            label: 'Cuento en inglés',
-            initial: d.specificationsEn,
-            onChanged: (v) => v.length,
-            onSaved: (newText) => _saveDraftText('en', newText),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _feedback1Controller,
-            decoration: const InputDecoration(labelText: 'Feedback para regenerar', hintText: 'hazlo más largo, cambia el protagonista…'),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: _generatingText ? null : _regenerateText,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Regenerar texto con feedback'),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Paso 1: Texto (editable)', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: AppSpacing.sm),
+                _editableTextField(
+                  label: 'Cuento en español',
+                  initial: d.specificationsEs,
+                  onChanged: (v) => d.specificationsEs.length,
+                  onSaved: (newText) => _saveDraftText('es', newText),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                _editableTextField(
+                  label: 'Cuento en inglés',
+                  initial: d.specificationsEn,
+                  onChanged: (v) => v.length,
+                  onSaved: (newText) => _saveDraftText('en', newText),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                TextField(
+                  controller: _feedback1Controller,
+                  decoration: const InputDecoration(labelText: 'Feedback para regenerar', hintText: 'hazlo más largo, cambia el protagonista…'),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: _generatingText ? null : _regenerateText,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Regenerar texto con feedback'),
+                ),
+              ],
+            ),
           ),
 
-          const Divider(height: 32),
+          const SizedBox(height: AppSpacing.md),
 
           // Step 2: Image
-          const Text('Paso 2: Imagen', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          if (d.imageUrl.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(d.imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity),
-            )
-          else
-            const Text('(sin imagen aún)'),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _feedback2Controller,
-            decoration: const InputDecoration(labelText: 'Feedback para regenerar imagen', hintText: 'más brillante, sin fondo, personaje a la izquierda…'),
-            maxLines: 2,
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              if (d.imageUrl.isEmpty)
-                FilledButton.icon(
-                  onPressed: _generatingImage ? null : _approveTextAndGenerateImage,
-                  icon: _generatingImage
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.image),
-                  label: const Text('Aprobar texto y generar imagen'),
-                )
-              else
-                OutlinedButton.icon(
-                  onPressed: _generatingImage ? null : _regenerateImage,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Regenerar imagen'),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Paso 2: Imagen', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: AppSpacing.sm),
+                if (d.imageUrl.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(d.imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity),
+                  )
+                else
+                  const Text('(sin imagen aún)'),
+                const SizedBox(height: AppSpacing.sm),
+                TextField(
+                  controller: _feedback2Controller,
+                  decoration: const InputDecoration(labelText: 'Feedback para regenerar imagen', hintText: 'más brillante, sin fondo, personaje a la izquierda…'),
+                  maxLines: 2,
                 ),
-            ],
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    if (d.imageUrl.isEmpty)
+                      FilledButton.icon(
+                        onPressed: _generatingImage ? null : _approveTextAndGenerateImage,
+                        icon: _generatingImage
+                            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Icon(Icons.image),
+                        label: const Text('Aprobar texto y generar imagen'),
+                      )
+                    else
+                      OutlinedButton.icon(
+                        onPressed: _generatingImage ? null : _regenerateImage,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Regenerar imagen'),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
 
-          const Divider(height: 32),
+          const SizedBox(height: AppSpacing.md),
 
           // Step 3: Audio
-          const Text('Paso 3: Audio', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          _audioRow('es', d.audioUrlEs, _generatingAudioEs),
-          const SizedBox(height: 8),
-          _audioRow('en', d.audioUrlEn, _generatingAudioEn),
-          const SizedBox(height: 16),
-          if (d.audioUrlEs.isNotEmpty && d.audioUrlEn.isNotEmpty)
-            FilledButton.icon(
-              onPressed: _approveAndPublish,
-              icon: const Icon(Icons.publish),
-              label: const Text('Aprobar y publicar'),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Paso 3: Audio', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: AppSpacing.sm),
+                _audioRow('es', d.audioUrlEs, _generatingAudioEs),
+                const SizedBox(height: AppSpacing.sm),
+                _audioRow('en', d.audioUrlEn, _generatingAudioEn),
+                if (d.audioUrlEs.isNotEmpty && d.audioUrlEn.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  FilledButton.icon(
+                    onPressed: _approveAndPublish,
+                    icon: const Icon(Icons.publish),
+                    label: const Text('Aprobar y publicar'),
+                  ),
+                ],
+              ],
             ),
+          ),
         ],
       ),
     );
@@ -305,9 +332,9 @@ class _DraftCreatePageState extends State<DraftCreatePage> {
             maxLines: 8,
           ),
           const SizedBox(height: 4),
-          Text('${_wordCount(controller.text)} palabras', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text('${_wordCount(controller.text)} palabras', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
           if (_wordCount(controller.text) < 200 || _wordCount(controller.text) > 600)
-            const Text('⚠️ Los cuentos existentes tienen 300-500 palabras', style: TextStyle(fontSize: 12, color: Colors.orange)),
+            const Text('⚠️ Los cuentos existentes tienen 300-500 palabras', style: TextStyle(fontSize: 12, color: AppColors.warning)),
           const SizedBox(height: 4),
           OutlinedButton(
             onPressed: () async {
