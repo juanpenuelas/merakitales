@@ -20,6 +20,10 @@ class PremiumProvider extends ChangeNotifier {
 
   bool _isPremium = false;
   bool get isPremium => _isPremium;
+  
+  CustomerInfo? _customerInfo;
+  CustomerInfo? get customerInfo => _customerInfo;
+
   final PurchasesWrapper _purchases;
   SharedPreferences? _prefs;
 
@@ -62,8 +66,16 @@ class PremiumProvider extends ChangeNotifier {
   }
 
   Future<void> _updateWithCustomerInfo(CustomerInfo customerInfo) async {
+    _customerInfo = customerInfo;
     final active = customerInfo.entitlements.all[RevenueCatConfig.entitlementId]?.isActive ?? false;
+    
+    final wasPremium = _isPremium;
     await updatePremiumStatus(active);
+    
+    // If updatePremiumStatus didn't trigger a notification, trigger one for the customerInfo update
+    if (wasPremium == active) {
+      notifyListeners();
+    }
   }
 
   Future<void> updatePremiumStatus(bool active) async {

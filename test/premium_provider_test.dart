@@ -294,4 +294,23 @@ void main() {
     expect(provider.isPremium, true);
     expect(notifyCount, 1);
   });
+
+  test('PremiumProvider exposes and updates customerInfo', () async {
+    final provider = PremiumProvider(purchases: mockPurchases);
+    await provider.init();
+    
+    expect(provider.customerInfo, isNotNull);
+
+    final updatedCustomerInfo = createMockCustomerInfo(isPremium: true);
+    
+    int notifyCount = 0;
+    provider.addListener(() {
+      notifyCount++;
+    });
+
+    mockPurchases.triggerUpdate(updatedCustomerInfo);
+    
+    expect(provider.customerInfo, equals(updatedCustomerInfo));
+    expect(notifyCount, 1);
+  });
 }
