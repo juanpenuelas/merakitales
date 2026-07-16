@@ -70,6 +70,7 @@ jest.mock("../src/admin", () => {
     requireAuth: jest.fn(),
     __sets: sets,
     __deletes: deletes,
+    __esDoc: esDoc,
   };
 });
 
@@ -109,5 +110,28 @@ describe("retractTale", () => {
     const req = { data: { taleId: 31 }, auth: { uid: "admin" } };
     await retractTaleHandler(req);
     expect(admin.requireAuth).toHaveBeenCalledWith(req);
+  });
+
+  test("propagates is_premium_tale: true from the published tale to the new draft", async () => {
+    const admin = require("../src/admin");
+    admin.__sets.length = 0;
+    admin.__deletes.length = 0;
+    admin.__esDoc.is_premium_tale = true;
+    try {
+      await retractTaleHandler({ data: { taleId: 31 }, auth: { uid: "admin" } });
+      const draftSets = admin.__sets.filter((s) => s.name === "tale_drafts");
+      expect(draftSets[0].d.is_premium_tale).toBe(true);
+    } finally {
+      delete admin.__esDoc.is_premium_tale;
+    }
+  });
+
+  test("defaults is_premium_tale to false when the published tale has no such field", async () => {
+    const admin = require("../src/admin");
+    admin.__sets.length = 0;
+    admin.__deletes.length = 0;
+    await retractTaleHandler({ data: { taleId: 31 }, auth: { uid: "admin" } });
+    const draftSets = admin.__sets.filter((s) => s.name === "tale_drafts");
+    expect(draftSets[0].d.is_premium_tale).toBe(false);
   });
 });
