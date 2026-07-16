@@ -9,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/notification_service.dart';
+import 'package:provider/provider.dart';
+import '../services/subscription_service.dart';
+import '../services/weekly_read_limit_service.dart';
+import '../pages/subscription_page/subscription_page_widget.dart';
 import 'tale_detail_tablet_component_model.dart';
 export 'tale_detail_tablet_component_model.dart';
 
@@ -38,10 +42,102 @@ class _TaleDetailTabletComponentWidgetState
     _model.onUpdate();
   }
 
+  String _truncateToWords(String text, int wordLimit) {
+    final words = text.split(RegExp(r'\s+'));
+    if (words.length <= wordLimit) return text;
+    return words.take(wordLimit).join(' ') + '...';
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => TaleDetailTabletComponentModel());
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final isPremium = context.read<PremiumProvider>().isPremium;
+      if (!isPremium && widget.taleDetailParameter != null) {
+        final taleId = widget.taleDetailParameter!.taleId;
+        final service = WeeklyReadLimitService();
+        final canRead = await service.canRead(taleId);
+        
+        if (canRead) {
+          await service.recordRead(taleId);
+        } else {
+          showModalBottomSheet(
+            context: context,
+            isDismissible: false,
+            enableDrag: false,
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Límite semanal alcanzado',
+                      style: FlutterFlowTheme.of(context).headlineSmall.override(
+                        font: GoogleFonts.outfit(),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                      'Has alcanzado el límite semanal de 7 cuentos gratis. Vuelve el lunes o hazte Premium.',
+                      textAlign: TextAlign.center,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        font: GoogleFonts.readexPro(),
+                        color: Colors.black54,
+                      ),
+                    ),
+                    SizedBox(height: 24.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close bottom sheet
+                        Navigator.pop(context); // Close tale detail
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SubscriptionPageWidget(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: FlutterFlowTheme.of(context).primary,
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: Text(
+                        'Hazte Premium',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(height: 12.0),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Volver'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        }
+      }
+    });
 
     animationsMap.addAll({
       'imageOnPageLoadAnimation': AnimationInfo(
@@ -179,6 +275,10 @@ class _TaleDetailTabletComponentWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final isPremium = context.watch<PremiumProvider>().isPremium;
+    final isPremiumTale = widget.taleDetailParameter?.isPremiumTale ?? false;
+    final showPremiumTeaser = isPremiumTale && !isPremium;
+
     return Container(
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -336,7 +436,7 @@ class _TaleDetailTabletComponentWidgetState
                                           widget.taleDetailParameter?.audioUrl,
                                           'name',
                                         ) !=
-                                        '')
+                                        '' && !showPremiumTeaser)
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         4.0, 8.0, 4.0, 8.0),
@@ -410,16 +510,81 @@ class _TaleDetailTabletComponentWidgetState
                                           .disabledRestoreOnForeground,
                                     ),
                                   ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      4.0, 10.0, 4.0, 0.0),
-                                  child: Text(
-                                    widget.taleDetailParameter!.specifications,
-                                    textAlign: TextAlign.start,
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          font: GoogleFonts.readexPro(
+                                if (showPremiumTeaser)
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(4.0, 10.0, 4.0, 0.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        ShaderMask(
+                                          shaderCallback: (rect) {
+                                            return LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [Colors.black, Colors.transparent],
+                                            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                                          },
+                                          blendMode: BlendMode.dstIn,
+                                          child: Text(
+                                            _truncateToWords(widget.taleDetailParameter?.specifications ?? '', 100),
+                                            textAlign: TextAlign.start,
+                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  font: GoogleFonts.readexPro(
+                                                    fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                  ),
+                                                  fontSize: 24.0,
+                                                ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 16),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => const SubscriptionPageWidget(),
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: FlutterFlowTheme.of(context).primary,
+                                            padding: EdgeInsets.symmetric(vertical: 16),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Desbloquear Cuento',
+                                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        SizedBox(height: 16),
+                                      ],
+                                    ),
+                                  ).animateOnPageLoad(animationsMap['textOnPageLoadAnimation3']!)
+                                else
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        4.0, 10.0, 4.0, 0.0),
+                                    child: Text(
+                                      widget.taleDetailParameter!.specifications,
+                                      textAlign: TextAlign.start,
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            font: GoogleFonts.readexPro(
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
+                                            fontSize: 24.0,
+                                            letterSpacing: 0.0,
                                             fontWeight:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMedium
@@ -429,20 +594,9 @@ class _TaleDetailTabletComponentWidgetState
                                                     .bodyMedium
                                                     .fontStyle,
                                           ),
-                                          fontSize: 24.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontWeight,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .bodyMedium
-                                                  .fontStyle,
-                                        ),
-                                  ).animateOnPageLoad(animationsMap[
-                                      'textOnPageLoadAnimation3']!),
-                                ),
+                                    ).animateOnPageLoad(animationsMap[
+                                        'textOnPageLoadAnimation3']!),
+                                  ),
                                 Divider(
                                   height: 32.0,
                                   thickness: 1.0,

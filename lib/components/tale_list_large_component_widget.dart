@@ -86,10 +86,12 @@ class _TaleListLargeComponentWidgetState
                         color: Color(0x3E000000),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
+                      child: SafeArea(
+                        bottom: false,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 30.0, 0.0, 0.0),
                             child: Column(
@@ -178,7 +180,8 @@ class _TaleListLargeComponentWidgetState
                     ),
                   ),
                 ),
-                Expanded(
+              ),
+              Expanded(
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -382,17 +385,61 @@ class _TaleListLargeComponentWidgetState
                                                         EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 1.0,
                                                                 1.0, 1.0),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6.0),
-                                                      child: Image.network(
-                                                        listViewTalesRecord
-                                                            .imageUrl640px,
-                                                        width: double.infinity,
-                                                        height: 400.0,
-                                                        fit: BoxFit.cover,
-                                                      ),
+                                                    child: Stack(
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  6.0),
+                                                          child: Image.network(
+                                                            listViewTalesRecord
+                                                                .imageUrl640px,
+                                                            width: double.infinity,
+                                                            height: 400.0,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                        if (listViewTalesRecord.isPremiumTale)
+                                                          Positioned(
+                                                            top: 8.0,
+                                                            right: 8.0,
+                                                            child: Container(
+                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                              decoration: BoxDecoration(
+                                                                color: FlutterFlowTheme.of(context).primary,
+                                                                borderRadius: BorderRadius.circular(12.0),
+                                                              ),
+                                                              child: Text(
+                                                                '⭐ PREMIUM',
+                                                                style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                  font: GoogleFonts.plusJakartaSans(),
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        if (listViewTalesRecord.createdAt != null && DateTime.now().difference(listViewTalesRecord.createdAt!).inDays <= 7)
+                                                          Positioned(
+                                                            top: 8.0,
+                                                            left: 8.0,
+                                                            child: Container(
+                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.orange,
+                                                                borderRadius: BorderRadius.circular(12.0),
+                                                              ),
+                                                              child: Text(
+                                                                '✨ NUEVO',
+                                                                style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                                  font: GoogleFonts.plusJakartaSans(),
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
                                                     ),
                                                   ),
                                                   Padding(

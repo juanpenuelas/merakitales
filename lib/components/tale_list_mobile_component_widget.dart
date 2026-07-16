@@ -90,10 +90,12 @@ class _TaleListMobileComponentWidgetState
                         color: Color(0x3E000000),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
+                      child: SafeArea(
+                        bottom: false,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 0.0, 30.0, 0.0, 0.0),
                             child: Column(
@@ -174,10 +176,11 @@ class _TaleListMobileComponentWidgetState
                                             .fontStyle,
                                       ),
                                 ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -240,16 +243,90 @@ class _TaleListMobileComponentWidgetState
                   isSearchable: false,
                   isMultiSelect: false,
                 ),
+                StreamBuilder<List<CategoriesRecord>>(
+                  stream: queryCategoriesRecord(
+                    queryBuilder: (c) => c.orderBy('sort_order'),
+                  ),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox.shrink();
+                    final categories = snapshot.data!;
+                    if (categories.isEmpty) return const SizedBox.shrink();
+                    
+                    return SizedBox(
+                      height: 50.0,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length + 1,
+                        itemBuilder: (context, index) {
+                          final isAll = index == 0;
+                          final category = isAll ? null : categories[index - 1];
+                          final isSelected = isAll 
+                              ? _model.selectedCategorySlug == null 
+                              : _model.selectedCategorySlug == category?.slug;
+                              
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _model.selectedCategorySlug = isAll ? null : category?.slug;
+                                  _model.listViewPagingController?.refresh();
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected 
+                                      ? FlutterFlowTheme.of(context).primary 
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected 
+                                        ? FlutterFlowTheme.of(context).primary 
+                                        : const Color(0xFFE0E3E7),
+                                  ),
+                                ),
+                                child: Text(
+                                  isAll 
+                                      ? 'Todos' 
+                                      : '${category!.emoji} ${FFLocalizations.of(context).languageCode == 'en' ? category.nameEn : category.nameEs}',
+                                  style: TextStyle(
+                                    color: isSelected ? Colors.white : const Color(0xFF14181B),
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
                 Expanded(
                   child: PagedListView<DocumentSnapshot<Object?>?, TalesRecord>(
                     pagingController: _model.setListViewController(
-                      TalesRecord.collection
-                          .where(
-                            'lang',
-                            isEqualTo:
-                                '${FFLocalizations.of(context).languageCode}',
-                          )
-                          .orderBy('tale_id', descending: true),
+                      (_model.selectedCategorySlug == null)
+                        ? TalesRecord.collection
+                            .where(
+                              'lang',
+                              isEqualTo:
+                                  '${FFLocalizations.of(context).languageCode}',
+                            )
+                            .orderBy('tale_id', descending: true)
+                        : TalesRecord.collection
+                            .where(
+                              'lang',
+                              isEqualTo:
+                                  '${FFLocalizations.of(context).languageCode}',
+                            )
+                            .where(
+                              'category_slug',
+                              isEqualTo: _model.selectedCategorySlug,
+                            )
+                            .orderBy('tale_id', descending: true),
                     ),
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
@@ -361,15 +438,59 @@ class _TaleListMobileComponentWidgetState
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0.0, 1.0, 1.0, 1.0),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(6.0),
-                                        child: Image.network(
-                                          listViewTalesRecord.imageUrl640px,
-                                          width: double.infinity,
-                                          height: 200.0,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(6.0),
+                                            child: Image.network(
+                                              listViewTalesRecord.imageUrl640px,
+                                              width: double.infinity,
+                                              height: 200.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          if (listViewTalesRecord.isPremiumTale)
+                                            Positioned(
+                                              top: 8.0,
+                                              right: 8.0,
+                                              child: Container(
+                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(context).primary,
+                                                  borderRadius: BorderRadius.circular(12.0),
+                                                ),
+                                                child: Text(
+                                                  '⭐ PREMIUM',
+                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                    font: GoogleFonts.plusJakartaSans(),
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          if (listViewTalesRecord.createdAt != null && DateTime.now().difference(listViewTalesRecord.createdAt!).inDays <= 7)
+                                            Positioned(
+                                              top: 8.0,
+                                              left: 8.0,
+                                              child: Container(
+                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.orange,
+                                                  borderRadius: BorderRadius.circular(12.0),
+                                                ),
+                                                child: Text(
+                                                  '✨ NUEVO',
+                                                  style: FlutterFlowTheme.of(context).labelSmall.override(
+                                                    font: GoogleFonts.plusJakartaSans(),
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
                                     Padding(
