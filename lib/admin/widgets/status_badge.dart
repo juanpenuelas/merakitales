@@ -25,6 +25,9 @@ class StatusBadge extends StatelessWidget {
   factory StatusBadge.retracted() =>
       const StatusBadge(icon: Icons.history, label: 'Retractado', color: AppColors.warning);
 
+  factory StatusBadge.premium() =>
+      const StatusBadge(icon: Icons.star, label: 'Premium', color: AppColors.warning);
+
   @override
   Widget build(BuildContext context) {
     return Container(
