@@ -66,20 +66,15 @@ class AdminScaffold extends StatelessWidget {
                 label: Text('Categorías'),
               ),
             ],
-            trailing: Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.logout, color: AppColors.textSecondary),
-                    tooltip: 'Cerrar sesión',
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                      if (context.mounted) context.go('/login');
-                    },
-                  ),
-                ),
+            trailing: Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: IconButton(
+                icon: const Icon(Icons.logout, color: AppColors.textSecondary),
+                tooltip: 'Cerrar sesión',
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  if (context.mounted) context.go('/login');
+                },
               ),
             ),
           ),
