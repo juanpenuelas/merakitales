@@ -137,6 +137,9 @@ class _TaleDetailMobileComponentWidgetState
           );
         }
       }
+
+      // Request FCM permission and subscribe to topic (idempotent: runs once per session).
+      NotificationService().requestPermissionsAndSubscribe();
     });
 
     animationsMap.addAll({
@@ -269,7 +272,6 @@ class _TaleDetailMobileComponentWidgetState
   @override
   void dispose() {
     _model.maybeDispose();
-    NotificationService().requestPermissionsAndSubscribe();
     super.dispose();
   }
 
