@@ -25,6 +25,7 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
   String? _draftId;
   bool _loading = false;
   bool _saving = false;
+  bool _savingPremium = false;
 
   // AI Prompting
   final _themeController = TextEditingController();
@@ -90,6 +91,21 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
   }
 
   int _wordCount(String s) => s.trim().isEmpty ? 0 : s.trim().split(RegExp(r'\s+')).length;
+
+  // --- ACTIONS: SETTINGS ---
+
+  Future<void> _toggleIsPremium(bool value) async {
+    if (_draftId == null) return;
+    setState(() => _savingPremium = true);
+    try {
+      await _service.updateDraftPremium(draftId: _draftId!, isPremiumTale: value);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Premium actualizado')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      if (mounted) setState(() => _savingPremium = false);
+    }
+  }
 
   // --- ACTIONS: TEXT ---
 
@@ -277,6 +293,8 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           children: [
+            _buildSettingsSection(),
+            const SizedBox(height: AppSpacing.md),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -313,6 +331,31 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
             const SizedBox(height: 60),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsSection() {
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.tune, color: AppColors.primary),
+              SizedBox(width: 8),
+              Text('Ajustes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            ],
+          ),
+          const Divider(height: 24),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Cuento Premium'),
+            subtitle: const Text('Solo visible para usuarios con suscripción'),
+            value: _draft?.isPremiumTale ?? false,
+            onChanged: (_draft == null || _savingPremium) ? null : _toggleIsPremium,
+          ),
+        ],
       ),
     );
   }
