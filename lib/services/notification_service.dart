@@ -7,9 +7,16 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
+  // Guard: only request permissions once per app session.
+  static bool _hasRequested = false;
+
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   Future<void> requestPermissionsAndSubscribe() async {
+    // Idempotent: only run once per app session.
+    if (_hasRequested) return;
+    _hasRequested = true;
+
     // 1. Request Permission
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,
@@ -19,10 +26,10 @@ class NotificationService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized || 
         settings.authorizationStatus == AuthorizationStatus.provisional) {
-      debugPrint('User granted permission');
+      debugPrint('NotificationService: permission granted, subscribing to topic.');
       await _subscribeToTopicBasedOnLanguage();
     } else {
-      debugPrint('User declined or has not accepted permission');
+      debugPrint('NotificationService: permission declined or not accepted.');
     }
   }
 
