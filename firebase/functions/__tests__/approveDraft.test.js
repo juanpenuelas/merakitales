@@ -145,4 +145,32 @@ describe("approveDraft", () => {
     ).rejects.toThrow(/missing image\/audio assets/);
     admin.__setDraftOverrides({});
   });
+
+  // __sets acumula entradas de TODOS los tests anteriores en este archivo
+  // (el mock de admin no resetea el array entre tests), así que cada test
+  // aquí sólo mira las 2 últimas entradas "tales" — las que genera su propia
+  // llamada a approveDraftHandler.
+  test("propagates is_premium_tale: true from draft to both published tales", async () => {
+    const admin = require("../src/admin");
+    admin.__setDraft("pending", true);
+    admin.__setDraftOverrides({ is_premium_tale: true });
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    expect(talesSets[0].d.is_premium_tale).toBe(true);
+    expect(talesSets[1].d.is_premium_tale).toBe(true);
+    admin.__setDraftOverrides({});
+  });
+
+  test("defaults is_premium_tale to false when the draft has no such field", async () => {
+    const admin = require("../src/admin");
+    admin.__setDraft("pending", true);
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    expect(talesSets[0].d.is_premium_tale).toBe(false);
+    expect(talesSets[1].d.is_premium_tale).toBe(false);
+  });
 });
