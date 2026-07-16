@@ -243,90 +243,16 @@ class _TaleListMobileComponentWidgetState
                   isSearchable: false,
                   isMultiSelect: false,
                 ),
-                StreamBuilder<List<CategoriesRecord>>(
-                  stream: queryCategoriesRecord(
-                    queryBuilder: (c) => c.orderBy('sort_order'),
-                  ),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox.shrink();
-                    final categories = snapshot.data!;
-                    if (categories.isEmpty) return const SizedBox.shrink();
-                    
-                    return SizedBox(
-                      height: 50.0,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categories.length + 1,
-                        itemBuilder: (context, index) {
-                          final isAll = index == 0;
-                          final category = isAll ? null : categories[index - 1];
-                          final isSelected = isAll 
-                              ? _model.selectedCategorySlug == null 
-                              : _model.selectedCategorySlug == category?.slug;
-                              
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _model.selectedCategorySlug = isAll ? null : category?.slug;
-                                  _model.listViewPagingController?.refresh();
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isSelected 
-                                      ? FlutterFlowTheme.of(context).primary 
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected 
-                                        ? FlutterFlowTheme.of(context).primary 
-                                        : const Color(0xFFE0E3E7),
-                                  ),
-                                ),
-                                child: Text(
-                                  isAll 
-                                      ? 'Todos' 
-                                      : '${category!.emoji} ${FFLocalizations.of(context).languageCode == 'en' ? category.nameEn : category.nameEs}',
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : const Color(0xFF14181B),
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
                 Expanded(
                   child: PagedListView<DocumentSnapshot<Object?>?, TalesRecord>(
                     pagingController: _model.setListViewController(
-                      (_model.selectedCategorySlug == null)
-                        ? TalesRecord.collection
-                            .where(
-                              'lang',
-                              isEqualTo:
-                                  '${FFLocalizations.of(context).languageCode}',
-                            )
-                            .orderBy('tale_id', descending: true)
-                        : TalesRecord.collection
-                            .where(
-                              'lang',
-                              isEqualTo:
-                                  '${FFLocalizations.of(context).languageCode}',
-                            )
-                            .where(
-                              'category_slug',
-                              isEqualTo: _model.selectedCategorySlug,
-                            )
-                            .orderBy('tale_id', descending: true),
+                      TalesRecord.collection
+                          .where(
+                            'lang',
+                            isEqualTo:
+                                '${FFLocalizations.of(context).languageCode}',
+                          )
+                          .orderBy('tale_id', descending: true),
                     ),
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,

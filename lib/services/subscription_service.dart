@@ -5,7 +5,7 @@ import 'revenuecat_config.dart';
 
 class PurchasesWrapper {
   const PurchasesWrapper();
-  Future<void> configure(String apiKey) => Purchases.configure(PurchasesConfiguration(apiKey));
+  Future<void> configure(PurchasesConfiguration configuration) => Purchases.configure(configuration);
   Future<CustomerInfo> getCustomerInfo() => Purchases.getCustomerInfo();
   void addCustomerInfoUpdateListener(void Function(CustomerInfo) listener) =>
       Purchases.addCustomerInfoUpdateListener(listener);
@@ -48,7 +48,10 @@ class PremiumProvider extends ChangeNotifier {
           ? RevenueCatConfig.apiKeyAndroid
           : RevenueCatConfig.apiKeyIOS;
 
-      await _purchases.configure(apiKey);
+      final configuration = PurchasesConfiguration(apiKey)
+        ..storeKitVersion = StoreKitVersion.storeKit1;
+
+      await _purchases.configure(configuration);
 
       _purchases.addCustomerInfoUpdateListener((customerInfo) {
         _updateWithCustomerInfo(customerInfo);

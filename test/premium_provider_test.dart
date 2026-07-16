@@ -27,11 +27,11 @@ class MockPurchasesWrapper implements PurchasesWrapper {
   });
 
   @override
-  Future<void> configure(String apiKey) async {
+  Future<void> configure(PurchasesConfiguration configuration) async {
     if (throwOnConfigure) {
       throw Exception('Configuration failed');
     }
-    configuredApiKey = apiKey;
+    configuredApiKey = configuration.apiKey;
     configureCallCount++;
   }
 
