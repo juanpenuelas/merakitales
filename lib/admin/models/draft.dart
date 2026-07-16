@@ -17,12 +17,6 @@ class Draft {
   final String imagePrompt;
   final int? assignedTaleId;
   final int? retractedFromTaleId;
-  final DateTime? scheduledAt;
-  
-  final bool isGeneratingText;
-  final bool isGeneratingImage;
-  final bool isGeneratingAudioEs;
-  final bool isGeneratingAudioEn;
 
   Draft({
     required this.id,
@@ -41,26 +35,14 @@ class Draft {
     required this.imagePrompt,
     this.assignedTaleId,
     this.retractedFromTaleId,
-    this.scheduledAt,
-    this.isGeneratingText = false,
-    this.isGeneratingImage = false,
-    this.isGeneratingAudioEs = false,
-    this.isGeneratingAudioEn = false,
   });
 
-  /// Derived purely from which assets exist for badges
+  /// Derived purely from which assets exist — never stored, so it can
+  /// never disagree with the draft's actual Firestore fields.
   String get step {
     if (imageUrl.isNotEmpty && audioUrlEs.isNotEmpty && audioUrlEn.isNotEmpty) return 'audio';
     if (imageUrl.isNotEmpty) return 'image';
     return 'text';
-  }
-
-  bool get isReadyToPublish {
-    return specificationsEs.trim().isNotEmpty &&
-           specificationsEn.trim().isNotEmpty &&
-           imageUrl.trim().isNotEmpty &&
-           audioUrlEs.trim().isNotEmpty &&
-           audioUrlEn.trim().isNotEmpty;
   }
 
   factory Draft.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -82,11 +64,6 @@ class Draft {
       imagePrompt: d['image_prompt'] as String? ?? '',
       assignedTaleId: d['assigned_tale_id'] as int?,
       retractedFromTaleId: d['retracted_from_tale_id'] as int?,
-      isGeneratingText: d['is_generating_text'] as bool? ?? false,
-      isGeneratingImage: d['is_generating_image'] as bool? ?? false,
-      isGeneratingAudioEs: d['is_generating_audio_es'] as bool? ?? false,
-      isGeneratingAudioEn: d['is_generating_audio_en'] as bool? ?? false,
-      scheduledAt: (d['scheduled_at'] as Timestamp?)?.toDate(),
     );
   }
 }

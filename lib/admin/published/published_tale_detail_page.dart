@@ -4,9 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/drafts_service.dart';
 import '../models/published_tale.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_spacing.dart';
-import '../widgets/app_card.dart';
 
 class PublishedTaleDetailPage extends StatefulWidget {
   const PublishedTaleDetailPage({super.key, required this.taleId});
@@ -82,13 +79,13 @@ class _PublishedTaleDetailPageState extends State<PublishedTaleDetailPage> {
                 onPressed: (i) => setState(() => _es = i == 0),
                 children: const [Text('ES'), Text('EN')],
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: 8),
             ],
           ),
           body: _retracting
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  padding: const EdgeInsets.all(16),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 720),
@@ -96,53 +93,35 @@ class _PublishedTaleDetailPageState extends State<PublishedTaleDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (t.imageUrl.isNotEmpty)
-                            AppCard(
-                              padding: EdgeInsets.zero,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  t.imageUrl,
-                                  errorBuilder: (c, e, s) => Container(
-                                    height: 200,
-                                    color: Colors.grey.shade200,
-                                    child: const Center(child: Icon(Icons.broken_image, size: 48)),
-                                  ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                t.imageUrl,
+                                errorBuilder: (c, e, s) => Container(
+                                  height: 200,
+                                  color: Colors.grey.shade200,
+                                  child: const Center(child: Icon(Icons.broken_image, size: 48)),
                                 ),
                               ),
                             ),
-                          const SizedBox(height: AppSpacing.md),
-                          AppCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('tale_id=${t.taleId}', style: const TextStyle(color: AppColors.textSecondary)),
-                                const SizedBox(height: AppSpacing.sm),
-                                Text('Descripción', style: Theme.of(context).textTheme.titleSmall),
-                                Text(desc),
-                                const SizedBox(height: AppSpacing.md),
-                                Text('Texto del cuento', style: Theme.of(context).textTheme.titleSmall),
-                                Text(spec, style: const TextStyle(fontSize: 18, height: 1.5)),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          AppCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Audio (${_es ? 'ES' : 'EN'})", style: Theme.of(context).textTheme.titleSmall),
-                                const SizedBox(height: AppSpacing.sm),
-                                if (audio.isNotEmpty)
-                                  InkWell(
-                                    onTap: () => launchUrl(Uri.parse(audio)),
-                                    child: const Row(children: [Icon(Icons.play_circle, size: 32), SizedBox(width: 8), Text('Reproducir audio')]),
-                                  )
-                                else
-                                  const Text('Sin audio'),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: 16),
+                          Text('tale_id=${t.taleId}', style: const TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 8),
+                          Text('Descripción', style: Theme.of(context).textTheme.titleSmall),
+                          Text(desc),
+                          const SizedBox(height: 16),
+                          Text('Texto del cuento', style: Theme.of(context).textTheme.titleSmall),
+                          Text(spec, style: const TextStyle(fontSize: 18, height: 1.5)),
+                          const SizedBox(height: 16),
+                          Text("Audio (${_es ? 'ES' : 'EN'})", style: Theme.of(context).textTheme.titleSmall),
+                          if (audio.isNotEmpty)
+                            InkWell(
+                              onTap: () => launchUrl(Uri.parse(audio)),
+                              child: const Row(children: [Icon(Icons.play_circle, size: 32), SizedBox(width: 8), Text('Reproducir audio')]),
+                            )
+                          else
+                            const Text('Sin audio'),
+                          const SizedBox(height: 24),
                           OutlinedButton.icon(
                             onPressed: _retract,
                             icon: const Icon(Icons.undo),

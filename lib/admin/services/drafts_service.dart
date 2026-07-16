@@ -14,7 +14,7 @@ class DraftsService {
   Stream<List<Draft>> streamDrafts() {
     return _db
         .collection('tale_drafts')
-        .where('status', whereIn: ['pending', 'scheduled'])
+        .where('status', isEqualTo: 'pending')
         .orderBy('created_at', descending: true)
         .snapshots()
         .map((qs) => qs.docs.map(Draft.fromDoc).toList());
@@ -127,17 +127,15 @@ class DraftsService {
     });
   }
 
-  Future<void> generateText({required String draftId, String? theme, String? feedback}) async {
-    await _db.collection('tale_drafts').doc(draftId).update({'is_generating_text': true});
-    await _functions.httpsCallable('generateTaleText').call({
-      'draftId': draftId,
+  Future<String> generateText({String? theme, String? feedback}) async {
+    final result = await _functions.httpsCallable('generateTaleText').call({
       'theme': theme,
       'feedback': feedback,
     });
+    return result.data['draftId'] as String;
   }
 
   Future<void> generateImage(String draftId, {String? feedback}) async {
-    await _db.collection('tale_drafts').doc(draftId).update({'is_generating_image': true});
     await _functions.httpsCallable('generateTaleImage').call({
       'draftId': draftId,
       'feedback': feedback,
@@ -145,8 +143,6 @@ class DraftsService {
   }
 
   Future<void> generateAudio(String draftId, String lang, {String? feedback}) async {
-    final flag = lang == 'es' ? 'is_generating_audio_es' : 'is_generating_audio_en';
-    await _db.collection('tale_drafts').doc(draftId).update({flag: true});
     await _functions.httpsCallable('generateTaleAudio').call({
       'draftId': draftId,
       'lang': lang,
@@ -157,14 +153,6 @@ class DraftsService {
   Future<int> approveDraft(String id) async {
     final result = await _functions.httpsCallable('approveDraft').call({'draftId': id});
     return result.data['taleId'] as int;
-  }
-
-  Future<DateTime> scheduleDraft(String id, DateTime scheduledAt) async {
-    final result = await _functions.httpsCallable('scheduleDraft').call({
-      'draftId': id,
-      'scheduledAtISO': scheduledAt.toUtc().toIso8601String(),
-    });
-    return DateTime.parse(result.data['scheduledFor'] as String);
   }
 
   Future<void> rejectDraft(String id) async {
