@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import '../services/drafts_service.dart';
 import '../models/published_tale.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
-import '../widgets/app_card.dart';
 import '../widgets/empty_state.dart';
+import '../widgets/tale_row_card.dart';
+import '../widgets/status_badge.dart';
 
 class PublishedListPage extends StatefulWidget {
   const PublishedListPage({super.key});
@@ -78,42 +78,16 @@ class _PublishedListPageState extends State<PublishedListPage> {
                   separatorBuilder: (c, i) => const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (c, i) {
                     final t = tales[i];
-                    return AppCard(
+                    return TaleRowCard(
                       onTap: () => context.go('/published/${t.taleId}'),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: t.imageUrl640.isNotEmpty
-                                ? Image.network(
-                                    t.imageUrl640,
-                                    width: 56,
-                                    height: 56,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (c, e, s) => Container(width: 56, height: 56, color: Colors.grey.shade200, child: const Icon(Icons.broken_image)),
-                                  )
-                                : Container(width: 56, height: 56, color: Colors.grey.shade200, child: const Icon(Icons.public)),
-                          ),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(t.name, style: Theme.of(context).textTheme.titleMedium),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'tale_id=${t.taleId} · ${t.createdAt != null ? t.createdAt!.toLocal() : ''}',
-                                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                                ),
-                              ],
-                            ),
-                          ),
-                          TextButton.icon(
-                            onPressed: () => _retract(t),
-                            icon: const Icon(Icons.undo),
-                            label: const Text('Retirar'),
-                          ),
-                        ],
+                      title: t.name,
+                      imageUrl640: t.imageUrl640,
+                      placeholder: Icons.public,
+                      badges: [StatusBadge.published()],
+                      trailing: TextButton.icon(
+                        onPressed: () => _retract(t),
+                        icon: const Icon(Icons.undo),
+                        label: const Text('Retirar'),
                       ),
                     );
                   },
