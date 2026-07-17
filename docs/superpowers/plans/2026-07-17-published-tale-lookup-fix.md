@@ -432,3 +432,117 @@ Summarize pass/fail for Steps 3-4 before considering this plan complete. If Step
 
 - This work should happen on an isolated branch/worktree, per the user's request to start a new branch before implementing. Create it via the `superpowers:using-git-worktrees` skill at the start of execution (not part of this plan's tasks — that skill handles it).
 - Task 3's Steps 1 and 4 touch production (a function deploy, and retracting a real published tale). Both are hard-to-reverse/live-system actions — get explicit user confirmation before running them, per standard operating practice.
+
+---
+
+### Task 4 (discovered during Task 3 verification): Fix `approveDraft.js` to tolerate a missing storage file when re-publishing a retracted legacy tale
+
+**Why this exists:** Task 3's manual E2E test retracted `tale_id=30` (a legacy tale). The retract succeeded — `retractTaleHandler` already tolerates its storage move failing (the legacy asset never lived at the `tales/{taleId}/...` path `moveIfExists` guesses) and falls back to the tale's existing asset URL, same as designed. But publishing that draft back then failed with `[firebase_functions/failed-precondition] file#copy failed with an error - No such object: .../drafts/{draftId}/image_1024.png`, because `publishDraft()` in `approveDraft.js` calls `moveFile` directly (no try/catch, no fallback) — it assumes a file always exists at `drafts/{draftId}/...` to move. For a retracted legacy tale, no such file was ever created there (retract had nothing to move either), so the move throws and publishing fails outright, even though the draft already holds working asset URLs. This blocks completing the retract→republish round trip for any legacy tale, including the specific one just retracted during Task 3 verification (`tale_id=30`, draft id `TJAZHvULsnIJMfk3Lo5B`).
+
+The original design spec's "Storage (sin cambios)" section verified this fallback only from the retract side; it missed that `approveDraft.js`'s publish side has no equivalent tolerance, so this task extends scope to close that gap, mirroring the already-accepted `moveIfExists` pattern from `retractTale.js`.
+
+**Files:**
+- Modify: `firebase/functions/src/approveDraft.js:29-33`
+- Test: `firebase/functions/__tests__/approveDraft.test.js`
+
+**Interfaces:**
+- Consumes: `moveFile` from `./storage` (unchanged signature). `d` (the draft's Firestore data, already loaded at `approveDraft.js:15`) — uses its existing `image_url`, `image_url_640px`, `audio_url_es`, `audio_url_en` fields as fallbacks.
+- Produces: `publishDraft(draftId, decidedByUid)` — same signature and return value (`taleId`). `approveDraftHandler(req)` — same signature, same thrown errors. No caller changes needed.
+
+- [ ] **Step 1: Add a failing test for the fallback behavior**
+
+The existing `moveFile` mock (`jest.fn(async ({ toPath }) => ...)`, unchanged) already supports per-test failure injection via `mockRejectedValueOnce` — no change needed to the mock declaration itself. Add this new test in `firebase/functions/__tests__/approveDraft.test.js`, at the end of the `describe("approveDraft", ...)` block, after the "defaults is_premium_tale to false..." test:
+
+```js
+  test("falls back to the draft's existing asset URL when the storage move fails (e.g. a re-published legacy tale with no file at drafts/{id}/)", async () => {
+    const admin = require("../src/admin");
+    const { moveFile } = require("../src/storage");
+    admin.__setDraft("pending", true);
+    moveFile.mockRejectedValueOnce(new Error("No such object: drafts/d1/image_1024.png"));
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    // image_1024.png move failed -> falls back to draftDoc.image_url; the other 3 moves still succeeded normally
+    expect(talesSets[0].d.image_url).toBe("https://storage.googleapis.com/b/drafts/d1/image_1024.png");
+    expect(talesSets[0].d.audio_url).toContain("tales/31/audio_es.mp3");
+    const commonSets = admin.__sets.filter((s) => s.name === "tales_common_data").slice(-1);
+    expect(commonSets[0].d.image_url_1024px).toBe("https://storage.googleapis.com/b/drafts/d1/image_1024.png");
+  });
+```
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `cd firebase/functions && npx jest approveDraft.test.js`
+Expected: FAIL on the new test — `moveFile` rejects on its first call (the image_1024.png move), and `publishDraft` currently has no try/catch around that call, so `approveDraftHandler` rejects with `failed-precondition` instead of completing.
+
+- [ ] **Step 3: Implement the fallback in `approveDraft.js`**
+
+Replace lines 29-33 of `firebase/functions/src/approveDraft.js` (currently):
+
+```js
+  // Move storage files drafts/{draftId}/ -> tales/{taleId}/
+  const fromPrefix = `drafts/${draftId}`;
+  const toPrefix = `tales/${taleId}`;
+  const imageUrl = await moveFile({ bucket, fromPath: `${fromPrefix}/image_1024.png`, toPath: `${toPrefix}/image_1024.png` });
+  const imageUrl640 = await moveFile({ bucket, fromPath: `${fromPrefix}/image_640.png`, toPath: `${toPrefix}/image_640.png` });
+  const audioUrlEs = await moveFile({ bucket, fromPath: `${fromPrefix}/audio_es.mp3`, toPath: `${toPrefix}/audio_es.mp3` });
+  const audioUrlEn = await moveFile({ bucket, fromPath: `${fromPrefix}/audio_en.mp3`, toPath: `${toPrefix}/audio_en.mp3` });
+```
+
+with:
+
+```js
+  // Move storage files drafts/{draftId}/ -> tales/{taleId}/. If there's nothing
+  // to move (e.g. a re-published legacy tale whose asset was never placed at
+  // drafts/{draftId}/... in the first place), keep the draft's existing URL —
+  // same tolerance retractTale.js already applies on the way out.
+  const fromPrefix = `drafts/${draftId}`;
+  const toPrefix = `tales/${taleId}`;
+  const moveOrKeep = async (filename, fallback) => {
+    try {
+      return await moveFile({ bucket, fromPath: `${fromPrefix}/${filename}`, toPath: `${toPrefix}/${filename}` });
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const imageUrl = await moveOrKeep("image_1024.png", d.image_url);
+  const imageUrl640 = await moveOrKeep("image_640.png", d.image_url_640px);
+  const audioUrlEs = await moveOrKeep("audio_es.mp3", d.audio_url_es);
+  const audioUrlEn = await moveOrKeep("audio_en.mp3", d.audio_url_en);
+```
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `cd firebase/functions && npx jest approveDraft.test.js`
+Expected: PASS — all tests including the new one.
+
+- [ ] **Step 5: Run the full functions test suite to check for regressions**
+
+Run: `cd firebase/functions && npm test`
+Expected: PASS on all suites except the 2 pre-existing unrelated failures (`generateTaleImage.test.js`, `generateTaleAudio.test.js`).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add firebase/functions/src/approveDraft.js firebase/functions/__tests__/approveDraft.test.js
+git commit -m "fix(functions): tolerate missing storage file when re-publishing a retracted legacy tale
+
+publishDraft moved drafts/{draftId}/... -> tales/{taleId}/... unconditionally,
+with no fallback if the source file doesn't exist. Legacy tales retracted via
+retractTale never had a file placed at drafts/{draftId}/... in the first
+place (their original assets live at non-standard storage paths), so
+re-publishing one failed outright with a raw GCS 'No such object' error.
+Fall back to the draft's already-stored asset URL when the move fails, same
+tolerance retractTale.js already applies."
+```
+
+- [ ] **Step 7: Deploy and verify against the real stuck draft**
+
+This touches production — confirm with the user before running (already confirmed for this specific fix). Deploy:
+
+```bash
+cd firebase/functions && firebase deploy --only functions:functions:approveDraft --project merakitales-5rltbl
+```
+
+Then ask the user to retry "Aprobar y Publicar Cuento" on the draft that got stuck during Task 3 verification (workspace URL contained draft id `TJAZHvULsnIJMfk3Lo5B`, tale "El Tren de la Noche") and confirm it now succeeds and the tale reappears in "Publicados".
