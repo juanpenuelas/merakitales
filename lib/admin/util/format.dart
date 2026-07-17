@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 String slugify(String input) {
   const from = 'áàäâãéèëêíìïîóòöôõúùüûñç';
   const to = 'aaaaaeeeeiiiiooooouuuunc';
@@ -14,3 +16,6 @@ String _two(int n) => n.toString().padLeft(2, '0');
 
 String formatScheduled(DateTime dt) =>
     '${_two(dt.day)}/${_two(dt.month)} ${_two(dt.hour)}:${_two(dt.minute)}';
+
+DateTime combineDateTime(DateTime date, TimeOfDay time) =>
+    DateTime(date.year, date.month, date.day, time.hour, time.minute);

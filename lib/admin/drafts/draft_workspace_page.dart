@@ -4,11 +4,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../services/drafts_service.dart';
+import '../services/categories_service.dart';
 import '../models/draft.dart';
+import '../models/category.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/app_card.dart';
 import '../widgets/status_badge.dart';
+import '../util/format.dart';
 
 class DraftWorkspacePage extends StatefulWidget {
   const DraftWorkspacePage({super.key, this.draftId});
@@ -20,6 +23,7 @@ class DraftWorkspacePage extends StatefulWidget {
 
 class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
   final _service = DraftsService();
+  final _categoriesService = CategoriesService();
 
   Draft? _draft;
   String? _draftId;
@@ -104,6 +108,48 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _savingPremium = false);
+    }
+  }
+
+  Future<void> _setCategory(String? categoryId) async {
+    if (_draftId == null) return;
+    try {
+      await _service.updateDraftCategory(draftId: _draftId!, categoryId: categoryId);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Categoría actualizada')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  Future<void> _schedule() async {
+    if (_draftId == null) return;
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().add(const Duration(days: 1)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (time == null) return;
+    try {
+      await _service.scheduleDraft(_draftId!, combineDateTime(date, time));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Publicación programada')));
+        context.go('/drafts');
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al programar: $e')));
+    }
+  }
+
+  Future<void> _cancelSchedule() async {
+    if (_draftId == null) return;
+    try {
+      await _service.cancelSchedule(_draftId!);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Programación cancelada')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -309,17 +355,47 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
                       if (_draft?.step == 'audio') ...[
                         const SizedBox(height: AppSpacing.md),
                         AppCard(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: FilledButton.icon(
-                              onPressed: _approveAndPublish,
-                              icon: const Icon(Icons.publish),
-                              label: const Text('Aprobar y Publicar Cuento'),
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.all(16),
-                                backgroundColor: AppColors.success,
-                              ),
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (_draft?.status == 'scheduled') ...[
+                                Row(
+                                  children: [
+                                    StatusBadge.scheduled(),
+                                    const SizedBox(width: 8),
+                                    if (_draft?.scheduledAt != null)
+                                      Expanded(
+                                        child: Text(
+                                          'Programado · ${formatScheduled(_draft!.scheduledAt!.toLocal())}',
+                                          style: const TextStyle(fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                OutlinedButton.icon(
+                                  onPressed: _cancelSchedule,
+                                  icon: const Icon(Icons.cancel_schedule_send),
+                                  label: const Text('Cancelar programación'),
+                                ),
+                              ] else ...[
+                                FilledButton.icon(
+                                  onPressed: _approveAndPublish,
+                                  icon: const Icon(Icons.publish),
+                                  label: const Text('Aprobar y Publicar Cuento'),
+                                  style: FilledButton.styleFrom(
+                                    padding: const EdgeInsets.all(16),
+                                    backgroundColor: AppColors.success,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                OutlinedButton.icon(
+                                  onPressed: _schedule,
+                                  icon: const Icon(Icons.schedule),
+                                  label: const Text('Programar publicación'),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ]
@@ -354,6 +430,34 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
             subtitle: const Text('Solo visible para usuarios con suscripción'),
             value: _draft?.isPremiumTale ?? false,
             onChanged: (_draft == null || _savingPremium) ? null : _toggleIsPremium,
+          ),
+          const SizedBox(height: 8),
+          StreamBuilder<List<Category>>(
+            stream: _categoriesService.streamCategories(),
+            builder: (context, snap) {
+              final cats = snap.data ?? [];
+              final ids = cats.map((c) => c.id).toSet();
+              // Guard: if the draft points at a deleted category, fall back to null
+              // so DropdownButtonFormField doesn't throw on a value not in its items.
+              final currentValue = ids.contains(_draft?.categoryId) ? _draft?.categoryId : null;
+              return DropdownButtonFormField<String?>(
+                value: currentValue,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Categoría',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                items: [
+                  const DropdownMenuItem<String?>(value: null, child: Text('Sin categoría')),
+                  ...cats.map((c) => DropdownMenuItem<String?>(
+                        value: c.id,
+                        child: Text('${c.emoji} ${c.nameEs}'),
+                      )),
+                ],
+                onChanged: (_draft == null) ? null : (value) => _setCategory(value),
+              );
+            },
           ),
         ],
       ),
