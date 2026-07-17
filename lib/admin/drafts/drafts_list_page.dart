@@ -97,6 +97,10 @@ class _DraftsListPageState extends State<DraftsListPage> {
                           Row(
                             children: [
                               StatusBadge.step(d.step),
+                              if (d.isPremiumTale) ...[
+                                const SizedBox(width: AppSpacing.sm),
+                                StatusBadge.premium(),
+                              ],
                               if (d.retractedFromTaleId != null) ...[
                                 const SizedBox(width: AppSpacing.sm),
                                 StatusBadge.retracted(),

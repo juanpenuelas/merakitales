@@ -17,6 +17,7 @@ class Draft {
   final String imagePrompt;
   final int? assignedTaleId;
   final int? retractedFromTaleId;
+  final bool isPremiumTale;
 
   Draft({
     required this.id,
@@ -35,6 +36,7 @@ class Draft {
     required this.imagePrompt,
     this.assignedTaleId,
     this.retractedFromTaleId,
+    this.isPremiumTale = false,
   });
 
   /// Derived purely from which assets exist — never stored, so it can
@@ -64,6 +66,7 @@ class Draft {
       imagePrompt: d['image_prompt'] as String? ?? '',
       assignedTaleId: d['assigned_tale_id'] as int?,
       retractedFromTaleId: d['retracted_from_tale_id'] as int?,
+      isPremiumTale: d['is_premium_tale'] as bool? ?? false,
     );
   }
 }

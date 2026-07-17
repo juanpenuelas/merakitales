@@ -64,6 +64,7 @@ async function retractTaleHandler(req) {
     image_url_640px: imageUrl640 || es.image_url_640px,
     assigned_tale_id: null,
     retracted_from_tale_id: taleId,
+    is_premium_tale: es.is_premium_tale ?? false,
   });
   batch.delete(db.collection("tales").doc(`${taleId}_es`));
   batch.delete(db.collection("tales").doc(`${taleId}_en`));

@@ -74,6 +74,7 @@ class DraftsService {
       'image_url_640px': '',
       'assigned_tale_id': null,
       'retracted_from_tale_id': null,
+      'is_premium_tale': false,
     });
     return ref.id;
   }
@@ -95,6 +96,10 @@ class DraftsService {
       'description_en': descriptionEn,
       'specifications_en': specificationsEn,
     });
+  }
+
+  Future<void> updateDraftPremium({required String draftId, required bool isPremiumTale}) async {
+    await _db.collection('tale_drafts').doc(draftId).update({'is_premium_tale': isPremiumTale});
   }
 
   UploadTask uploadDraftImage(String draftId, Uint8List bytes) {
