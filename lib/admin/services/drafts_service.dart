@@ -35,15 +35,25 @@ class DraftsService {
   }
 
   /// Loads the full bilingual content (ES + EN) for one published tale.
+  /// Looks up by `tale_id`+`lang` fields rather than the doc id: published
+  /// tales predating the admin's `${taleId}_es`/`${taleId}_en` doc-id
+  /// convention have random Firestore ids, so guessing the id misses them.
   Future<PublishedTaleFull> getPublishedTale(int taleId) async {
-    final snaps = await Future.wait([
-      _db.collection('tales').doc('${taleId}_es').get(),
-      _db.collection('tales').doc('${taleId}_en').get(),
-    ]);
+    Future<Map<String, dynamic>?> fetchByLang(String lang) async {
+      final q = await _db
+          .collection('tales')
+          .where('tale_id', isEqualTo: taleId)
+          .where('lang', isEqualTo: lang)
+          .limit(1)
+          .get();
+      return q.docs.isEmpty ? null : q.docs.first.data();
+    }
+
+    final snaps = await Future.wait([fetchByLang('es'), fetchByLang('en')]);
     return PublishedTaleFull.fromDocs(
       taleId: taleId,
-      esData: snaps[0].data(),
-      enData: snaps[1].data(),
+      esData: snaps[0],
+      enData: snaps[1],
     );
   }
 
