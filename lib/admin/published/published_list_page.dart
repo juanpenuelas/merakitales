@@ -83,7 +83,10 @@ class _PublishedListPageState extends State<PublishedListPage> {
                       title: t.name,
                       imageUrl640: t.imageUrl640,
                       placeholder: Icons.public,
-                      badges: [StatusBadge.published()],
+                      badges: [
+                        StatusBadge.published(),
+                        if (t.isPremiumTale) StatusBadge.premium(),
+                      ],
                       trailing: TextButton.icon(
                         onPressed: () => _retract(t),
                         icon: const Icon(Icons.undo),

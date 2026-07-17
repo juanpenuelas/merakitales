@@ -8,6 +8,7 @@ class PublishedTale {
   final String description;
   final String imageUrl;
   final String imageUrl640;
+  final bool isPremiumTale;
   final DateTime? createdAt;
 
   PublishedTale({
@@ -18,6 +19,7 @@ class PublishedTale {
     required this.description,
     required this.imageUrl,
     required this.imageUrl640,
+    this.isPremiumTale = false,
     this.createdAt,
   });
 
@@ -31,6 +33,7 @@ class PublishedTale {
       description: d['description'] as String? ?? '',
       imageUrl: d['image_url'] as String? ?? '',
       imageUrl640: d['image_url_640px'] as String? ?? '',
+      isPremiumTale: d['is_premium_tale'] as bool? ?? false,
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
     );
   }
