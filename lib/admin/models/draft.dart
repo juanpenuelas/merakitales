@@ -18,6 +18,9 @@ class Draft {
   final int? assignedTaleId;
   final int? retractedFromTaleId;
   final bool isPremiumTale;
+  final DateTime? scheduledAt;
+  final String? scheduledBy;
+  final String? categoryId;
 
   Draft({
     required this.id,
@@ -37,6 +40,9 @@ class Draft {
     this.assignedTaleId,
     this.retractedFromTaleId,
     this.isPremiumTale = false,
+    this.scheduledAt,
+    this.scheduledBy,
+    this.categoryId,
   });
 
   /// Derived purely from which assets exist — never stored, so it can
@@ -67,6 +73,9 @@ class Draft {
       assignedTaleId: d['assigned_tale_id'] as int?,
       retractedFromTaleId: d['retracted_from_tale_id'] as int?,
       isPremiumTale: d['is_premium_tale'] as bool? ?? false,
+      scheduledAt: (d['scheduled_at'] as Timestamp?)?.toDate(),
+      scheduledBy: d['scheduled_by'] as String?,
+      categoryId: d['category_id'] as String?,
     );
   }
 }
