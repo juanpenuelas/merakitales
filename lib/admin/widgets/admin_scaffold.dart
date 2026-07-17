@@ -41,7 +41,21 @@ class AdminScaffold extends StatelessWidget {
             },
             extended: MediaQuery.of(context).size.width > 800,
             backgroundColor: AppColors.surface,
-            indicatorColor: AppColors.primary.withOpacity(0.1),
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset('assets/images/app_launcher_icon.png', width: 40, height: 40),
+              ),
+            ),
+            indicatorColor: AppColors.primary.withOpacity(0.12),
+            indicatorShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: AppColors.accent, width: 1.2),
+            ),
+            useIndicator: true,
+            unselectedIconTheme: const IconThemeData(color: AppColors.textSecondary),
+            unselectedLabelTextStyle: const TextStyle(color: AppColors.textSecondary),
             selectedIconTheme: const IconThemeData(color: AppColors.primary),
             selectedLabelTextStyle: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
             destinations: const [
@@ -66,19 +80,24 @@ class AdminScaffold extends StatelessWidget {
                 label: Text('Categorías'),
               ),
             ],
-            trailing: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: IconButton(
-                icon: const Icon(Icons.logout, color: AppColors.textSecondary),
-                tooltip: 'Cerrar sesión',
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  if (context.mounted) context.go('/login');
-                },
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.logout, color: AppColors.textSecondary),
+                    tooltip: 'Cerrar sesión',
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      if (context.mounted) context.go('/login');
+                    },
+                  ),
+                ),
               ),
             ),
           ),
-          const VerticalDivider(thickness: 1, width: 1, color: AppColors.border),
+          const VerticalDivider(thickness: 1, width: 1, color: AppColors.accent),
           Expanded(
             child: child,
           ),

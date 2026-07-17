@@ -27,7 +27,7 @@ class Category {
       nameEn: d['name_en'] as String? ?? '',
       emoji: d['emoji'] as String? ?? '',
       slug: d['slug'] as String? ?? '',
-      sortOrder: d['sort_order'] as int? ?? 0,
+      sortOrder: (d['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
     );
   }

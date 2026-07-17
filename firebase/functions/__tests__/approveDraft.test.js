@@ -174,6 +174,30 @@ describe("approveDraft", () => {
     expect(talesSets[1].d.is_premium_tale).toBe(false);
   });
 
+  test("propagates category_id from draft to both published tales", async () => {
+    const admin = require("../src/admin");
+    admin.__setDraft("pending", true);
+    admin.__setDraftOverrides({ category_id: "cat_abc" });
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    expect(talesSets[0].d.category_id).toBe("cat_abc");
+    expect(talesSets[1].d.category_id).toBe("cat_abc");
+    admin.__setDraftOverrides({});
+  });
+
+  test("defaults category_id to null when the draft has no such field", async () => {
+    const admin = require("../src/admin");
+    admin.__setDraft("pending", true);
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    expect(talesSets[0].d.category_id).toBe(null);
+    expect(talesSets[1].d.category_id).toBe(null);
+  });
+
   test("falls back to the draft's existing asset URL when the storage move fails (e.g. a re-published legacy tale with no file at drafts/{id}/)", async () => {
     const admin = require("../src/admin");
     const { moveFile } = require("../src/storage");

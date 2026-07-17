@@ -11,14 +11,16 @@ class DraftsService {
   final _db = FirebaseFirestore.instance;
   final _functions = FirebaseFunctions.instanceFor(region: 'europe-west1');
 
-  Stream<List<Draft>> streamDrafts() {
+  Stream<List<Draft>> streamDraftsByStatuses(List<String> statuses) {
     return _db
         .collection('tale_drafts')
-        .where('status', isEqualTo: 'pending')
+        .where('status', whereIn: statuses)
         .orderBy('created_at', descending: true)
         .snapshots()
         .map((qs) => qs.docs.map(Draft.fromDoc).toList());
   }
+
+  Stream<List<Draft>> streamDrafts() => streamDraftsByStatuses(['pending']);
 
   Stream<Draft?> streamDraft(String id) {
     return _db.collection('tale_drafts').doc(id).snapshots().map((s) => s.exists ? Draft.fromDoc(s) : null);
@@ -85,6 +87,7 @@ class DraftsService {
       'assigned_tale_id': null,
       'retracted_from_tale_id': null,
       'is_premium_tale': false,
+      'category_id': null,
     });
     return ref.id;
   }
@@ -172,6 +175,27 @@ class DraftsService {
 
   Future<void> rejectDraft(String id) async {
     await _functions.httpsCallable('rejectDraft').call({'draftId': id});
+  }
+
+  Future<void> scheduleDraft(String draftId, DateTime scheduledAt) async {
+    await _functions.httpsCallable('scheduleDraft').call({
+      'draftId': draftId,
+      'scheduledAtISO': scheduledAt.toUtc().toIso8601String(),
+    });
+  }
+
+  /// Cancel a schedule. Backend has no dedicated endpoint; the admin uid is
+  /// allowed to write tale_drafts, so revert the doc directly.
+  Future<void> cancelSchedule(String draftId) async {
+    await _db.collection('tale_drafts').doc(draftId).update({
+      'status': 'pending',
+      'scheduled_at': FieldValue.delete(),
+      'scheduled_by': FieldValue.delete(),
+    });
+  }
+
+  Future<void> updateDraftCategory({required String draftId, required String? categoryId}) async {
+    await _db.collection('tale_drafts').doc(draftId).update({'category_id': categoryId});
   }
 
   Future<String> retractTale(int taleId) async {

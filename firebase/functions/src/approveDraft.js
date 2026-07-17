@@ -73,6 +73,7 @@ async function publishDraft(draftId, decidedByUid) {
     tale_common_data_ref: commonRef,
     audio_url: audioUrlEs,
     is_premium_tale: d.is_premium_tale ?? false,
+    category_id: d.category_id ?? null,
   });
 
   // Write EN tale
@@ -93,6 +94,7 @@ async function publishDraft(draftId, decidedByUid) {
     tale_common_data_ref: commonRef,
     audio_url: audioUrlEn,
     is_premium_tale: d.is_premium_tale ?? false,
+    category_id: d.category_id ?? null,
   });
 
   // Mark draft approved

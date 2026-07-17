@@ -20,5 +20,11 @@ service cloud.firestore {
     match /tale_drafts/{document} {
       allow read, write: if request.auth.uid == "N5sv9GubvwOvapwv72nwrhWzBtK2";
     }
+
+    // Categories: read public (reader app may use later), write admin-only.
+    match /categories/{document} {
+      allow read: if true;
+      allow write: if request.auth.uid == "N5sv9GubvwOvapwv72nwrhWzBtK2";
+    }
   }
 }
