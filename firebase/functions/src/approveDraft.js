@@ -46,7 +46,7 @@ async function publishDraft(draftId, decidedByUid) {
   const audioUrlEn = await moveOrKeep("audio_en.mp3", d.audio_url_en);
 
   const now = new Date();
-  const commonRef = db.collection("tales_common_data").doc(`${taleId}`);
+  const commonRef = db.collection("tales_common_data").doc();
 
   // Write common_data
   await commonRef.set({
@@ -56,7 +56,7 @@ async function publishDraft(draftId, decidedByUid) {
   });
 
   // Write ES tale
-  await db.collection("tales").doc(`${taleId}_es`).set({
+  await db.collection("tales").doc().set({
     name: d.name_es,
     description: d.description_es,
     specifications: d.specifications_es,
@@ -76,7 +76,7 @@ async function publishDraft(draftId, decidedByUid) {
   });
 
   // Write EN tale
-  await db.collection("tales").doc(`${taleId}_en`).set({
+  await db.collection("tales").doc().set({
     name: d.name_en,
     description: d.description_en,
     specifications: d.specifications_en,

@@ -74,13 +74,13 @@ describe("approveDraft", () => {
     const result = await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
 
     expect(result.taleId).toBe(31);
-    // tales collection: doc called twice (31_es, 31_en)
+    // tales collection: doc() called twice, both times with no id (Firestore auto-generates), not a guessed "31_es"/"31_en"
     expect(admin.__collections["tales"].doc).toHaveBeenCalledTimes(2);
-    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(1, "31_es");
-    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(2, "31_en");
-    // tales_common_data: doc called once (31)
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(1);
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(2);
+    // tales_common_data: doc() called once, no id
     expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledTimes(1);
-    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledWith("31");
+    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledWith();
     // 3 sets: 1 common_data + 2 tales
     const talesSets = admin.__sets.filter((s) => s.name === "tales");
     expect(talesSets).toHaveLength(2);
