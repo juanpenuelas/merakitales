@@ -28,6 +28,15 @@ class StatusBadge extends StatelessWidget {
   factory StatusBadge.premium() =>
       const StatusBadge(icon: Icons.star, label: 'Premium', color: AppColors.warning);
 
+  factory StatusBadge.scheduled() =>
+      const StatusBadge(icon: Icons.schedule, label: 'Programado', color: AppColors.secondary);
+
+  factory StatusBadge.published() =>
+      const StatusBadge(icon: Icons.check_circle_outline, label: 'Publicado', color: AppColors.success);
+
+  factory StatusBadge.category(String name) =>
+      StatusBadge(icon: Icons.local_offer_outlined, label: name, color: AppColors.primary);
+
   @override
   Widget build(BuildContext context) {
     return Container(
