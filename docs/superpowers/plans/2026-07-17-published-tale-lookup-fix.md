@@ -546,3 +546,151 @@ cd firebase/functions && firebase deploy --only functions:functions:approveDraft
 ```
 
 Then ask the user to retry "Aprobar y Publicar Cuento" on the draft that got stuck during Task 3 verification (workspace URL contained draft id `TJAZHvULsnIJMfk3Lo5B`, tale "El Tren de la Noche") and confirm it now succeeds and the tale reappears in "Publicados".
+
+---
+
+### Task 5 (requested by user after seeing the fix): Stop assigning deterministic `${taleId}_es`/`${taleId}_en` doc ids on publish — let Firestore auto-generate them, like every other tale already has
+
+**Why this exists:** After Tasks 1-4, a full repo grep (`lib/admin`, `firebase/functions/src`, `lib/backend`) confirms nothing reads a `tales` document by reconstructing `${taleId}_lang` from its id anymore — every reader queries by the `tale_id`+`lang` fields (Tasks 1-2), or follows the `tale_common_data_ref` reference field (Task 1) rather than guessing `tales_common_data/{taleId}`. The only remaining place that *writes* the deterministic id pattern is `approveDraft.js`'s two `.set()` calls when publishing a new tale — a vestigial convention that serves no purpose now and only exists because it predates the field-query fix. The user asked, correctly: since nothing depends on this id shape, why not let Firestore assign a random id on publish, exactly like the 30 legacy tales already have and always have had? This task removes the last id-guessing write path, so every tale (past and future) is created and found the same way.
+
+**Files:**
+- Modify: `firebase/functions/src/approveDraft.js:49,59,79`
+- Test: `firebase/functions/__tests__/approveDraft.test.js`
+- Modify (doc-comment accuracy only): `lib/admin/services/drafts_service.dart:38-40`
+
+**Interfaces:**
+- Consumes: nothing new.
+- Produces: `publishDraft(draftId, decidedByUid)` — same signature and return value (`taleId`, a number — unaffected, this is Firestore's own `tale_id` *field*, assigned earlier in the function via the existing transaction; only the *document id* changes). No caller needs changes.
+
+- [ ] **Step 1: Update the test's assertions for auto-generated ids**
+
+In `firebase/functions/__tests__/approveDraft.test.js`, the mock's `doc: jest.fn((id) => ({...}))` (inside `getCollection`, around line 31) already tolerates `id === undefined` (it just tracks whatever `id` it's called with — `undefined` is a valid value in the `sets` array entries). No change needed to the mock itself. Replace only the assertions in the first test (`"writes 2 tales docs + 1 common_data, marks draft approved, moves 4 files"`) that check the specific guessed ids — replace:
+
+```js
+    // tales collection: doc called twice (31_es, 31_en)
+    expect(admin.__collections["tales"].doc).toHaveBeenCalledTimes(2);
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(1, "31_es");
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(2, "31_en");
+    // tales_common_data: doc called once (31)
+    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledTimes(1);
+    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledWith("31");
+```
+
+with:
+
+```js
+    // tales collection: doc() called twice, both times with no id (Firestore auto-generates), not a guessed "31_es"/"31_en"
+    expect(admin.__collections["tales"].doc).toHaveBeenCalledTimes(2);
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(1);
+    expect(admin.__collections["tales"].doc).toHaveBeenNthCalledWith(2);
+    // tales_common_data: doc() called once, no id
+    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledTimes(1);
+    expect(admin.__collections["tales_common_data"].doc).toHaveBeenCalledWith();
+```
+
+(Every other assertion in this test file — `talesSets[0].d.tale_id`, `.d.tale_common_data_ref`, `.d.audio_url`, `commonSets[0].d.image_url_1024px`, the `is_premium_tale` tests, etc. — reads from `sets`/`d` by content, not by id, so none of them need to change.)
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `cd firebase/functions && npx jest approveDraft.test.js`
+Expected: FAIL on the first test — the current code still calls `.doc("31_es")`/`.doc("31_en")`/`.doc("31")` with explicit ids, so `toHaveBeenNthCalledWith(1)` (expecting zero arguments) does not match.
+
+- [ ] **Step 3: Remove the guessed ids in `approveDraft.js`**
+
+Replace line 49:
+
+```js
+  const commonRef = db.collection("tales_common_data").doc(`${taleId}`);
+```
+
+with:
+
+```js
+  const commonRef = db.collection("tales_common_data").doc();
+```
+
+Replace line 59:
+
+```js
+  await db.collection("tales").doc(`${taleId}_es`).set({
+```
+
+with:
+
+```js
+  await db.collection("tales").doc().set({
+```
+
+Replace line 79:
+
+```js
+  await db.collection("tales").doc(`${taleId}_en`).set({
+```
+
+with:
+
+```js
+  await db.collection("tales").doc().set({
+```
+
+Nothing else in the function changes — `taleId` (the numeric `tale_id` field) is still assigned by the existing transaction and still written into both docs' `tale_id` field exactly as before; only the Firestore *document id* stops being derived from it.
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `cd firebase/functions && npx jest approveDraft.test.js`
+Expected: PASS — all tests including the updated assertions.
+
+- [ ] **Step 5: Run the full functions test suite to check for regressions**
+
+Run: `cd firebase/functions && npm test`
+Expected: PASS on all suites except the 2 pre-existing unrelated failures (`generateTaleImage.test.js`, `generateTaleAudio.test.js`).
+
+- [ ] **Step 6: Fix the now-inaccurate doc-comment in `drafts_service.dart`**
+
+In `lib/admin/services/drafts_service.dart`, the comment above `getPublishedTale` currently reads:
+
+```dart
+  /// Loads the full bilingual content (ES + EN) for one published tale.
+  /// Looks up by `tale_id`+`lang` fields rather than the doc id: published
+  /// tales predating the admin's `${taleId}_es`/`${taleId}_en` doc-id
+  /// convention have random Firestore ids, so guessing the id misses them.
+```
+
+Replace with:
+
+```dart
+  /// Loads the full bilingual content (ES + EN) for one published tale.
+  /// Looks up by `tale_id`+`lang` fields rather than the doc id: every
+  /// published tale (old and new) has a Firestore auto-generated doc id,
+  /// never a predictable one, so nothing may ever look it up by guessing.
+```
+
+- [ ] **Step 7: Static analysis**
+
+Run: `flutter analyze lib/admin`
+Expected: no new errors (7 pre-existing issues unrelated to this file).
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add firebase/functions/src/approveDraft.js firebase/functions/__tests__/approveDraft.test.js lib/admin/services/drafts_service.dart
+git commit -m "fix(functions): stop guessing tale doc ids on publish, let Firestore assign them
+
+Nothing reads a tales/ document by reconstructing \${taleId}_es/\${taleId}_en
+from its id anymore (Tasks 1-2 moved every reader to field queries and
+reference-following). The deterministic id this function assigned on publish
+was therefore serving no purpose - just a vestige of the convention the
+earlier bug depended on. Let Firestore auto-generate the doc id instead, same
+as the 30 legacy tales already have, so id generation is uniform everywhere
+going forward."
+```
+
+- [ ] **Step 9: Deploy**
+
+This touches production — confirm with the user before running (already directed by the user to make this change; deploying the resulting code still touches a live function).
+
+```bash
+cd firebase/functions && firebase deploy --only functions:functions:approveDraft --project merakitales-5rltbl
+```
+
+No further manual verification needed beyond what Task 3 already covered — the publish path's behavior for the admin/mobile app is unchanged (same fields, same values), only the invisible-to-everyone document id generation changed.
