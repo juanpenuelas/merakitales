@@ -173,4 +173,20 @@ describe("approveDraft", () => {
     expect(talesSets[0].d.is_premium_tale).toBe(false);
     expect(talesSets[1].d.is_premium_tale).toBe(false);
   });
+
+  test("falls back to the draft's existing asset URL when the storage move fails (e.g. a re-published legacy tale with no file at drafts/{id}/)", async () => {
+    const admin = require("../src/admin");
+    const { moveFile } = require("../src/storage");
+    admin.__setDraft("pending", true);
+    moveFile.mockRejectedValueOnce(new Error("No such object: drafts/d1/image_1024.png"));
+
+    await approveDraftHandler({ data: { draftId: "d1" }, auth: { uid: "admin" } });
+
+    const talesSets = admin.__sets.filter((s) => s.name === "tales").slice(-2);
+    // image_1024.png move failed -> falls back to draftDoc.image_url; the other 3 moves still succeeded normally
+    expect(talesSets[0].d.image_url).toBe("https://storage.googleapis.com/b/drafts/d1/image_1024.png");
+    expect(talesSets[0].d.audio_url).toContain("tales/31/audio_es.mp3");
+    const commonSets = admin.__sets.filter((s) => s.name === "tales_common_data").slice(-1);
+    expect(commonSets[0].d.image_url_1024px).toBe("https://storage.googleapis.com/b/drafts/d1/image_1024.png");
+  });
 });

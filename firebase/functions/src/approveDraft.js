@@ -27,13 +27,23 @@ async function publishDraft(draftId, decidedByUid) {
     return maxId + 1;
   });
 
-  // Move storage files drafts/{draftId}/ -> tales/{taleId}/
+  // Move storage files drafts/{draftId}/ -> tales/{taleId}/. If there's nothing
+  // to move (e.g. a re-published legacy tale whose asset was never placed at
+  // drafts/{draftId}/... in the first place), keep the draft's existing URL —
+  // same tolerance retractTale.js already applies on the way out.
   const fromPrefix = `drafts/${draftId}`;
   const toPrefix = `tales/${taleId}`;
-  const imageUrl = await moveFile({ bucket, fromPath: `${fromPrefix}/image_1024.png`, toPath: `${toPrefix}/image_1024.png` });
-  const imageUrl640 = await moveFile({ bucket, fromPath: `${fromPrefix}/image_640.png`, toPath: `${toPrefix}/image_640.png` });
-  const audioUrlEs = await moveFile({ bucket, fromPath: `${fromPrefix}/audio_es.mp3`, toPath: `${toPrefix}/audio_es.mp3` });
-  const audioUrlEn = await moveFile({ bucket, fromPath: `${fromPrefix}/audio_en.mp3`, toPath: `${toPrefix}/audio_en.mp3` });
+  const moveOrKeep = async (filename, fallback) => {
+    try {
+      return await moveFile({ bucket, fromPath: `${fromPrefix}/${filename}`, toPath: `${toPrefix}/${filename}` });
+    } catch (_) {
+      return fallback;
+    }
+  };
+  const imageUrl = await moveOrKeep("image_1024.png", d.image_url);
+  const imageUrl640 = await moveOrKeep("image_640.png", d.image_url_640px);
+  const audioUrlEs = await moveOrKeep("audio_es.mp3", d.audio_url_es);
+  const audioUrlEn = await moveOrKeep("audio_en.mp3", d.audio_url_en);
 
   const now = new Date();
   const commonRef = db.collection("tales_common_data").doc(`${taleId}`);
