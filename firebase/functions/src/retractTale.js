@@ -13,18 +13,19 @@ async function retractTaleHandler(req) {
     throw new HttpsError("invalid-argument", "taleId required");
   }
 
-  const esSnap = await db.collection("tales").doc(`${taleId}_es`).get();
-  const enSnap = await db.collection("tales").doc(`${taleId}_en`).get();
-  const commonSnap = await db.collection("tales_common_data").doc(`${taleId}`).get();
+  const esQuery = await db.collection("tales").where("tale_id", "==", taleId).where("lang", "==", "es").limit(1).get();
+  const enQuery = await db.collection("tales").where("tale_id", "==", taleId).where("lang", "==", "en").limit(1).get();
 
-  if (!esSnap.exists || !enSnap.exists) {
+  if (esQuery.empty || enQuery.empty) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("not-found", "Tale not found");
   }
 
+  const esSnap = esQuery.docs[0];
+  const enSnap = enQuery.docs[0];
   const es = esSnap.data();
   const en = enSnap.data();
-  const common = commonSnap.exists ? commonSnap.data() : null;
+  const commonSnap = es.tale_common_data_ref ? await es.tale_common_data_ref.get() : null;
 
   const draftId = db.collection("tale_drafts").doc().id;
   const fromPrefix = `tales/${taleId}`;
@@ -66,10 +67,10 @@ async function retractTaleHandler(req) {
     retracted_from_tale_id: taleId,
     is_premium_tale: es.is_premium_tale ?? false,
   });
-  batch.delete(db.collection("tales").doc(`${taleId}_es`));
-  batch.delete(db.collection("tales").doc(`${taleId}_en`));
-  if (commonSnap.exists) {
-    batch.delete(db.collection("tales_common_data").doc(`${taleId}`));
+  batch.delete(esSnap.ref);
+  batch.delete(enSnap.ref);
+  if (commonSnap && commonSnap.exists) {
+    batch.delete(commonSnap.ref);
   }
   await batch.commit();
 
