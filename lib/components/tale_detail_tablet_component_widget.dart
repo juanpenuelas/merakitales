@@ -56,14 +56,15 @@ class _TaleDetailTabletComponentWidgetState
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final isPremium = context.read<PremiumProvider>().isPremium;
-      if (!isPremium && widget.taleDetailParameter != null) {
-        final taleId = widget.taleDetailParameter!.taleId;
-        final service = WeeklyReadLimitService();
-        final canRead = await service.canRead(taleId);
-        
-        if (canRead) {
-          await service.recordRead(taleId);
-        } else {
+      if (widget.taleDetailParameter != null) {
+        final allowed =
+            await WeeklyReadLimitService().registerOpenAndCheckAllowed(
+          taleId: widget.taleDetailParameter!.taleId,
+          userIsPremium: isPremium,
+          taleIsPremium: widget.taleDetailParameter!.isPremiumTale,
+        );
+
+        if (!allowed) {
           showModalBottomSheet(
             context: context,
             isDismissible: false,

@@ -77,4 +77,23 @@ class WeeklyReadLimitService {
       await prefs.setStringList(_readTalesKey, readTales.map((e) => e.toString()).toList());
     }
   }
+
+  /// Registra la apertura de un cuento y devuelve si puede mostrarse.
+  /// Reglas: usuario premium nunca tiene cupo; un cuento premium abierto por
+  /// un usuario no premium es un teaser y no consume ni bloquea; solo las
+  /// lecturas de cuentos gratis por usuarios no premium cuentan.
+  Future<bool> registerOpenAndCheckAllowed({
+    required int taleId,
+    required bool userIsPremium,
+    required bool taleIsPremium,
+  }) async {
+    if (userIsPremium || taleIsPremium) {
+      return true;
+    }
+    if (!await canRead(taleId)) {
+      return false;
+    }
+    await recordRead(taleId);
+    return true;
+  }
 }
