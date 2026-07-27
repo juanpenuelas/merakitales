@@ -14,22 +14,26 @@ class LibraryHomeModel extends FlutterFlowModel<LibraryHomeWidget> {
   String? _talesStreamLang;
   Stream<List<CategoriesRecord>>? _categoriesStream;
 
+  // Consultamos Firestore directamente en vez de usar queryTalesRecord /
+  // queryCategoriesRecord: esos helpers tragan el error con handleError y el
+  // StreamBuilder nunca veria hasError (spinner eterno en vez de reintentar).
   Stream<List<TalesRecord>> talesStreamFor(String lang) {
     if (_talesStream == null || _talesStreamLang != lang) {
       _talesStreamLang = lang;
-      _talesStream = queryTalesRecord(
-        queryBuilder: (q) => q
-            .where('lang', isEqualTo: lang)
-            .orderBy('tale_id', descending: true),
-      );
+      _talesStream = TalesRecord.collection
+          .where('lang', isEqualTo: lang)
+          .orderBy('tale_id', descending: true)
+          .snapshots()
+          .map((s) => s.docs.map(TalesRecord.fromSnapshot).toList());
     }
     return _talesStream!;
   }
 
   Stream<List<CategoriesRecord>> categoriesStream() {
-    _categoriesStream ??= queryCategoriesRecord(
-      queryBuilder: (q) => q.orderBy('sort_order'),
-    );
+    _categoriesStream ??= CategoriesRecord.collection
+        .orderBy('sort_order')
+        .snapshots()
+        .map((s) => s.docs.map(CategoriesRecord.fromSnapshot).toList());
     return _categoriesStream!;
   }
 
