@@ -181,6 +181,7 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                           FFAppState().updateLanguage + 1;
                       FFAppState().update(() {});
                     },
+                    showSelectedIcon: false,
                   ),
                 ],
               ),

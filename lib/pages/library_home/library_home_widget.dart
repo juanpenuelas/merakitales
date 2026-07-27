@@ -176,6 +176,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
                     icon: const Icon(Icons.menu,
                         color: Colors.white, size: 28.0),
                     onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                    tooltip: isSpanish ? 'Menú' : 'Menu',
                   ),
                   Text(
                     'Meraki Tales',
