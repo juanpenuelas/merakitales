@@ -5,11 +5,10 @@ class SubscriptionBenefitsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const benefits = [
-      'Historias ilimitadas',
-      'Modo offline',
-      'Sin anuncios',
-    ];
+    final isSpanish = Localizations.localeOf(context).languageCode == 'es';
+    final benefits = isSpanish
+        ? const ['Historias ilimitadas', 'Modo offline', 'Sin anuncios']
+        : const ['Unlimited stories', 'Offline mode', 'No ads'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

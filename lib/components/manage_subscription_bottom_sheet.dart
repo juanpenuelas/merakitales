@@ -10,6 +10,8 @@ class ManageSubscriptionBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSpanish = Localizations.localeOf(context).languageCode == 'es';
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -17,21 +19,23 @@ class ManageSubscriptionBottomSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gestionar Suscripción',
+            isSpanish ? 'Gestionar Suscripción' : 'Manage Subscription',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Si cancelas ahora, perderás tu acceso a historias ilimitadas y el modo offline al terminar tu periodo de facturación actual.',
+          Text(
+            isSpanish
+                ? 'Si cancelas ahora, perderás tu acceso a historias ilimitadas y el modo offline al terminar tu periodo de facturación actual.'
+                : 'If you cancel now, you will lose access to unlimited stories and offline mode at the end of your current billing period.',
           ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: onCancelPressed,
-              child: const Text('Entendido, cancelar de todos modos'),
+              child: Text(isSpanish ? 'Entendido, cancelar de todos modos' : 'Got it, cancel anyway'),
             ),
           ),
         ],

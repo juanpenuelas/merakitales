@@ -13,6 +13,7 @@ class SubscriptionHeroCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isPremium ? Colors.white : Colors.black87;
+    final isSpanish = Localizations.localeOf(context).languageCode == 'es';
 
     return Container(
       padding: const EdgeInsets.all(24.0),
@@ -41,7 +42,9 @@ class SubscriptionHeroCardWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16.0),
           Text(
-            isPremium ? 'Suscripción Premium Activa' : 'Plan Gratuito',
+            isPremium
+                ? (isSpanish ? 'Suscripción Premium Activa' : 'Premium Subscription Active')
+                : (isSpanish ? 'Plan Gratuito' : 'Free Plan'),
             style: TextStyle(
               color: textColor,
               fontSize: 18.0,
@@ -52,7 +55,7 @@ class SubscriptionHeroCardWidget extends StatelessWidget {
           if (isPremium && expirationDate != null) ...[
             const SizedBox(height: 8.0),
             Text(
-              'Se renueva el $expirationDate',
+              isSpanish ? 'Se renueva el $expirationDate' : 'Renews on $expirationDate',
               style: TextStyle(
                 color: textColor.withOpacity(0.9),
                 fontSize: 14.0,
