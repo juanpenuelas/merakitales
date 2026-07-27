@@ -95,6 +95,11 @@ class TalesRecord extends FirestoreRecord {
   bool get isPremiumTale => _isPremiumTale ?? false;
   bool hasIsPremiumTale() => _isPremiumTale != null;
 
+  // "category_id" field.
+  String? _categoryId;
+  String get categoryId => _categoryId ?? '';
+  bool hasCategoryId() => _categoryId != null;
+
   void _initializeFields() {
     _name = snapshotData['name'] as String?;
     _description = snapshotData['description'] as String?;
@@ -113,6 +118,7 @@ class TalesRecord extends FirestoreRecord {
         snapshotData['tale_common_data_ref'] as DocumentReference?;
     _audioUrl = snapshotData['audio_url'] as String?;
     _isPremiumTale = snapshotData['is_premium_tale'] as bool?;
+    _categoryId = snapshotData['category_id'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -165,6 +171,7 @@ Map<String, dynamic> createTalesRecordData({
   DocumentReference? taleCommonDataRef,
   String? audioUrl,
   bool? isPremiumTale,
+  String? categoryId,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -184,6 +191,7 @@ Map<String, dynamic> createTalesRecordData({
       'tale_common_data_ref': taleCommonDataRef,
       'audio_url': audioUrl,
       'is_premium_tale': isPremiumTale,
+      'category_id': categoryId,
     }.withoutNulls,
   );
 
@@ -210,7 +218,8 @@ class TalesRecordDocumentEquality implements Equality<TalesRecord> {
         e1?.imageUrl640px == e2?.imageUrl640px &&
         e1?.taleCommonDataRef == e2?.taleCommonDataRef &&
         e1?.audioUrl == e2?.audioUrl &&
-        e1?.isPremiumTale == e2?.isPremiumTale;
+        e1?.isPremiumTale == e2?.isPremiumTale &&
+        e1?.categoryId == e2?.categoryId;
   }
 
   @override
@@ -230,7 +239,8 @@ class TalesRecordDocumentEquality implements Equality<TalesRecord> {
         e?.imageUrl640px,
         e?.taleCommonDataRef,
         e?.audioUrl,
-        e?.isPremiumTale
+        e?.isPremiumTale,
+        e?.categoryId
       ]);
 
   @override
