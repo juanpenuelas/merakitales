@@ -1,0 +1,5 @@
+// Plantilla. Copia este archivo a revenuecat_keys.dart y pega las claves
+// del dashboard de RevenueCat (Project settings -> API keys -> App-specific
+// public keys). revenuecat_keys.dart esta gitignoreado a proposito.
+const String kRcApiKeyAndroid = 'goog_pon_aqui_la_clave';
+const String kRcApiKeyIOS = 'appl_pon_aqui_la_clave';
