@@ -5,6 +5,8 @@ class PremiumStatusBottomSheetWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSpanish = Localizations.localeOf(context).languageCode == 'es';
+
     return Container(
       padding: const EdgeInsets.all(24.0),
       decoration: const BoxDecoration(
@@ -16,19 +18,21 @@ class PremiumStatusBottomSheetWidget extends StatelessWidget {
         children: [
           const Icon(Icons.workspace_premium, color: Color(0xFF7C3AED), size: 64),
           const SizedBox(height: 16),
-          const Text(
-            '¡Eres Premium!',
-            style: TextStyle(
+          Text(
+            isSpanish ? '¡Eres Premium!' : 'You are Premium!',
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Color(0xFF7C3AED),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Gracias por apoyar Meraki Tales. Tienes acceso ilimitado a todos los cuentos sin anuncios.',
+          Text(
+            isSpanish
+                ? 'Gracias por apoyar Meraki Tales. Tienes acceso ilimitado a todos los cuentos sin anuncios.'
+                : 'Thank you for supporting Meraki Tales. You have unlimited access to every tale, with no ads.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -42,9 +46,9 @@ class PremiumStatusBottomSheetWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Cerrar',
-                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+              child: Text(
+                isSpanish ? 'Cerrar' : 'Close',
+                style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),

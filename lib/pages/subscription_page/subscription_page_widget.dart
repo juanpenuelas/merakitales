@@ -45,9 +45,11 @@ class SubscriptionPageWidget extends StatelessWidget {
       return const PaywallWidget();
     }
 
+    final isSpanish = Localizations.localeOf(context).languageCode == 'es';
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Suscripción'),
+        title: Text(isSpanish ? 'Suscripción' : 'Subscription'),
       ),
       body: Consumer<PremiumProvider>(
         builder: (context, provider, child) {
@@ -82,7 +84,7 @@ class SubscriptionPageWidget extends StatelessWidget {
                         },
                       );
                     },
-                    child: const Text('Gestionar suscripción'),
+                    child: Text(isSpanish ? 'Gestionar suscripción' : 'Manage subscription'),
                   ),
                 ],
               ],

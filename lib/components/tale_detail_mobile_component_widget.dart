@@ -82,7 +82,7 @@ class _TaleDetailMobileComponentWidgetState
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Límite semanal alcanzado',
+                      Localizations.localeOf(context).languageCode == 'es' ? 'Límite semanal alcanzado' : 'Weekly limit reached',
                       style: FlutterFlowTheme.of(context).headlineSmall.override(
                         font: GoogleFonts.outfit(),
                         color: Colors.black,
@@ -91,7 +91,9 @@ class _TaleDetailMobileComponentWidgetState
                     ),
                     SizedBox(height: 16.0),
                     Text(
-                      'Has alcanzado el límite semanal de 7 cuentos gratis. Vuelve el lunes o hazte Premium.',
+                      Localizations.localeOf(context).languageCode == 'es'
+                          ? 'Has alcanzado el límite semanal de 7 cuentos gratis. Vuelve el lunes o hazte Premium.'
+                          : 'You have reached the weekly limit of 7 free tales. Come back on Monday or go Premium.',
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                         font: GoogleFonts.readexPro(),
@@ -118,7 +120,7 @@ class _TaleDetailMobileComponentWidgetState
                         ),
                       ),
                       child: Text(
-                        'Hazte Premium',
+                        Localizations.localeOf(context).languageCode == 'es' ? 'Hazte Premium' : 'Go Premium',
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
@@ -128,7 +130,7 @@ class _TaleDetailMobileComponentWidgetState
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
-                      child: Text('Volver'),
+                      child: Text(Localizations.localeOf(context).languageCode == 'es' ? 'Volver' : 'Back'),
                     ),
                   ],
                 ),
@@ -512,7 +514,7 @@ class _TaleDetailMobileComponentWidgetState
                                   ),
                                 ),
                                 child: Text(
-                                  'Desbloquear Cuento',
+                                  Localizations.localeOf(context).languageCode == 'es' ? 'Desbloquear Cuento' : 'Unlock Tale',
                                   style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                               ),

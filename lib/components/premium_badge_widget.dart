@@ -48,7 +48,9 @@ class PremiumBadgeWidget extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              isPremium ? 'PREMIUM' : 'FREE',
+              isPremium
+                  ? 'PREMIUM'
+                  : (Localizations.localeOf(context).languageCode == 'es' ? 'GRATIS' : 'FREE'),
               style: TextStyle(
                 color: isPremium ? Colors.white : Colors.black54,
                 fontWeight: FontWeight.bold,

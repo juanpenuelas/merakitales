@@ -430,7 +430,7 @@ class _TaleListLargeComponentWidgetState
                                                                 borderRadius: BorderRadius.circular(12.0),
                                                               ),
                                                               child: Text(
-                                                                '✨ NUEVO',
+                                                                Localizations.localeOf(context).languageCode == 'es' ? '✨ NUEVO' : '✨ NEW',
                                                                 style: FlutterFlowTheme.of(context).labelSmall.override(
                                                                   font: GoogleFonts.plusJakartaSans(),
                                                                   color: Colors.white,

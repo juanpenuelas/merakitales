@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -51,6 +52,13 @@ class FakePremiumProvider extends ChangeNotifier implements PremiumProvider {
 void main() {
   Widget createWidgetUnderTest(FakePremiumProvider provider) {
     return MaterialApp(
+      locale: const Locale('es'),
+      supportedLocales: const [Locale('es'), Locale('en')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: ChangeNotifierProvider<PremiumProvider>.value(
         value: provider,
         child: const SubscriptionPageWidget(),
@@ -58,7 +66,8 @@ void main() {
     );
   }
 
-  testWidgets('sends non-premium users to the paywall, not the status page', (WidgetTester tester) async {
+  testWidgets('sends non-premium users to the paywall, not the status page',
+      (WidgetTester tester) async {
     final provider = FakePremiumProvider(isPremium: false);
     await tester.pumpWidget(createWidgetUnderTest(provider));
 
@@ -69,7 +78,8 @@ void main() {
     expect(find.text('Gestionar suscripción'), findsNothing);
   });
 
-  testWidgets('a premium flip mid-purchase must not swap the paywall away', (WidgetTester tester) async {
+  testWidgets('a premium flip mid-purchase must not swap the paywall away',
+      (WidgetTester tester) async {
     // El paywall abre un diálogo de carga y lo cierra el mismo despues del
     // await. Si al activarse premium esta pagina lo desmonta, ese diálogo se
     // queda huerfano y el spinner gira para siempre: el paywall debe seguir
@@ -84,7 +94,8 @@ void main() {
     expect(find.byType(PaywallWidget), findsOneWidget);
   });
 
-  testWidgets('renders premium state correctly when isPremium is true', (WidgetTester tester) async {
+  testWidgets('renders premium state correctly when isPremium is true',
+      (WidgetTester tester) async {
     final customerInfo = MockCustomerInfo(
       latestExpirationDate: '2026-12-31T23:59:59Z',
       managementURL: 'https://manage.subscription.com',
@@ -97,7 +108,8 @@ void main() {
     expect(find.text('Gestionar suscripción'), findsOneWidget);
   });
 
-  testWidgets('tapping Gestionar suscripción opens ManageSubscriptionBottomSheet', (WidgetTester tester) async {
+  testWidgets('tapping Gestionar suscripción opens ManageSubscriptionBottomSheet',
+      (WidgetTester tester) async {
     final customerInfo = MockCustomerInfo(
       latestExpirationDate: '2026-12-31T23:59:59Z',
       managementURL: 'https://manage.subscription.com',
