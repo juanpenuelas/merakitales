@@ -5,6 +5,7 @@ import 'package:merakitales/services/subscription_service.dart';
 import 'package:merakitales/components/subscription_hero_card_widget.dart';
 import 'package:merakitales/components/subscription_benefits_list_widget.dart';
 import 'package:merakitales/components/manage_subscription_bottom_sheet.dart';
+import 'package:merakitales/pages/paywall_widget.dart';
 
 class SubscriptionPageWidget extends StatelessWidget {
   const SubscriptionPageWidget({super.key});
@@ -33,6 +34,17 @@ class SubscriptionPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Todos los puntos de entrada premium (drawer, badge, cuento bloqueado)
+    // llegan aqui. Esta pagina es el estado/gestion de la suscripcion y no
+    // tiene camino a la compra, asi que quien no es premium va al paywall.
+    // read y NO watch a proposito: el destino se decide al entrar. Con watch,
+    // al activarse premium se desmontaba el paywall a mitad de la compra y su
+    // dialogo de carga quedaba huerfano girando para siempre. El paywall se
+    // cierra solo al terminar.
+    if (!context.read<PremiumProvider>().isPremium) {
+      return const PaywallWidget();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Suscripción'),

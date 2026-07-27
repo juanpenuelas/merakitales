@@ -73,3 +73,6 @@ web/build/
 .firebase/
 firebase/.firebase/
 firebase/build
+
+# ---- Claves de RevenueCat (publicas del SDK, fuera del repo) ----
+lib/services/revenuecat_keys.dart

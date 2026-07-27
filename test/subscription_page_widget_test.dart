@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:merakitales/pages/subscription_page/subscription_page_widget.dart';
+import 'package:merakitales/pages/paywall_widget.dart';
 import 'package:merakitales/components/subscription_hero_card_widget.dart';
 import 'package:merakitales/components/subscription_benefits_list_widget.dart';
 import 'package:merakitales/components/manage_subscription_bottom_sheet.dart';
@@ -57,13 +58,30 @@ void main() {
     );
   }
 
-  testWidgets('renders free state correctly when isPremium is false', (WidgetTester tester) async {
+  testWidgets('sends non-premium users to the paywall, not the status page', (WidgetTester tester) async {
     final provider = FakePremiumProvider(isPremium: false);
     await tester.pumpWidget(createWidgetUnderTest(provider));
 
-    expect(find.byType(SubscriptionHeroCardWidget), findsOneWidget);
-    expect(find.byType(SubscriptionBenefitsListWidget), findsOneWidget);
+    // El paywall es la unica pantalla con precio y boton de compra; la pagina
+    // de estado no tiene camino a la compra, asi que no-premium no debe verla.
+    expect(find.byType(PaywallWidget), findsOneWidget);
+    expect(find.byType(SubscriptionHeroCardWidget), findsNothing);
     expect(find.text('Gestionar suscripción'), findsNothing);
+  });
+
+  testWidgets('a premium flip mid-purchase must not swap the paywall away', (WidgetTester tester) async {
+    // El paywall abre un diálogo de carga y lo cierra el mismo despues del
+    // await. Si al activarse premium esta pagina lo desmonta, ese diálogo se
+    // queda huerfano y el spinner gira para siempre: el paywall debe seguir
+    // montado hasta que el se cierre solo.
+    final provider = FakePremiumProvider(isPremium: false);
+    await tester.pumpWidget(createWidgetUnderTest(provider));
+    expect(find.byType(PaywallWidget), findsOneWidget);
+
+    provider.update(true, null); // lo que hace purchasePackage al completarse
+    await tester.pump();
+
+    expect(find.byType(PaywallWidget), findsOneWidget);
   });
 
   testWidgets('renders premium state correctly when isPremium is true', (WidgetTester tester) async {
