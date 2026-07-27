@@ -62,19 +62,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               : LibraryHomeWidget(),
         ),
         FFRoute(
-          name: HomePageWidget.routeName,
-          path: HomePageWidget.routePath,
-          builder: (context, params) => HomePageWidget(),
-        ),
-        FFRoute(
           name: LibraryHomeWidget.routeName,
           path: LibraryHomeWidget.routePath,
           builder: (context, params) => LibraryHomeWidget(),
-        ),
-        FFRoute(
-          name: TaleListWidget.routeName,
-          path: TaleListWidget.routePath,
-          builder: (context, params) => TaleListWidget(),
         ),
         FFRoute(
           name: TailDetailWidget.routeName,

@@ -43,7 +43,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
     super.initState();
     _model = createModel(context, () => LibraryHomeModel());
 
-    // Precarga del intersticial, igual que hacia la antigua TaleListWidget.
+    // Precarga del intersticial, igual que hacia la lista antigua.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       unawaited(
         () async {
