@@ -24,6 +24,11 @@ los ~30 cuentos gratuitos nunca llevan categoría). Dos huecos detectados:
   app; nunca en las estanterías de la home. Gratis y Novedades no llevan descripción.
 - Sin cambios en Cloud Functions: el admin escribe Firestore directamente (patrón
   actual de `CategoriesService`).
+- **Reglas de Firestore** (decisión de Juan, 2026-07-28, descubierto en implementación):
+  `tales` bloqueaba todo write de cliente. Se añade una regla estrecha: el UID admin
+  puede hacer `update` de `tales` limitado al campo `category_id`
+  (`affectedKeys().hasOnly(['category_id'])`). Requiere
+  `firebase deploy --only firestore:rules` al cerrar la rama.
 
 ## Diseño — datos (Firestore)
 

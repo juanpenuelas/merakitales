@@ -286,6 +286,7 @@ git commit -m "feat(admin): asignar categoria a cuentos publicados en el servici
 
 **Files:**
 - Modify: `lib/admin/published/published_list_page.dart`
+- Modify: `firebase/firestore.rules`
 
 **Interfaces:**
 - Consumes: `updatePublishedTaleCategory` (Task 2), `PublishedTale.categoryId` (Task 2), `CategoriesService.streamCategories()` y `Category` (existentes; `Category.id`, `.emoji`, `.nameEs`).
@@ -374,6 +375,31 @@ En `lib/admin/published/published_list_page.dart`:
 
 Notas: el stream de publicados refresca la fila solo (snapshots). Sin spinner de bloqueo: la escritura es rápida y el snackbar confirma. Los cuentos gratuitos ven solo el botón Retirar, como hoy.
 
+- [ ] **Step 1b: Autorizar la escritura en las reglas de Firestore (decisión de Juan 2026-07-28)**
+
+Las reglas actuales bloquean todo write de cliente a `tales` (solo escriben las Cloud
+Functions). En `firebase/firestore.rules`, sustituir el bloque `match /tales/{document}`
+por:
+
+```
+    match /tales/{document} {
+      allow create: if false;
+      allow read: if true;
+      // Unico write de cliente permitido: el admin (mismo UID que en
+      // tale_drafts/categories) recategoriza cuentos publicados, y solo
+      // puede tocar el campo category_id. Todo lo demas sigue via Functions.
+      allow update: if request.auth != null
+        && request.auth.uid == "N5sv9GubvwOvapwv72nwrhWzBtK2"
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['category_id']);
+      allow delete: if false;
+    }
+```
+
+Sin test automatizado de reglas (requeriría el emulador; desproporcionado aquí): la
+verificación manual de Task 5 asigna una categoría en el admin real, lo que prueba la
+regla en producción. IMPORTANTE: la regla no surte efecto hasta
+`firebase deploy --only firestore:rules` (paso de cierre en Task 5).
+
 - [ ] **Step 2: Verificar**
 
 Run: `flutter analyze && flutter test`
@@ -382,8 +408,8 @@ Expected: analyze 27 (cero nuevos), suite verde. (Sin test propio: cableado de U
 - [ ] **Step 3: Commit**
 
 ```bash
-git add lib/admin/published/published_list_page.dart
-git commit -m "feat(admin): dropdown de categoria en publicados premium"
+git add lib/admin/published/published_list_page.dart firebase/firestore.rules
+git commit -m "feat(admin): dropdown de categoria en publicados premium con regla estrecha"
 ```
 
 ---
@@ -536,4 +562,4 @@ Review whole-branch (base = merge-base con main) con foco en: regla premium-only
 
 - [ ] **Step 4: Cierre de rama**
 
-Usar `superpowers:finishing-a-development-branch` (merge a main + push + borrado de rama; preguntar por deploy — este cambio SÍ toca el admin: si el admin está desplegado en Firebase Hosting, recordar el build de hosting según el protocolo del usuario).
+Usar `superpowers:finishing-a-development-branch` (merge a main + push + borrado de rama; preguntar por deploy). Este cierre tiene DOS deploys pendientes de confirmar con Juan: (1) `firebase deploy --only firestore:rules` — SIN esto el dropdown da permission-denied en producción; (2) el build+deploy de Hosting del admin según su protocolo (verificar con hash check que firebase/build/web corresponde al build nuevo, symlink incluido). ORDEN: las reglas ANTES de la verificación manual del Step 3.
