@@ -8,7 +8,6 @@ import '/flutter_flow/flutter_flow_native_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../services/notification_service.dart';
 import 'package:provider/provider.dart';
 import '../services/subscription_service.dart';
 import '../services/weekly_read_limit_service.dart';
@@ -140,9 +139,6 @@ class _TaleDetailMobileComponentWidgetState
           );
         }
       }
-
-      // Request FCM permission and subscribe to topic (idempotent: runs once per session).
-      NotificationService().requestPermissionsAndSubscribe();
     });
 
     animationsMap.addAll({
