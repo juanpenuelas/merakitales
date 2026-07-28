@@ -84,6 +84,10 @@ los ~30 cuentos gratuitos nunca llevan categoría). Dos huecos detectados:
   `description` (String?). En la fila de contador, si hay descripción:
   `"N cuentos · descripción"`; si no, `"N cuentos"` como hoy.
 - Nada más cambia: la aparición de estanterías al categorizar ya funciona.
+- Enmienda (hallazgo de la verificación manual, 2026-07-28): "ver más ›" se muestra
+  SIEMPRE en todas las estanterías (antes solo con >10 cuentos), porque las categorías
+  tienen 8-10 cuentos por diseño y la página de categoría —único lugar donde se ve la
+  descripción— quedaba inalcanzable.
 
 ## Tests
 

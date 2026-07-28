@@ -29,6 +29,9 @@ class CategoryPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSpanish = Localizations.localeOf(context).languageCode == 'es';
     final isPremiumUser = context.watch<PremiumProvider>().isPremium;
+    final noun = isSpanish
+        ? (tales.length == 1 ? 'cuento' : 'cuentos')
+        : (tales.length == 1 ? 'tale' : 'tales');
     final width = MediaQuery.sizeOf(context).width;
     final columns = width < 479
         ? 2
@@ -63,8 +66,8 @@ class CategoryPageWidget extends StatelessWidget {
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   (description == null || description!.isEmpty)
-                      ? '${tales.length} ${isSpanish ? 'cuentos' : 'tales'}'
-                      : '${tales.length} ${isSpanish ? 'cuentos' : 'tales'} · ${description!}',
+                      ? '${tales.length} $noun'
+                      : '${tales.length} $noun · ${description!}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13.0,
                     color: const Color(0xFF57636C),
