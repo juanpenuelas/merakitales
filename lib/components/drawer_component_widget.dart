@@ -48,7 +48,7 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
       width: 270.0,
       height: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: FlutterFlowTheme.of(context).secondaryBackground,
         boxShadow: const [
           BoxShadow(
             blurRadius: 4.0,
@@ -90,7 +90,7 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                                     .headlineMedium
                                     .fontStyle,
                               ),
-                              color: const Color(0xFF15161E),
+                              color: FlutterFlowTheme.of(context).primaryText,
                               fontSize: 24.0,
                               letterSpacing: 0.0,
                             ),
@@ -168,15 +168,16 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                     const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
                 child: Row(
                   children: [
-                    const Icon(Icons.language_rounded,
-                        color: Color(0xFF57636C), size: 22.0),
+                    Icon(Icons.language_rounded,
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        size: 22.0),
                     const SizedBox(width: 10.0),
                     Text(
                       isSpanish ? 'Idioma' : 'Language',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 14.0,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF15161E),
+                        color: FlutterFlowTheme.of(context).primaryText,
                       ),
                     ),
                     const Spacer(),
@@ -192,6 +193,50 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                             FFAppState().updateLanguage + 1;
                         FFAppState().update(() {});
                       },
+                      showSelectedIcon: false,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.dark_mode_outlined,
+                        color: FlutterFlowTheme.of(context).secondaryText,
+                        size: 22.0),
+                    const SizedBox(width: 10.0),
+                    Flexible(
+                      child: Text(
+                        isSpanish ? 'Tema' : 'Theme',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                          color: FlutterFlowTheme.of(context).primaryText,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    SegmentedButton<ThemeMode>(
+                      style: const ButtonStyle(
+                          visualDensity:
+                              VisualDensity(horizontal: -4, vertical: -2)),
+                      segments: const [
+                        ButtonSegment(
+                            value: ThemeMode.light,
+                            icon: Icon(Icons.light_mode)),
+                        ButtonSegment(
+                            value: ThemeMode.system,
+                            icon: Icon(Icons.brightness_auto)),
+                        ButtonSegment(
+                            value: ThemeMode.dark,
+                            icon: Icon(Icons.dark_mode)),
+                      ],
+                      selected: {FlutterFlowTheme.themeMode},
+                      onSelectionChanged: (selection) =>
+                          setDarkModeSetting(context, selection.first),
                       showSelectedIcon: false,
                     ),
                   ],
@@ -218,7 +263,7 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                     width: double.infinity,
                     height: 50.0,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F4F8),
+                      color: FlutterFlowTheme.of(context).primaryBackground,
                       borderRadius: BorderRadius.circular(12.0),
                       shape: BoxShape.rectangle,
                     ),
@@ -240,9 +285,9 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                               ),
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.info_outline,
-                            color: Color(0xFF15161E),
+                            color: FlutterFlowTheme.of(context).primaryText,
                             size: 28.0,
                           ),
                           Padding(
@@ -261,7 +306,8 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                                           .titleSmall
                                           .fontStyle,
                                     ),
-                                    color: const Color(0xFF15161E),
+                                    color:
+                                        FlutterFlowTheme.of(context).primaryText,
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                   ),

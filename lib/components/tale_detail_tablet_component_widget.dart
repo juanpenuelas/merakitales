@@ -72,7 +72,7 @@ class _TaleDetailTabletComponentWidgetState
               return Container(
                 padding: EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16.0),
                     topRight: Radius.circular(16.0),
@@ -85,7 +85,7 @@ class _TaleDetailTabletComponentWidgetState
                       Localizations.localeOf(context).languageCode == 'es' ? 'Límite semanal alcanzado' : 'Weekly limit reached',
                       style: FlutterFlowTheme.of(context).headlineSmall.override(
                         font: GoogleFonts.outfit(),
-                        color: Colors.black,
+                        color: FlutterFlowTheme.of(context).primaryText,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -97,7 +97,7 @@ class _TaleDetailTabletComponentWidgetState
                       textAlign: TextAlign.center,
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                         font: GoogleFonts.readexPro(),
-                        color: Colors.black54,
+                        color: FlutterFlowTheme.of(context).secondaryText,
                       ),
                     ),
                     SizedBox(height: 24.0),

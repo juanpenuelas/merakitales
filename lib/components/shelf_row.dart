@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/backend/backend.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
 import 'tale_cover_card.dart';
 
 /// Estanteria: titulo + carrusel horizontal de portadas (max 10) +
@@ -51,7 +52,7 @@ class ShelfRow extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 17.0,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF101213),
+                    color: FlutterFlowTheme.of(context).primaryText,
                   ),
                 ),
               ),

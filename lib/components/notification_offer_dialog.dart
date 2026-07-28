@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '/flutter_flow/flutter_flow_theme.dart';
+
 /// Pre-dialogo propio de la app, mostrado antes del prompt del sistema.
 /// Widget tonto: solo pinta y devuelve la eleccion del usuario via
 /// Navigator.pop (patron showDialog<bool>).
@@ -36,7 +38,7 @@ class NotificationOfferDialog extends StatelessWidget {
         textAlign: TextAlign.center,
         style: GoogleFonts.plusJakartaSans(
           fontSize: 14.0,
-          color: Colors.black54,
+          color: FlutterFlowTheme.of(context).secondaryText,
         ),
       ),
       actionsAlignment: MainAxisAlignment.center,
@@ -45,7 +47,8 @@ class NotificationOfferDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context, false),
           child: Text(
             isSpanish ? 'Ahora no' : 'Not now',
-            style: GoogleFonts.plusJakartaSans(color: Colors.black54),
+            style: GoogleFonts.plusJakartaSans(
+                color: FlutterFlowTheme.of(context).secondaryText),
           ),
         ),
         FilledButton(
