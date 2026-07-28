@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/backend/backend.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
 
 /// Portada cuadrada con candado (premium bloqueado), badge NUEVO (<= 7 dias)
 /// y titulo en dos lineas. Widget tonto: quien lo usa decide `locked`.
@@ -47,7 +48,7 @@ class TaleCoverCard extends StatelessWidget {
                     errorBuilder: (_, __, ___) => Container(
                       width: size,
                       height: size,
-                      color: const Color(0xFFE0E0E0),
+                      color: FlutterFlowTheme.of(context).alternate,
                       child: const Icon(
                         Icons.menu_book_rounded,
                         color: Colors.white,
@@ -104,7 +105,7 @@ class TaleCoverCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12.0,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF101213),
+                color: FlutterFlowTheme.of(context).primaryText,
               ),
             ),
           ],

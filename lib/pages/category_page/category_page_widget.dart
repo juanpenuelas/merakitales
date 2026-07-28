@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/backend/backend.dart';
 import '/components/tale_cover_card.dart';
 import '/flutter_flow/flutter_flow_ad_banner.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
 import '/services/subscription_service.dart';
 import '/services/tale_opener.dart';
 
@@ -44,7 +45,7 @@ class CategoryPageWidget extends StatelessWidget {
         (width - hPadding * 2 - spacing * (columns - 1)) / columns;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F4F8),
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       appBar: AppBar(
         backgroundColor: const Color(0xFF2D5A3D),
         foregroundColor: Colors.white,

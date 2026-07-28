@@ -170,7 +170,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFF1F4F8),
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       drawer: Drawer(
         elevation: 16.0,
         child: wrapWithModel(
