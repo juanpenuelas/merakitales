@@ -7,7 +7,7 @@ import '/backend/backend.dart';
 import 'tale_cover_card.dart';
 
 /// Estanteria: titulo + carrusel horizontal de portadas (max 10) +
-/// "ver mas" cuando la seccion tiene mas de 10 cuentos.
+/// "ver mas" siempre visible (el carrusel sigue topando en 10).
 class ShelfRow extends StatelessWidget {
   const ShelfRow({
     super.key,
@@ -55,7 +55,7 @@ class ShelfRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (onVerMas != null && tales.length > kMaxVisible)
+              if (onVerMas != null)
                 TextButton(
                   onPressed: onVerMas,
                   child: Text(

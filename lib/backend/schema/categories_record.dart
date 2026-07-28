@@ -40,12 +40,24 @@ class CategoriesRecord extends FirestoreRecord {
   int get sortOrder => _sortOrder ?? 0;
   bool hasSortOrder() => _sortOrder != null;
 
+  // "description_es" field.
+  String? _descriptionEs;
+  String get descriptionEs => _descriptionEs ?? '';
+  bool hasDescriptionEs() => _descriptionEs != null;
+
+  // "description_en" field.
+  String? _descriptionEn;
+  String get descriptionEn => _descriptionEn ?? '';
+  bool hasDescriptionEn() => _descriptionEn != null;
+
   void _initializeFields() {
     _nameEs = snapshotData['name_es'] as String?;
     _nameEn = snapshotData['name_en'] as String?;
     _emoji = snapshotData['emoji'] as String?;
     _slug = snapshotData['slug'] as String?;
     _sortOrder = castToType<int>(snapshotData['sort_order']);
+    _descriptionEs = snapshotData['description_es'] as String?;
+    _descriptionEn = snapshotData['description_en'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -88,6 +100,8 @@ Map<String, dynamic> createCategoriesRecordData({
   String? emoji,
   String? slug,
   int? sortOrder,
+  String? descriptionEs,
+  String? descriptionEn,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -96,6 +110,8 @@ Map<String, dynamic> createCategoriesRecordData({
       'emoji': emoji,
       'slug': slug,
       'sort_order': sortOrder,
+      'description_es': descriptionEs,
+      'description_en': descriptionEn,
     }.withoutNulls,
   );
 
@@ -111,12 +127,21 @@ class CategoriesRecordDocumentEquality implements Equality<CategoriesRecord> {
         e1?.nameEn == e2?.nameEn &&
         e1?.emoji == e2?.emoji &&
         e1?.slug == e2?.slug &&
-        e1?.sortOrder == e2?.sortOrder;
+        e1?.sortOrder == e2?.sortOrder &&
+        e1?.descriptionEs == e2?.descriptionEs &&
+        e1?.descriptionEn == e2?.descriptionEn;
   }
 
   @override
-  int hash(CategoriesRecord? e) => const ListEquality()
-      .hash([e?.nameEs, e?.nameEn, e?.emoji, e?.slug, e?.sortOrder]);
+  int hash(CategoriesRecord? e) => const ListEquality().hash([
+        e?.nameEs,
+        e?.nameEn,
+        e?.emoji,
+        e?.slug,
+        e?.sortOrder,
+        e?.descriptionEs,
+        e?.descriptionEn
+      ]);
 
   @override
   bool isValidKey(Object? o) => o is CategoriesRecord;

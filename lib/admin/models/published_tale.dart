@@ -10,6 +10,7 @@ class PublishedTale {
   final String imageUrl640;
   final bool isPremiumTale;
   final DateTime? createdAt;
+  final String? categoryId;
 
   PublishedTale({
     required this.id,
@@ -21,6 +22,7 @@ class PublishedTale {
     required this.imageUrl640,
     this.isPremiumTale = false,
     this.createdAt,
+    this.categoryId,
   });
 
   factory PublishedTale.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -35,6 +37,7 @@ class PublishedTale {
       imageUrl640: d['image_url_640px'] as String? ?? '',
       isPremiumTale: d['is_premium_tale'] as bool? ?? false,
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
+      categoryId: d['category_id'] as String?,
     );
   }
 }

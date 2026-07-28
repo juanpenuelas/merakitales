@@ -5,8 +5,9 @@ import '../util/format.dart';
 
 class CategoryFormResult {
   final String nameEs, nameEn, emoji, slug;
+  final String descriptionEs, descriptionEn;
   final int sortOrder;
-  CategoryFormResult({required this.nameEs, required this.nameEn, required this.emoji, required this.slug, required this.sortOrder});
+  CategoryFormResult({required this.nameEs, required this.nameEn, required this.emoji, required this.slug, required this.descriptionEs, required this.descriptionEn, required this.sortOrder});
 }
 
 Future<CategoryFormResult?> showCategoryEditor(BuildContext context, {Category? existing}) {
@@ -25,6 +26,7 @@ class _CategoryEditorDialog extends StatefulWidget {
 
 class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
   late final TextEditingController _nameEs, _nameEn, _emoji, _slug, _sort;
+  late final TextEditingController _descEs, _descEn;
   bool _slugTouched = false;
 
   @override
@@ -35,6 +37,8 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
     _nameEn = TextEditingController(text: e?.nameEn ?? '');
     _emoji = TextEditingController(text: e?.emoji ?? '');
     _slug = TextEditingController(text: e?.slug ?? '');
+    _descEs = TextEditingController(text: e?.descriptionEs ?? '');
+    _descEn = TextEditingController(text: e?.descriptionEn ?? '');
     _sort = TextEditingController(text: (e?.sortOrder ?? 0).toString());
     _slugTouched = e != null;
     _nameEs.addListener(() {
@@ -44,7 +48,7 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
 
   @override
   void dispose() {
-    for (final c in [_nameEs, _nameEn, _emoji, _slug, _sort]) { c.dispose(); }
+    for (final c in [_nameEs, _nameEn, _emoji, _slug, _descEs, _descEn, _sort]) { c.dispose(); }
     super.dispose();
   }
 
@@ -62,6 +66,10 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
           const SizedBox(height: AppSpacing.sm),
           TextField(key: const Key('cat_slug'), controller: _slug, onChanged: (_) => _slugTouched = true, decoration: const InputDecoration(labelText: 'Slug')),
           const SizedBox(height: AppSpacing.sm),
+          TextField(key: const Key('cat_desc_es'), controller: _descEs, decoration: const InputDecoration(labelText: 'Descripción (ES)')),
+          const SizedBox(height: AppSpacing.sm),
+          TextField(key: const Key('cat_desc_en'), controller: _descEn, decoration: const InputDecoration(labelText: 'Descripción (EN)')),
+          const SizedBox(height: AppSpacing.sm),
           TextField(controller: _sort, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Orden')),
         ]),
       ),
@@ -74,6 +82,8 @@ class _CategoryEditorDialogState extends State<_CategoryEditorDialog> {
             nameEn: _nameEn.text.trim(),
             emoji: _emoji.text.trim(),
             slug: _slug.text.trim().isEmpty ? slugify(_nameEs.text) : _slug.text.trim(),
+            descriptionEs: _descEs.text.trim(),
+            descriptionEn: _descEn.text.trim(),
             sortOrder: int.tryParse(_sort.text) ?? 0,
           )),
           child: const Text('Guardar'),

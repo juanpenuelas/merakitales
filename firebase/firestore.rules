@@ -4,7 +4,12 @@ service cloud.firestore {
     match /tales/{document} {
       allow create: if false;
       allow read: if true;
-      allow write: if false;
+      // Unico write de cliente permitido: el admin (mismo UID que en
+      // tale_drafts/categories) recategoriza cuentos publicados, y solo
+      // puede tocar el campo category_id. Todo lo demas sigue via Functions.
+      allow update: if request.auth != null
+        && request.auth.uid == "N5sv9GubvwOvapwv72nwrhWzBtK2"
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['category_id']);
       allow delete: if false;
     }
 

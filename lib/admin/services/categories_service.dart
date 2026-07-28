@@ -17,6 +17,8 @@ class CategoriesService {
     required String nameEn,
     required String emoji,
     required String slug,
+    required String descriptionEs,
+    required String descriptionEn,
     required int sortOrder,
   }) async {
     await _db.collection('categories').add({
@@ -24,6 +26,8 @@ class CategoriesService {
       'name_en': nameEn,
       'emoji': emoji,
       'slug': slug,
+      'description_es': descriptionEs,
+      'description_en': descriptionEn,
       'sort_order': sortOrder,
       'created_at': FieldValue.serverTimestamp(),
     });
@@ -35,6 +39,8 @@ class CategoriesService {
     required String nameEn,
     required String emoji,
     required String slug,
+    required String descriptionEs,
+    required String descriptionEn,
     required int sortOrder,
   }) async {
     await _db.collection('categories').doc(id).update({
@@ -42,6 +48,8 @@ class CategoriesService {
       'name_en': nameEn,
       'emoji': emoji,
       'slug': slug,
+      'description_es': descriptionEs,
+      'description_en': descriptionEn,
       'sort_order': sortOrder,
     });
   }

@@ -6,6 +6,8 @@ class Category {
   final String nameEn;
   final String emoji;
   final String slug;
+  final String descriptionEs;
+  final String descriptionEn;
   final int sortOrder;
   final DateTime? createdAt;
 
@@ -15,6 +17,8 @@ class Category {
     required this.nameEn,
     required this.emoji,
     required this.slug,
+    this.descriptionEs = '',
+    this.descriptionEn = '',
     required this.sortOrder,
     this.createdAt,
   });
@@ -27,6 +31,8 @@ class Category {
       nameEn: d['name_en'] as String? ?? '',
       emoji: d['emoji'] as String? ?? '',
       slug: d['slug'] as String? ?? '',
+      descriptionEs: d['description_es'] as String? ?? '',
+      descriptionEn: d['description_en'] as String? ?? '',
       sortOrder: (d['sort_order'] as num?)?.toInt() ?? 0,
       createdAt: (d['created_at'] as Timestamp?)?.toDate(),
     );

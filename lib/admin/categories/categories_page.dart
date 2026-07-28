@@ -16,13 +16,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Future<void> _create() async {
     final r = await showCategoryEditor(context);
     if (r == null) return;
-    await _service.createCategory(nameEs: r.nameEs, nameEn: r.nameEn, emoji: r.emoji, slug: r.slug, sortOrder: r.sortOrder);
+    await _service.createCategory(nameEs: r.nameEs, nameEn: r.nameEn, emoji: r.emoji, slug: r.slug, descriptionEs: r.descriptionEs, descriptionEn: r.descriptionEn, sortOrder: r.sortOrder);
   }
 
   Future<void> _edit(Category cat) async {
     final r = await showCategoryEditor(context, existing: cat);
     if (r == null) return;
-    await _service.updateCategory(id: cat.id, nameEs: r.nameEs, nameEn: r.nameEn, emoji: r.emoji, slug: r.slug, sortOrder: r.sortOrder);
+    await _service.updateCategory(id: cat.id, nameEs: r.nameEs, nameEn: r.nameEn, emoji: r.emoji, slug: r.slug, descriptionEs: r.descriptionEs, descriptionEn: r.descriptionEn, sortOrder: r.sortOrder);
   }
 
   Future<void> _delete(Category cat) async {
