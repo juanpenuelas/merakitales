@@ -58,4 +58,69 @@ void main() {
     // Should be able to read again
     expect(await service.canRead(8), isTrue);
   });
+
+  group('registerOpenAndCheckAllowed', () {
+    late WeeklyReadLimitService service;
+
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+      service = WeeklyReadLimitService();
+    });
+
+    test('usuario premium: siempre permitido y no registra lectura', () async {
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 1, userIsPremium: true, taleIsPremium: false);
+      expect(allowed, true);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList('weekly_read_tales') ?? [], isEmpty);
+    });
+
+    test('teaser premium (usuario no premium): permitido y no registra',
+        () async {
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 2, userIsPremium: false, taleIsPremium: true);
+      expect(allowed, true);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList('weekly_read_tales') ?? [], isEmpty);
+    });
+
+    test('cuento gratis bajo el limite: permitido y registra', () async {
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 3, userIsPremium: false, taleIsPremium: false);
+      expect(allowed, true);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList('weekly_read_tales'), ['3']);
+    });
+
+    test('cuento gratis con limite alcanzado: bloqueado', () async {
+      for (var i = 1; i <= 7; i++) {
+        await service.registerOpenAndCheckAllowed(
+            taleId: i, userIsPremium: false, taleIsPremium: false);
+      }
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 99, userIsPremium: false, taleIsPremium: false);
+      expect(allowed, false);
+    });
+
+    test('releer un cuento ya leido esta semana con limite lleno: permitido',
+        () async {
+      for (var i = 1; i <= 7; i++) {
+        await service.registerOpenAndCheckAllowed(
+            taleId: i, userIsPremium: false, taleIsPremium: false);
+      }
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 1, userIsPremium: false, taleIsPremium: false);
+      expect(allowed, true);
+    });
+
+    test('teaser premium con limite lleno: sigue permitido', () async {
+      for (var i = 1; i <= 7; i++) {
+        await service.registerOpenAndCheckAllowed(
+            taleId: i, userIsPremium: false, taleIsPremium: false);
+      }
+      final allowed = await service.registerOpenAndCheckAllowed(
+          taleId: 100, userIsPremium: false, taleIsPremium: true);
+      expect(allowed, true);
+    });
+  });
 }

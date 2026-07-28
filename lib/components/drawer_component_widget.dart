@@ -155,6 +155,39 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
               ),
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.language_rounded,
+                      color: Color(0xFF57636C), size: 22.0),
+                  const SizedBox(width: 10.0),
+                  Text(
+                    isSpanish ? 'Idioma' : 'Language',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF15161E),
+                    ),
+                  ),
+                  const Spacer(),
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'es', label: Text('ES')),
+                      ButtonSegment(value: 'en', label: Text('EN')),
+                    ],
+                    selected: {isSpanish ? 'es' : 'en'},
+                    onSelectionChanged: (selection) {
+                      setAppLanguage(context, selection.first);
+                      FFAppState().updateLanguage =
+                          FFAppState().updateLanguage + 1;
+                      FFAppState().update(() {});
+                    },
+                    showSelectedIcon: false,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
