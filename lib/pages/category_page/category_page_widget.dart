@@ -17,11 +17,13 @@ class CategoryPageWidget extends StatelessWidget {
     required this.title,
     this.emoji,
     required this.tales,
+    this.description,
   });
 
   final String title;
   final String? emoji;
   final List<TalesRecord> tales;
+  final String? description;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,9 @@ class CategoryPageWidget extends StatelessWidget {
               child: Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  '${tales.length} ${isSpanish ? 'cuentos' : 'tales'}',
+                  (description == null || description!.isEmpty)
+                      ? '${tales.length} ${isSpanish ? 'cuentos' : 'tales'}'
+                      : '${tales.length} ${isSpanish ? 'cuentos' : 'tales'} · ${description!}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13.0,
                     color: const Color(0xFF57636C),

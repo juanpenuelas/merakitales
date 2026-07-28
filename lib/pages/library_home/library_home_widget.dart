@@ -80,6 +80,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
   void _openShelf(Shelf shelf, bool isSpanish) {
     String title;
     String? emoji;
+    String? description;
     switch (shelf.type) {
       case ShelfType.novedades:
         title = isSpanish ? 'Novedades' : 'New arrivals';
@@ -92,6 +93,10 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
       case ShelfType.categoria:
         title = isSpanish ? shelf.category!.nameEs : shelf.category!.nameEn;
         emoji = shelf.category!.emoji.isEmpty ? null : shelf.category!.emoji;
+        final desc = isSpanish
+            ? shelf.category!.descriptionEs
+            : shelf.category!.descriptionEn;
+        description = desc.isEmpty ? null : desc;
         break;
     }
     Navigator.push(
@@ -101,6 +106,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
           title: title,
           emoji: emoji,
           tales: shelf.tales,
+          description: description,
         ),
       ),
     );
