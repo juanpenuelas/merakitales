@@ -8,8 +8,10 @@ import '../models/draft.dart';
 import '../models/published_tale.dart';
 
 class DraftsService {
-  final _db = FirebaseFirestore.instance;
-  final _functions = FirebaseFunctions.instanceFor(region: 'europe-west1');
+  final FirebaseFirestore _db;
+  late final _functions = FirebaseFunctions.instanceFor(region: 'europe-west1');
+
+  DraftsService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
 
   Stream<List<Draft>> streamDraftsByStatuses(List<String> statuses) {
     return _db
@@ -57,6 +59,23 @@ class DraftsService {
       esData: snaps[0],
       enData: snaps[1],
     );
+  }
+
+  /// Asigna (o limpia, con null) la categoria de un cuento publicado,
+  /// actualizando los documentos ES y EN localizados por tale_id+lang.
+  Future<void> updatePublishedTaleCategory({
+    required int taleId,
+    required String? categoryId,
+  }) async {
+    final q = await _db
+        .collection('tales')
+        .where('tale_id', isEqualTo: taleId)
+        .get();
+    final batch = _db.batch();
+    for (final doc in q.docs) {
+      batch.update(doc.reference, {'category_id': categoryId});
+    }
+    await batch.commit();
   }
 
   Future<String> createManualDraft({
