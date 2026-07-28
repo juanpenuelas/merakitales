@@ -1,2 +1,3 @@
 "CFBundleDisplayName" = "Grandma Meraki";
 "CFBundleName" = "Grandma Meraki";
+"NSPhotoLibraryUsageDescription" = "Grandma Meraki does not use your photo library. This notice is required by an internal app component and you will never be asked for this permission.";
