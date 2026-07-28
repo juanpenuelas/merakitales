@@ -431,34 +431,36 @@ class _DraftWorkspacePageState extends State<DraftWorkspacePage> {
             value: _draft?.isPremiumTale ?? false,
             onChanged: (_draft == null || _savingPremium) ? null : _toggleIsPremium,
           ),
-          const SizedBox(height: 8),
-          StreamBuilder<List<Category>>(
-            stream: _categoriesService.streamCategories(),
-            builder: (context, snap) {
-              final cats = snap.data ?? [];
-              final ids = cats.map((c) => c.id).toSet();
-              // Guard: if the draft points at a deleted category, fall back to null
-              // so DropdownButtonFormField doesn't throw on a value not in its items.
-              final currentValue = ids.contains(_draft?.categoryId) ? _draft?.categoryId : null;
-              return DropdownButtonFormField<String?>(
-                value: currentValue,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Categoría',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                ),
-                items: [
-                  const DropdownMenuItem<String?>(value: null, child: Text('Sin categoría')),
-                  ...cats.map((c) => DropdownMenuItem<String?>(
-                        value: c.id,
-                        child: Text('${c.emoji} ${c.nameEs}'),
-                      )),
-                ],
-                onChanged: (_draft == null) ? null : (value) => _setCategory(value),
-              );
-            },
-          ),
+          if (_draft?.isPremiumTale ?? false) ...[
+            const SizedBox(height: 8),
+            StreamBuilder<List<Category>>(
+              stream: _categoriesService.streamCategories(),
+              builder: (context, snap) {
+                final cats = snap.data ?? [];
+                final ids = cats.map((c) => c.id).toSet();
+                // Guard: if the draft points at a deleted category, fall back to null
+                // so DropdownButtonFormField doesn't throw on a value not in its items.
+                final currentValue = ids.contains(_draft?.categoryId) ? _draft?.categoryId : null;
+                return DropdownButtonFormField<String?>(
+                  value: currentValue,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Categoría',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  items: [
+                    const DropdownMenuItem<String?>(value: null, child: Text('Sin categoría')),
+                    ...cats.map((c) => DropdownMenuItem<String?>(
+                          value: c.id,
+                          child: Text('${c.emoji} ${c.nameEs}'),
+                        )),
+                  ],
+                  onChanged: (_draft == null) ? null : (value) => _setCategory(value),
+                );
+              },
+            ),
+          ],
         ],
       ),
     );

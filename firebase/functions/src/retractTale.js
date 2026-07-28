@@ -66,6 +66,7 @@ async function retractTaleHandler(req) {
     assigned_tale_id: null,
     retracted_from_tale_id: taleId,
     is_premium_tale: es.is_premium_tale ?? false,
+    category_id: es.category_id ?? null,
   });
   batch.delete(esSnap.ref);
   batch.delete(enSnap.ref);
