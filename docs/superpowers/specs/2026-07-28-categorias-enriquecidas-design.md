@@ -88,6 +88,10 @@ los ~30 cuentos gratuitos nunca llevan categoría). Dos huecos detectados:
   SIEMPRE en todas las estanterías (antes solo con >10 cuentos), porque las categorías
   tienen 8-10 cuentos por diseño y la página de categoría —único lugar donde se ve la
   descripción— quedaba inalcanzable.
+- Enmienda 2 (feedback visual de Juan, 2026-07-28): la cabecera de la página de
+  categoría es una tarjeta con degradado verde (emoji grande + título + pastilla
+  ámbar "N cuentos" + descripción en blanco suave), en lugar de la fila de texto
+  plano "N cuentos · descripción"; el AppBar pierde el título.
 
 ## Tests
 

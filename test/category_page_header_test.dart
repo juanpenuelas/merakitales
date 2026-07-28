@@ -48,7 +48,7 @@ Future<TalesRecord> makeTale() async {
 }
 
 void main() {
-  testWidgets('cabecera con descripcion: "N tales · descripcion"',
+  testWidgets('cabecera con descripcion: pastilla + descripcion + titulo',
       (tester) async {
     await tester.pumpWidget(wrap(const CategoryPageWidget(
       title: 'Mar y piratas',
@@ -56,16 +56,20 @@ void main() {
       tales: [],
       description: 'Aventuras acuáticas',
     )));
-    expect(find.text('0 tales · Aventuras acuáticas'), findsOneWidget);
+    expect(find.text('0 tales'), findsOneWidget);
+    expect(find.text('Aventuras acuáticas'), findsOneWidget);
+    expect(find.text('Mar y piratas'), findsOneWidget);
   });
 
-  testWidgets('cabecera sin descripcion: solo "N tales"', (tester) async {
+  testWidgets('cabecera sin descripcion: solo pastilla "N tales"',
+      (tester) async {
     await tester.pumpWidget(wrap(const CategoryPageWidget(
       title: 'Mar y piratas',
       emoji: '🏴‍☠️',
       tales: [],
     )));
     expect(find.text('0 tales'), findsOneWidget);
+    expect(find.text('Aventuras acuáticas'), findsNothing);
   });
 
   testWidgets('cabecera singular: "1 tale" con un solo cuento',

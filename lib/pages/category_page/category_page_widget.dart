@@ -48,31 +48,83 @@ class CategoryPageWidget extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2D5A3D),
         foregroundColor: Colors.white,
-        title: Text(
-          [if (emoji != null && emoji!.isNotEmpty) emoji, title].join(' '),
-          style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-          ),
-        ),
       ),
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding:
-                  const EdgeInsetsDirectional.fromSTEB(16.0, 10.0, 16.0, 0.0),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  (description == null || description!.isEmpty)
-                      ? '${tales.length} $noun'
-                      : '${tales.length} $noun · ${description!}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13.0,
-                    color: const Color(0xFF57636C),
-                    fontWeight: FontWeight.w600,
+              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 4.0),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14.0),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2D5A3D), Color(0xFF1E4030)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(14.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (emoji != null && emoji!.isNotEmpty) ...[
+                          Text(emoji!, style: const TextStyle(fontSize: 32.0)),
+                          const SizedBox(width: 12.0),
+                        ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 5.0),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 3.0),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE8B04B),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  '${tales.length} $noun',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: const Color(0xFF2D3A2E),
+                                    fontSize: 11.0,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (description != null && description!.isNotEmpty) ...[
+                      const SizedBox(height: 10.0),
+                      Text(
+                        description!,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white.withOpacity(0.85),
+                          fontSize: 12.5,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
