@@ -18,7 +18,7 @@ async function rejectDraftHandler(req) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("not-found", "Draft not found");
   }
-  if (snap.data().status !== "pending") {
+  if (!["pending", "scheduled"].includes(snap.data().status)) {
     const { HttpsError } = require("firebase-functions/v2/https");
     throw new HttpsError("failed-precondition", `Draft already ${snap.data().status}`);
   }

@@ -19,6 +19,34 @@ class _DraftsListPageState extends State<DraftsListPage> {
   final _service = DraftsService();
   String _filter = 'pending';
 
+  Future<void> _delete(Draft d) async {
+    final title = d.nameEs.isNotEmpty ? d.nameEs : d.nameEn;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar borrador'),
+        content: Text(
+            '¿Seguro que quieres eliminar "$title"? Se borrarán el borrador y sus imágenes y audios generados. Esta acción no se puede deshacer.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancelar')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await _service.rejectDraft(d.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Borrador "$title" eliminado')));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
   List<String> get _statuses {
     switch (_filter) {
       case 'scheduled': return ['scheduled'];
@@ -115,7 +143,18 @@ class _DraftsListPageState extends State<DraftsListPage> {
                       imageUrl640: d.imageUrl640,
                       placeholder: Icons.book,
                       badges: badges,
-                      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            tooltip: 'Eliminar',
+                            icon: const Icon(Icons.delete_outline),
+                            color: Theme.of(context).colorScheme.error,
+                            onPressed: () => _delete(d),
+                          ),
+                          const Icon(Icons.chevron_right, color: Colors.grey),
+                        ],
+                      ),
                     );
                   },
                 );
