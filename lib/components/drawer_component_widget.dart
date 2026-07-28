@@ -207,7 +207,7 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                         color: FlutterFlowTheme.of(context).secondaryText,
                         size: 22.0),
                     const SizedBox(width: 10.0),
-                    Flexible(
+                    Expanded(
                       child: Text(
                         isSpanish ? 'Tema' : 'Theme',
                         overflow: TextOverflow.ellipsis,
@@ -218,7 +218,6 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                         ),
                       ),
                     ),
-                    const Spacer(),
                     SegmentedButton<ThemeMode>(
                       style: const ButtonStyle(
                           visualDensity:
