@@ -29,8 +29,8 @@ class PremiumStatusBottomSheetWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             isSpanish
-                ? 'Gracias por apoyar Meraki Tales. Tienes acceso ilimitado a todos los cuentos sin anuncios.'
-                : 'Thank you for supporting Meraki Tales. You have unlimited access to every tale, with no ads.',
+                ? 'Gracias por apoyar Abuela Meraki. Tienes acceso ilimitado a todos los cuentos sin anuncios.'
+                : 'Thank you for supporting Grandma Meraki. You have unlimited access to every tale, with no ads.',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),

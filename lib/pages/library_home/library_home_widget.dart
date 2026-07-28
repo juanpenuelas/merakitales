@@ -197,7 +197,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
                     tooltip: isSpanish ? 'Menú' : 'Menu',
                   ),
                   Text(
-                    'Meraki Tales',
+                    isSpanish ? 'Abuela Meraki' : 'Grandma Meraki',
                     style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
                       fontSize: 20.0,
