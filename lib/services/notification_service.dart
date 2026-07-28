@@ -13,13 +13,18 @@ class NotificationService {
   /// autorizado (o provisional), suscribe al topic. Para re-suscripcion
   /// silenciosa de usuarios que ya habian concedido el permiso.
   Future<bool> ensureSubscribedIfAuthorized() async {
-    final settings = await _fcm.getNotificationSettings();
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      await _subscribeToTopicBasedOnLanguage();
-      return true;
+    try {
+      final settings = await _fcm.getNotificationSettings();
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
+        await _subscribeToTopicBasedOnLanguage();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error checking notification settings: $e');
+      return false;
     }
-    return false;
   }
 
   /// Dispara el prompt del sistema y suscribe al topic si concede.
