@@ -17,6 +17,8 @@ import '/flutter_flow/flutter_flow_native_ad.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/pages/category_page/category_page_widget.dart';
+import '/services/notification_prompt_policy.dart';
+import '/services/notification_service.dart';
 import '/services/shelf_builder.dart';
 import '/services/subscription_service.dart';
 import '/services/tale_opener.dart';
@@ -52,6 +54,16 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
             "ca-app-pub-6049242703708474/1026289941",
             false,
           );
+        }(),
+      );
+
+      // Usuario con permiso ya concedido (flujo viejo): re-suscripcion
+      // silenciosa al topic y se da la politica de reofertas por completada.
+      unawaited(
+        () async {
+          if (await NotificationService().ensureSubscribedIfAuthorized()) {
+            await NotificationPromptPolicy().markDone();
+          }
         }(),
       );
     });

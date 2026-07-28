@@ -7,29 +7,37 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  // Guard: only request permissions once per app session.
-  static bool _hasRequested = false;
-
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
-  Future<void> requestPermissionsAndSubscribe() async {
-    // Idempotent: only run once per app session.
-    if (_hasRequested) return;
-    _hasRequested = true;
+  /// Comprueba el permiso actual sin disparar ningun prompt; si ya esta
+  /// autorizado (o provisional), suscribe al topic. Para re-suscripcion
+  /// silenciosa de usuarios que ya habian concedido el permiso.
+  Future<bool> ensureSubscribedIfAuthorized() async {
+    final settings = await _fcm.getNotificationSettings();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      await _subscribeToTopicBasedOnLanguage();
+      return true;
+    }
+    return false;
+  }
 
-    // 1. Request Permission
+  /// Dispara el prompt del sistema y suscribe al topic si concede.
+  Future<bool> requestPermissionAndSubscribe() async {
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized || 
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional) {
       debugPrint('NotificationService: permission granted, subscribing to topic.');
       await _subscribeToTopicBasedOnLanguage();
+      return true;
     } else {
       debugPrint('NotificationService: permission declined or not accepted.');
+      return false;
     }
   }
 
