@@ -7,7 +7,7 @@ Write a COMPLETE, original bedtime story. Rules:
   1. Introduction: introduce the child protagonist and the magical/interesting setting
   2. Development: an adventure or small conflict resolved through positive values
   3. Resolution with a clear moral lesson
-  4. Close with the words "El fin." at the very end
+  4. Close each version with its own language's ending as the very last words: the Spanish version ends with "El fin." and the English version ends with "The end."
 - Provide BOTH a Spanish (es) and an English (en) version. The English version must be a natural adaptation (not a literal translation) suitable for native English-speaking children.
 - Generate a short "image_prompt" (one sentence in English) describing a single warm, friendly illustration that captures the story's mood (children's book illustration style, soft colors, no text in image, no characters with copyrighted likenesses).
 - "description" is a 1-2 sentence teaser for the list view.
