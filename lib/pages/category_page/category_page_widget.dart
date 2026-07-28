@@ -118,7 +118,7 @@ class CategoryPageWidget extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white.withOpacity(0.85),
+                          color: Colors.white.withValues(alpha: 0.85),
                           fontSize: 12.5,
                           height: 1.35,
                         ),
