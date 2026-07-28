@@ -1,2 +1,3 @@
 "CFBundleDisplayName" = "Abuela Meraki";
 "CFBundleName" = "Abuela Meraki";
+"NSPhotoLibraryUsageDescription" = "Abuela Meraki no usa tu fototeca. Este aviso lo requiere un componente interno de la app y nunca se te pedirá este permiso.";
