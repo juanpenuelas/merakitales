@@ -207,16 +207,22 @@ class _DrawerComponentWidgetState extends State<DrawerComponentWidget> {
                         color: FlutterFlowTheme.of(context).secondaryText,
                         size: 22.0),
                     const SizedBox(width: 10.0),
-                    Text(
-                      isSpanish ? 'Tema' : 'Theme',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                        color: FlutterFlowTheme.of(context).primaryText,
+                    Flexible(
+                      child: Text(
+                        isSpanish ? 'Tema' : 'Theme',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                          color: FlutterFlowTheme.of(context).primaryText,
+                        ),
                       ),
                     ),
                     const Spacer(),
                     SegmentedButton<ThemeMode>(
+                      style: const ButtonStyle(
+                          visualDensity:
+                              VisualDensity(horizontal: -4, vertical: -2)),
                       segments: const [
                         ButtonSegment(
                             value: ThemeMode.light,
