@@ -17,11 +17,6 @@ class FFAppState extends ChangeNotifier {
   Future initializePersistedState() async {
     prefs = await SharedPreferences.getInstance();
     _safeInit(() {
-      _TalesReadSinceLastIntersticialAdd =
-          prefs.getInt('ff_TalesReadSinceLastIntersticialAdd') ??
-              _TalesReadSinceLastIntersticialAdd;
-    });
-    _safeInit(() {
       _updateLanguage = prefs.getInt('ff_updateLanguage') ?? _updateLanguage;
     });
   }
@@ -32,14 +27,6 @@ class FFAppState extends ChangeNotifier {
   }
 
   late SharedPreferences prefs;
-
-  int _TalesReadSinceLastIntersticialAdd = 0;
-  int get TalesReadSinceLastIntersticialAdd =>
-      _TalesReadSinceLastIntersticialAdd;
-  set TalesReadSinceLastIntersticialAdd(int value) {
-    _TalesReadSinceLastIntersticialAdd = value;
-    prefs.setInt('ff_TalesReadSinceLastIntersticialAdd', value);
-  }
 
   int _updateLanguage = 0;
   int get updateLanguage => _updateLanguage;

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:merakitales/components/parental_gate.dart';
+import 'package:merakitales/components/subscription_legal_links.dart';
 import 'package:merakitales/services/subscription_service.dart';
 
 class PaywallWidget extends StatefulWidget {
@@ -161,23 +162,19 @@ class _PaywallWidgetState extends State<PaywallWidget> {
         ? 'Desbloquea la experiencia completa de Abuela Meraki' 
         : 'Unlock the full Abuela Meraki experience';
 
-    // Benefits list
+    // Benefits list. Solo lo que la app hace de verdad: nada de "sin anuncios"
+    // (ya no hay publicidad) ni "modo offline" (nunca existio).
     final List<Map<String, String>> benefits = [
       {
-        'title': isSpanish ? 'Sin anuncios' : 'Ad-Free experience',
-        'desc': isSpanish ? 'Disfruta de tus cuentos sin interrupciones' : 'Enjoy your stories without any interruptions',
-        'icon': 'no_ads',
+        'title': isSpanish ? 'Acceso a todos los cuentos' : 'Access to every story',
+        'desc': isSpanish ? 'Escucha y lee todos los cuentos disponibles, sin límite semanal' : 'Listen and read every available story, with no weekly limit',
+        'icon': 'auto_awesome',
       },
       {
-        'title': isSpanish ? 'Apoya a Abuela Meraki' : 'Support future stories',
+        'title': isSpanish ? 'Apoya a Abuela Meraki' : 'Support Abuela Meraki',
         'desc': isSpanish ? 'Ayúdanos a crear más cuentos mágicos para niños' : 'Help us create more magical tales for children',
         'icon': 'favorite',
       },
-      {
-        'title': isSpanish ? 'Acceso ilimitado' : 'Unlimited access',
-        'desc': isSpanish ? 'Escucha y lee todos los cuentos disponibles' : 'Listen and read all available stories',
-        'icon': 'auto_awesome',
-      }
     ];
 
     // Determine the monthly package
@@ -343,7 +340,6 @@ class _PaywallWidgetState extends State<PaywallWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: benefits.map((benefit) {
         IconData iconData = Icons.star;
-        if (benefit['icon'] == 'no_ads') iconData = Icons.block;
         if (benefit['icon'] == 'favorite') iconData = Icons.favorite;
         if (benefit['icon'] == 'auto_awesome') iconData = Icons.auto_awesome;
 
@@ -582,6 +578,26 @@ class _PaywallWidgetState extends State<PaywallWidget> {
                 fontSize: 14,
               ),
             ),
+          ),
+
+          // Guideline 3.1.2(c): duracion, renovacion y enlaces legales tienen
+          // que estar en el propio flujo de compra, no solo en la ficha.
+          const Divider(height: 32, color: Color(0xFF312E81)),
+          Text(
+            isSpanish
+                ? 'Suscripción mensual de renovación automática. El pago se carga a tu cuenta de Apple al confirmar la compra y se renueva cada mes al mismo precio salvo que la canceles al menos 24 horas antes de que termine el periodo en curso. Puedes gestionarla o cancelarla en los ajustes de tu cuenta.'
+                : 'Auto-renewing monthly subscription. Payment is charged to your Apple account at confirmation of purchase and renews every month at the same price unless you cancel at least 24 hours before the end of the current period. You can manage or cancel it in your account settings.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.readexPro(
+              color: const Color(0xFF94A3B8),
+              fontSize: 11,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SubscriptionLegalLinks(
+            isSpanish: isSpanish,
+            color: const Color(0xFFC7D2FE),
           ),
         ],
       ),

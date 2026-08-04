@@ -4,7 +4,6 @@ import '/flutter_flow/flutter_flow_audio_player.dart';
 import '/flutter_flow/flutter_flow_expanded_image_view.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_native_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -393,8 +392,6 @@ class _TaleDetailMobileComponentWidgetState
                         ).animateOnPageLoad(
                             animationsMap['imageOnPageLoadAnimation']!),
                       ),
-                      const SizedBox(height: 12.0),
-                      const NativeAdListTile(),
                       Divider(
                         height: 32.0,
                         thickness: 1.0,

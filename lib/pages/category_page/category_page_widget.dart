@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '/backend/backend.dart';
 import '/components/tale_cover_card.dart';
-import '/flutter_flow/flutter_flow_ad_banner.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/services/subscription_service.dart';
 import '/services/tale_opener.dart';
@@ -149,13 +147,6 @@ class CategoryPageWidget extends StatelessWidget {
                   );
                 },
               ),
-            ),
-            FlutterFlowAdBanner(
-              width: MediaQuery.sizeOf(context).width * 1.0,
-              height: 50.0,
-              showsTestAd: kDebugMode,
-              iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
-              androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
             ),
           ],
         ),

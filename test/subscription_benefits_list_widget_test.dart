@@ -19,9 +19,13 @@ void main() {
       ),
     ));
 
-    expect(find.text('Historias ilimitadas'), findsOneWidget);
-    expect(find.text('Modo offline'), findsOneWidget);
-    expect(find.text('Sin anuncios'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsNWidgets(3));
+    expect(find.text('Acceso a todos los cuentos'), findsOneWidget);
+    expect(find.text('Apoyas a Abuela Meraki'), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle), findsNWidgets(2));
+
+    // Guideline 2.3.1: nada de prometer lo que la app no hace. El modo offline
+    // nunca existio y la publicidad ya no existe.
+    expect(find.textContaining('offline'), findsNothing);
+    expect(find.textContaining('anuncios'), findsNothing);
   });
 }

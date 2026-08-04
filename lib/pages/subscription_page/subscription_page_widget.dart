@@ -5,6 +5,8 @@ import 'package:merakitales/services/subscription_service.dart';
 import 'package:merakitales/components/subscription_hero_card_widget.dart';
 import 'package:merakitales/components/subscription_benefits_list_widget.dart';
 import 'package:merakitales/components/manage_subscription_bottom_sheet.dart';
+import 'package:merakitales/components/parental_gate.dart';
+import 'package:merakitales/components/subscription_legal_links.dart';
 import 'package:merakitales/pages/paywall_widget.dart';
 
 class SubscriptionPageWidget extends StatelessWidget {
@@ -23,12 +25,15 @@ class SubscriptionPageWidget extends StatelessWidget {
     }
   }
 
-  void _openManagementUrl(String? url) async {
-    if (url != null && url.isNotEmpty) {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      }
+  // Gestionar la suscripcion saca al usuario a los ajustes de la cuenta, asi
+  // que en categoria Kids pasa por el parental gate igual que el resto de
+  // salidas de la app (guideline 1.3).
+  Future<void> _openManagementUrl(BuildContext context, String? url) async {
+    if (url == null || url.isEmpty) return;
+    if (!await ParentalGate.verify(context)) return;
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     }
   }
 
@@ -72,13 +77,14 @@ class SubscriptionPageWidget extends StatelessWidget {
                   const SizedBox(height: 24.0),
                   TextButton(
                     onPressed: () {
+                      final pageContext = context;
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) {
+                        builder: (sheetContext) {
                           return ManageSubscriptionBottomSheet(
                             onCancelPressed: () {
-                              _openManagementUrl(managementUrl);
-                              Navigator.pop(context);
+                              Navigator.pop(sheetContext);
+                              _openManagementUrl(pageContext, managementUrl);
                             },
                           );
                         },
@@ -87,6 +93,8 @@ class SubscriptionPageWidget extends StatelessWidget {
                     child: Text(isSpanish ? 'Gestionar suscripción' : 'Manage subscription'),
                   ),
                 ],
+                const SizedBox(height: 24.0),
+                SubscriptionLegalLinks(isSpanish: isSpanish),
               ],
             ),
           );

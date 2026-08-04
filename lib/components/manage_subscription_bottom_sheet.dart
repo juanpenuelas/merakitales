@@ -27,8 +27,8 @@ class ManageSubscriptionBottomSheet extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             isSpanish
-                ? 'Si cancelas ahora, perderás tu acceso a historias ilimitadas y el modo offline al terminar tu periodo de facturación actual.'
-                : 'If you cancel now, you will lose access to unlimited stories and offline mode at the end of your current billing period.',
+                ? 'Si cancelas ahora, perderás el acceso a todos los cuentos al terminar tu periodo de facturación actual.'
+                : 'If you cancel now, you will lose access to every story at the end of your current billing period.',
           ),
           const SizedBox(height: 24),
           SizedBox(
