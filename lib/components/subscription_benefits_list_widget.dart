@@ -6,9 +6,11 @@ class SubscriptionBenefitsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSpanish = Localizations.localeOf(context).languageCode == 'es';
+    // Solo lo que la app hace de verdad: "modo offline" nunca existio y ya no
+    // hay anuncios que quitar.
     final benefits = isSpanish
-        ? const ['Historias ilimitadas', 'Modo offline', 'Sin anuncios']
-        : const ['Unlimited stories', 'Offline mode', 'No ads'];
+        ? const ['Acceso a todos los cuentos', 'Apoyas a Abuela Meraki']
+        : const ['Access to every story', 'You support Abuela Meraki'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

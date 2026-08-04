@@ -28,7 +28,8 @@ void main() {
     );
 
     expect(find.text('Gestionar Suscripción'), findsOneWidget);
-    expect(find.textContaining('perderás tu acceso a historias ilimitadas'), findsOneWidget);
+    expect(find.textContaining('perderás el acceso a todos los cuentos'), findsOneWidget);
+    expect(find.textContaining('offline'), findsNothing);
     expect(find.text('Entendido, cancelar de todos modos'), findsOneWidget);
 
     await tester.tap(find.text('Entendido, cancelar de todos modos'));

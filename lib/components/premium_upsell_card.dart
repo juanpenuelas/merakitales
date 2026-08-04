@@ -52,8 +52,8 @@ class PremiumUpsellCard extends StatelessWidget {
                     ),
                     Text(
                       isSpanish
-                          ? 'Todos los cuentos, con audio y sin anuncios'
-                          : 'Every tale, with audio and no ads',
+                          ? 'Todos los cuentos, con audio y sin límite semanal'
+                          : 'Every tale, with audio and no weekly limit',
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white70,
                         fontSize: 11.0,

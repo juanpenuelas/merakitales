@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart'
-    show kDebugMode, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,9 +9,6 @@ import '/backend/backend.dart';
 import '/components/drawer_component_widget.dart';
 import '/components/premium_upsell_card.dart';
 import '/components/shelf_row.dart';
-import '/flutter_flow/admob_util.dart' as admob;
-import '/flutter_flow/flutter_flow_ad_banner.dart';
-import '/flutter_flow/flutter_flow_native_ad.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/pages/category_page/category_page_widget.dart';
@@ -45,18 +40,7 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
     super.initState();
     _model = createModel(context, () => LibraryHomeModel());
 
-    // Precarga del intersticial, igual que hacia la lista antigua.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      unawaited(
-        () async {
-          admob.loadInterstitialAd(
-            "ca-app-pub-6049242703708474/2634885084",
-            "ca-app-pub-6049242703708474/1026289941",
-            false,
-          );
-        }(),
-      );
-
       // Usuario con permiso ya concedido (flujo viejo): re-suscripcion
       // silenciosa al topic y se da la politica de reofertas por completada.
       unawaited(
@@ -241,10 +225,6 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
                         if (shelvesPintadas == 1 && !isPremiumUser) {
                           rows.add(const PremiumUpsellCard());
                         }
-                        if (shelvesPintadas % 3 == 0 &&
-                            defaultTargetPlatform != TargetPlatform.android) {
-                          rows.add(const NativeAdListTile());
-                        }
                       }
 
                       return ListView.builder(
@@ -256,13 +236,6 @@ class _LibraryHomeWidgetState extends State<LibraryHomeWidget> {
                   );
                 },
               ),
-            ),
-            FlutterFlowAdBanner(
-              width: MediaQuery.sizeOf(context).width * 1.0,
-              height: 50.0,
-              showsTestAd: kDebugMode,
-              iOSAdUnitID: 'ca-app-pub-6049242703708474/6940127458',
-              androidAdUnitID: 'ca-app-pub-6049242703708474/5874457795',
             ),
           ],
         ),

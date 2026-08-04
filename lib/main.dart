@@ -9,8 +9,6 @@ import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
 import 'services/subscription_service.dart';
 
-import '/flutter_flow/admob_util.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
@@ -19,23 +17,12 @@ void main() async {
   await initFirebase();
 
   await FlutterFlowTheme.initialize();
-  adMobRequestConsent();
-  adMobUpdateRequestConfiguration();
-  // Initialize Google Mobile Ads SDK so that Native ads can load.
-  await MobileAds.instance.initialize();
 
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
 
   final premiumProvider = PremiumProvider();
   await premiumProvider.init();
-
-  // Listen to premium transitions and clean up loaded ads:
-  premiumProvider.addListener(() {
-    if (premiumProvider.isPremium) {
-      clearLoadedInterstitialAd();
-    }
-  });
 
   runApp(MultiProvider(
     providers: [
