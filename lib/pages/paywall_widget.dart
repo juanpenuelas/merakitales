@@ -177,10 +177,13 @@ class _PaywallWidgetState extends State<PaywallWidget> {
       },
     ];
 
-    // Determine the monthly package
+    // Determine the monthly package. Sin precio real de la tienda no se
+    // inventa ninguno: habia un mock de $1.99 que se pintaba cuando fallaban
+    // las offerings, y eso es exactamente lo que vio App Review mientras el
+    // precio de verdad era otro.
     Package? monthlyPackage;
-    String formattedPrice = '\$1.99'; // Default mockup price
-    
+    String? formattedPrice;
+
     if (provider.offerings != null && provider.offerings!.current != null) {
       monthlyPackage = provider.offerings!.current!.monthly;
       if (monthlyPackage != null) {
@@ -188,9 +191,9 @@ class _PaywallWidgetState extends State<PaywallWidget> {
       }
     }
 
-    final priceText = isSpanish 
-        ? '$formattedPrice / mes' 
-        : '$formattedPrice / month';
+    final priceText = formattedPrice == null
+        ? null
+        : (isSpanish ? '$formattedPrice / mes' : '$formattedPrice / month');
 
     return Scaffold(
       backgroundColor: const Color(0xFF0B0914), // Deep premium dark background
@@ -396,8 +399,8 @@ class _PaywallWidgetState extends State<PaywallWidget> {
     required BuildContext context,
     required PremiumProvider provider,
     required Package? monthlyPackage,
-    required String formattedPrice,
-    required String priceText,
+    required String? formattedPrice,
+    required String? priceText,
     required bool isSpanish,
   }) {
     if (provider.isPremium) {
@@ -491,15 +494,16 @@ class _PaywallWidgetState extends State<PaywallWidget> {
             ),
           ),
           const SizedBox(height: 8),
-          
-          Text(
-            priceText,
-            style: GoogleFonts.outfit(
-              color: const Color(0xFF818CF8),
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
+
+          if (priceText != null)
+            Text(
+              priceText,
+              style: GoogleFonts.outfit(
+                color: const Color(0xFF818CF8),
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
           const SizedBox(height: 16),
 
           if (isPreviewOnly && kIsWeb)

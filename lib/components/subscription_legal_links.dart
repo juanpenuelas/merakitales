@@ -46,15 +46,17 @@ class SubscriptionLegalLinks extends StatelessWidget {
           ),
         );
 
+    // Sin separador entre enlaces: al partir a dos lineas en pantallas
+    // estrechas quedaba un "·" huerfano al final de la primera.
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
       children: [
         link(
           isSpanish ? 'Política de privacidad' : 'Privacy Policy',
           'privacy.html',
         ),
-        Text('·', style: style.copyWith(decoration: TextDecoration.none)),
         link(
           isSpanish ? 'Términos de uso (EULA)' : 'Terms of Use (EULA)',
           'terms.html',
