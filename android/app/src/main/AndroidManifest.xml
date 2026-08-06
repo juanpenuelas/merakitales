@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <!-- App infantil: la Politica de Familias de Play prohibe transmitir el
+         Advertising ID. Se declaro cuando la app llevaba AdMob; ahora se borra
+         y ademas se bloquea el que Firebase intenta fusionar via
+         play-services-ads-identifier. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove"/>
     <application
         android:label="@string/app_name"
         tools:replace="android:label"
